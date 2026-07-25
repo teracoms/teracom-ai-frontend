@@ -1,0 +1,1 @@
+export default function Page(){return <section><h1>Consulting</h1></section>}

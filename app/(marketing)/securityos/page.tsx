@@ -1,0 +1,1 @@
+export default function Page(){return <section><h1>SecurityOS AI</h1></section>}

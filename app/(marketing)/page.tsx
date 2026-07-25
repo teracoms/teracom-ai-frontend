@@ -1,0 +1,1 @@
+export default function Page(){return <section><h1>Teracom Solutions</h1></section>}
