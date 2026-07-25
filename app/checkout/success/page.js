@@ -1,0 +1,2 @@
+import Link from 'next/link';
+export default function Success(){return <main className="section"><div className="container"><span className="eyebrow">Payment successful</span><h1>Thank you for your order.</h1><p className="lead">The Stripe webhook route is ready to receive payment events and trigger the Zoho Books sync foundation.</p><Link className="btn btn-primary" href="/store">Back to Store</Link></div></main>}

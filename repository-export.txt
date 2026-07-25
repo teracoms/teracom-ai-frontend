@@ -1,0 +1,909 @@
+﻿==================================================
+FILE: .env.example
+==================================================
+NEXT_PUBLIC_SITE_URL=https://www.teracomsolutions.com.au
+
+# Stripe
+STRIPE_SECRET_KEY=sk_test_replace_me
+STRIPE_WEBHOOK_SECRET=whsec_replace_me
+
+# Zoho Books - Australia data centre
+ZOHO_ACCOUNTS_BASE_URL=https://accounts.zoho.com.au
+ZOHO_BOOKS_BASE_URL=https://www.zohoapis.com.au/books/v3
+ZOHO_CLIENT_ID=replace_me
+ZOHO_CLIENT_SECRET=replace_me
+ZOHO_REFRESH_TOKEN=replace_me
+ZOHO_ORGANIZATION_ID=replace_me
+
+# Admin import protection
+ADMIN_IMPORT_TOKEN=replace_with_a_long_random_string
+
+
+==================================================
+FILE: FileList.txt
+==================================================
+
+FullName                                                                                                          
+--------                                                                                                          
+D:\Website_Teracom\Teracom_Commerce_Platform_Foundation\teracom-commerce-platform\.env.example                    
+D:\Website_Teracom\Teracom_Commerce_Platform_Foundation\teracom-commerce-platform\FileList.txt                    
+D:\Website_Teracom\Teracom_Commerce_Platform_Foundation\teracom-commerce-platform\jsconfig.json                   
+D:\Website_Teracom\Teracom_Commerce_Platform_Foundation\teracom-commerce-platform\next.config.mjs                 
+D:\Website_Teracom\Teracom_Commerce_Platform_Foundation\teracom-commerce-platform\package.json                    
+D:\Website_Teracom\Teracom_Commerce_Platform_Foundation\teracom-commerce-platform\README.md                       
+D:\Website_Teracom\Teracom_Commerce_Platform_Foundation\teracom-commerce-platform\sample-supplier-feed.csv        
+D:\Website_Teracom\Teracom_Commerce_Platform_Foundation\teracom-commerce-platform\sample-supplier-feed.json       
+D:\Website_Teracom\Teracom_Commerce_Platform_Foundation\teracom-commerce-platform\sample-supplier-feed.xml        
+D:\Website_Teracom\Teracom_Commerce_Platform_Foundation\teracom-commerce-platform\Teracom_Code_For_Copilot.txt    
+D:\Website_Teracom\Teracom_Commerce_Platform_Foundation\teracom-commerce-platform\tsconfig.json                   
+D:\Website_Teracom\Teracom_Commerce_Platform_Foundation\teracom-commerce-platform\app\globals.css                 
+D:\Website_Teracom\Teracom_Commerce_Platform_Foundation\teracom-commerce-platform\app\layout.js                   
+D:\Website_Teracom\Teracom_Commerce_Platform_Foundation\teracom-commerce-platform\app\page.js                     
+D:\Website_Teracom\Teracom_Commerce_Platform_Foundation\teracom-commerce-platform\app\api\admin\import-feed\rou...
+D:\Website_Teracom\Teracom_Commerce_Platform_Foundation\teracom-commerce-platform\app\api\checkout\route.js       
+D:\Website_Teracom\Teracom_Commerce_Platform_Foundation\teracom-commerce-platform\app\api\leads\route.js          
+D:\Website_Teracom\Teracom_Commerce_Platform_Foundation\teracom-commerce-platform\app\api\webhooks\stripe\route.js
+D:\Website_Teracom\Teracom_Commerce_Platform_Foundation\teracom-commerce-platform\app\checkout\cancel\page.js     
+D:\Website_Teracom\Teracom_Commerce_Platform_Foundation\teracom-commerce-platform\app\checkout\success\page.js    
+D:\Website_Teracom\Teracom_Commerce_Platform_Foundation\teracom-commerce-platform\app\portal\page.js              
+D:\Website_Teracom\Teracom_Commerce_Platform_Foundation\teracom-commerce-platform\app\robots.txt\route.js         
+D:\Website_Teracom\Teracom_Commerce_Platform_Foundation\teracom-commerce-platform\app\securityos-ai\page.js       
+D:\Website_Teracom\Teracom_Commerce_Platform_Foundation\teracom-commerce-platform\app\sitemap.xml\route.js        
+D:\Website_Teracom\Teracom_Commerce_Platform_Foundation\teracom-commerce-platform\app\store\page.js               
+D:\Website_Teracom\Teracom_Commerce_Platform_Foundation\teracom-commerce-platform\components\CheckoutButton.js    
+D:\Website_Teracom\Teracom_Commerce_Platform_Foundation\teracom-commerce-platform\components\Footer.js            
+D:\Website_Teracom\Teracom_Commerce_Platform_Foundation\teracom-commerce-platform\components\Header.js            
+D:\Website_Teracom\Teracom_Commerce_Platform_Foundation\teracom-commerce-platform\lib\feed-importer.js            
+D:\Website_Teracom\Teracom_Commerce_Platform_Foundation\teracom-commerce-platform\lib\products.js                 
+D:\Website_Teracom\Teracom_Commerce_Platform_Foundation\teracom-commerce-platform\lib\stripe.js                   
+D:\Website_Teracom\Teracom_Commerce_Platform_Foundation\teracom-commerce-platform\lib\zoho.js                     
+D:\Website_Teracom\Teracom_Commerce_Platform_Foundation\teracom-commerce-platform\public\assets\consulting-visu...
+D:\Website_Teracom\Teracom_Commerce_Platform_Foundation\teracom-commerce-platform\public\assets\favicon.svg       
+D:\Website_Teracom\Teracom_Commerce_Platform_Foundation\teracom-commerce-platform\public\assets\hero-technology...
+D:\Website_Teracom\Teracom_Commerce_Platform_Foundation\teracom-commerce-platform\public\assets\securityos-dash...
+D:\Website_Teracom\Teracom_Commerce_Platform_Foundation\teracom-commerce-platform\public\assets\store-preview.svg 
+D:\Website_Teracom\Teracom_Commerce_Platform_Foundation\teracom-commerce-platform\public\assets\teracom-logo.png  
+
+
+
+
+==================================================
+FILE: jsconfig.json
+==================================================
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"]
+    }
+  }
+}
+
+
+==================================================
+FILE: next.config.mjs
+==================================================
+/** @type {import('next').NextConfig} */
+const nextConfig = { reactStrictMode: true };
+export default nextConfig;
+
+
+==================================================
+FILE: package.json
+==================================================
+{
+  "name": "teracom-commerce-platform-v3",
+  "version": "3.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@types/node": "^22.15.21",
+    "@types/react": "^18.3.18",
+    "next": "14.2.15",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "stripe": "17.3.1",
+    "typescript": "^5.8.3",
+    "zod": "3.23.8"
+  },
+  "devDependencies": {}
+}
+
+
+==================================================
+FILE: README.md
+==================================================
+# Teracom Commerce Platform V3
+
+This is the premium Teracom Solutions website rebuilt as a Vercel-ready Next.js application with the business engine underneath it.
+
+## Included
+
+- Premium Teracom homepage design
+- SecurityOS AI product page
+- Teracom Store page with products and plans
+- Customer Portal placeholder
+- Stripe Checkout API route
+- Stripe webhook route
+- Zoho Books helper integration foundation
+- Supplier CSV / JSON / XML feed parser
+- Admin feed import API route
+- Lead capture API route
+- Sitemap and robots routes
+
+## Deploy
+
+Vercel root directory should remain:
+
+```text
+teracom-commerce-platform
+```
+
+## Environment variables to add later
+
+```text
+NEXT_PUBLIC_SITE_URL
+STRIPE_SECRET_KEY
+STRIPE_WEBHOOK_SECRET
+ZOHO_CLIENT_ID
+ZOHO_CLIENT_SECRET
+ZOHO_REFRESH_TOKEN
+ZOHO_ORGANIZATION_ID
+ADMIN_IMPORT_TOKEN
+```
+
+## Notes
+
+Stripe and Zoho routes are built but require live credentials before taking real payments or creating invoices.
+
+
+==================================================
+FILE: sample-supplier-feed.csv
+==================================================
+SKU,Name,Description,Price,Stock,Category,Supplier
+HID-SIGNO,Sample Signo Reader,Access control reader,295.00,42,Access Control,Supplier A
+GEN-SW,Sample Security Software,Software licence,149.00,100,Software,Supplier B
+
+
+==================================================
+FILE: sample-supplier-feed.json
+==================================================
+{
+  "products": [
+    {
+      "sku": "MIL-VMS",
+      "name": "Sample VMS Licence",
+      "description": "Video management licence",
+      "price": 199,
+      "stock": 50,
+      "category": "Video Surveillance",
+      "supplier": "Supplier C"
+    }
+  ]
+}
+
+==================================================
+FILE: sample-supplier-feed.xml
+==================================================
+<products><product><sku>TEC-CTRL</sku><name>Sample Controller</name><description>Access control controller</description><price>499.00</price><stock>10</stock><category>Access Control</category><supplier>Supplier D</supplier></product></products>
+
+==================================================
+FILE: Teracom Solutions Project Summary.docx
+==================================================
+PK     ! 2‘oWf  ¥   [Content_Types].xml ¢(                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  ´”ËjÃ0E÷…þƒÑ¶ØJº(¥ÄÉ¢ehúŠ4NDõB£¼þ¾ã81¥$14ÉÆ ÏÜ{Ï1ƒÑÚšl	µw%ë=–“^i7+Ù×ä-d&á”0ÞAÉ6€l4¼½L60#µÃ’ÍS
+Oœ£œƒXø Ž*•V$:ÆB~‹ðû^ïKï¸”§Úƒ/P‰…IÙëš~7$²ì¹i¬³J&B0ZŠDu¾têOJ¾K(H¹íÁ¹xGŒL¨+Çvººš¨dcÓ»°ÔÅW>*®¼\XR§mpúªÒZ}í¢—€HwnMÑV¬ÐnÏ”Ã-ì")/ÒZwB`ÚÀË4¾Ýñ	®°sîDXÁôój¿Ì;A*Êˆ©Ëc´Ö‰Ö 4ßþÙ[›S‘Ô9Ž> ­•ø±÷{£Vç4p€˜ôéW×&’õÙóA½’¨Ù|»d‡?   ÿÿ PK     ! ‘·ï   N   _rels/.rels ¢(                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  ¬’ÁjÃ0@ïƒýƒÑ½QÚÁ£N/cÐÛÙ[ILÛØj×þý<ØØ]éaGËÒÓ“ÐzsœFuà”]ð–UŠ½	Öù^Ã[û¼x •…¼¥1xÖpâ›æöfýÊ#I)Êƒ‹YŠÏ‘øˆ˜ÍÀå*Döå§i")ÏÔc$³£žqU×÷˜~3 ™1ÕÖjH[{ª=E¾†ºÎ~
+f?±—3-ÂÞ²]ÄTê“¸2j)õ,l0/%œ‘b¬
+ð¼Ñêz£¿§Å‰…,	¡	‰/û|f\ZþçŠæ?6ï!Y´_áoœ]Aó  ÿÿ PK     ! "9ß¬]  ÂÆ     word/document.xmlì]Írã8’¾oÄ¾C{²ðÂÛU$öx¶zÊQ®îÝØËMQ»(RÁ»¼÷™˜½îÓõ“,@ýØÕ¶4ªMCžéŽ(É¤˜‰Ì/‰Äw¿ÿ²(¼›¬nòª|;‚g`äeeZMòrövôã§ø?òš6)'IQ•ÙÛÑ]ÖŒ~ÿî_ÿå»ÛóI•v‹¬l=M¢lÎo—éÛÑ¼m—çãq“Î³EÒœ-ò´®šjÚž¥Õb\M§yšo«z2F ‚þÛ²®Ò¬iôûdRÞ$ÍhM.ýbGmR'·úaCŒÓyR·Ù—{ð`"t,ÆþcBèBº‡>&…&ÅÆ¦U‘£éV=¢D£ôDçØq”ÐcJü8Jø1%ÿ8JÄiñXÀ«eVê›Óª^$­þ³žIý¹[¾Ñ„—I›_çEÞÞiš€mÈ$yùùˆé§¶xr0>^T“¬À“•êí¨«Ëóõóo¶Ï›¦Ÿ¯ž_lŸÈ
+»×ê×‰qö¥-švólmÃ»ÕãÑZ±ô\×Y¡ùX•Í<_nµÃâXjúæ|CäfnÅæw·Kh9Õv©¶h5÷mš¿»E±jù~ŠXŒ¦!±}Â¦	_¿sÓ’…–àûÅšÌ…–ÊgC ="ÀÒÌÒXlhøkãô~v:¹å´ÚÐYŠ¡“ß3ZêÀ_7æIw	„7í0æñ´šI;™Fn3FcólÒ&ó¤ÙNšÅ©¥"ØP$(®¬¨Ò­>34³Ã˜F·ïÆp9û¶‰ú}]uË{jù·Q»¸WÙ·<@k=á*¡æÛs5O–Z“/Òó‹YYÕÉu¡[¤§¯§g ×€ùW²ùè¿f_úëF~Ö_¦…ù2é<£Gï4¼®&wæs©oóeR'z…i(&ÍUmB[s•¯ÿÓWÏ5àœ||;@	ˆÛ^º¬Ÿ¸eÓ¤+ÚÇw.\ê[qY›zõq=îÿ•þ¯¯Žïôä+ÿÎã·çí»OYh~{WUÑõ†É»¬«Ÿ³´õ®º…¶þwæ×íê™Õ3pÅ0BðU2(ì´¼i¡ó~Ê[aÁDa$CÍŽÝ]|j˜óÆK¼6KçeUT³;¯‡xå7Õ£É&^Uzí<ó²BËB]•yê5YÚÕÿyy9éš¶¾;³‘¬§?ÀÊ)fè~ipö¦Íê…W]qÏo2Ã’¶2Œ¸Ö#~nÑ9…ð@¼à—Ýbõ%/n´.;¿I´!£^õ½‹Éæ4×ÆÛlfEûNÝüÕfäÕ—eV·y“Y0‡„(>òƒ0'¸¸ŸJ6‚"Â€E’¾J^HÍÝm•µ Ô7ÚlÛ°hð	ˆ_%K®4Œ¹MêÌ»Ôîžˆ6¡@ø(·Ãh­VYÚh.˜ .ûÚŸ—Ú4$žÁžEæ]o@Ár=¾6¦Ç$Ž4p¤[Ë\ã<Ó˜¤LçUÝOK_ÊLËwßÝœ×7òÏ_´Î!ð©	¡Þõp;Ÿ´ósðïó,ŸÍÛsxF—íÈ«ÎçuRä³òí(ÍJmaW—šV“Yßî¿Ló¢H5ôÐý[Ìÿ†p]}Îô§k3ü;²DØ‰|¡Ió¼Ø3.’™‰L>éÒÖBÈXÑÐi~h7®šªÚ°¥½[jIj–YQ\µIÝ®ÔÍÑÛ •W_±j×+U9ù¶wö¼Y&©¦¸¬³F›¿lôÎ.,FŠ1¢ƒ«ƒoàþs0x7×j7+'ÚÑÚ÷:Ó6$ó’ÒÜ«4MzÌÑÜ5m¶Ð~Ký›8,HQ
+q¸£¥µÃ’Ô³¬õ´_V76~	
+`JGè$ñÉø¬yš'VÈŠ€¾TðæyY¡Ê™†!Z(lä:¡þëdDÓæ‹¤­¬8Á„@qÀÈ«äÄ&z÷CR&3;É LÈÈáÑü¸JŠ¬ñ>e‰•@„â×)k?=)[V`Ž¨ÏØàŠs´K&Ë¤_ˆÎ3+cˆi Tð8ëÀ1Åß`“Âkºå²ª[OÏz»æ‚
+È—òž—/k‡Éû\V·E6™iØØ4¹Éý±âñ…R : ŽâÍUªÁ³§Å¤GÐVKûhpP<?ÖàAsb+$Va*hLòRË^Ï­X´ÛU{Ú[j³aÑ%2J•óÆó~IÓ~ì9’M.µ†ë,ùÜSÖœª“¼¼wDíœ%¦Î¯%9ÿ±U¹‹ƒšt%Jì3éÐBáÑQÌp(9 £]ÑQæVtsÈ‰ô_
+ûÔ«§‚g6²´çq#Nÿ™]7y{¿Æb#d8Š…Þ	Þ7_dW×&ñx³”`ƒiÌç‘S«êzòR{Z_lf;‹
+›9ÓhÑnªÅAä” mr;äz…m;!¼Ÿ°Íœ BD~ìT—®æÕ­·0Þ^aÖÙ,zÁ¢Ì7©ûf›]£AeúÙff£kØ©Ñ8hfÎeà|j3Çaäãÿ¤[qösãAb£šBaNZ¸@6¦ ’1ä”À|Ì»ÕÖ˜û©Á]À}m·Ñùg|pžÓÚãOÆ¸_õnÅõºãŽA‹|¥rÊTXMð(ÀÒ±vŸ·è®mf¹âK»Ôxj3S$àn¡£¶Î—6*„B„w*™Ù´›+<’´¯Ýÿ]Í+/¬ªÏVh”„è”v¦†\
+=Ø×“»}»vüó2-º‰Ý*%Æ”9ŸKŽ[Ù«—U´[ÖØ(6*ã8òÏØÉÓÉcZ®£–ÉÌ.5šc%|²zÕjd£|ˆô	^*tùœLØ·š »¦­Yí]Vu›Þ´êÊ‰í2ög1A¯TÉ•­öÊL¢ŸÕ"Çˆ :¿fy3ÞgÉÄdB´¶çÁå…Õú÷…ºä?<±Â‚Q:™ý˜O¯°p·VX ’‚ÁKírªŸu…e»iÃÓ.‡†3›Ý \+ ’È1[¡ÆíHc€Ln±FŽZLV¹Åëì«|")|„ƒ÷oòYnÌÎ:ÆJ­È€	Î_ŠÖz–—±0ërV°) |æ>b9Š›Â#«<ríü`EÐføU²äû.ŸØùÑp!™ó;a›!›ôíòT]m·ù“a  à/…ÍžW‡^u×MZçKÛÍÁ,F«ánvúžxß¦¬¶Ì`¨(r^™¿‚AÑXcjªºTeòõêÎŽé¢»ˆ•FwØo G„çó·ù‘Îþº¦€Í\…³hø­
+ƒp"ê½ïcv“g·V7 á‘`Ã¯íÁûýA7É­ü$µ²ð£×YèI=1…&lä
+ìTžEÜõ,ã}yV¿™jo|-OíˆV³.;³èaqppe¸»sOÕV`º‰qŒvÅ¶úò´îÄ¶Ì’Y€ÑëŒm]&wÆŸµÑ I`dÚëÌÌYå <Xh¼yr“yIQgÉäÎ»Î²Ò»îò¢µš>ÄçT±ƒºa»ÝïÎjç»O|Â‡ÁìëÈAé“ˆÇP€áQÝ¾Ø¤OrA(¨SÖåC™½©¦Sï²«Óyb·‰‰ŽBˆÊè³É¢$ @r‡fð¾UÎCC$@Ñ€Êá-Ñ¾Q±Ê³ýáTÊÞGãÛ×&bj˜`çañÒ8Nõãð|&H	Š¤phŽ<µ 1"‹G»@¢p$BÈ˜Œ_*çàyAb¦`Y†! ¡ŠðÐ)xŸµø[AEÇÂØE7ò0¨È¸‚’ƒî¾ŽiDc‚}§*tØ@E—ÃäØ×n©§B›y›ì++¯Pú\J|zûm@ˆBæÖÞÑ5û/Ê›Ê2úM0TD_Qw_/l¡
+³OÜ!$uW¦Þ§:)›$µFä¾¤'¾k)|,êÅ“aC*ßß‰EÜÜA„,’‚/–ó¼ˆðjªöâ,›”§¸P±[.”I‹Û”Øî¦ð¦¦gù¢¯&õ 4Ú€CÄb3æÔ†#3bº+ºOëÃ€¬
+,PàŸn‘ É£À­òm6à(9Ž²ëòê'‘Q"`!<9<H)}¡œõ?^}ø“EÓ1	éÉ…AÀf*v©ÝÿõÃ{+FC8rªåGlld8„H9”¢¾/XþþñQ5V;1E€¸´$~ 	ÓŒøxøÒÍû:`cÂ˜ŒŽ¡S¥-lýå¯ó¢¤MzüjÑD3çq¸Ô+«€Ô~ˆSþé/ý_‹–C_;
+Áð›øöµÜÆ¨AJA}§LÃW{~lúˆÄ¾SÎ¦4–BAàTPÞNÚ¡½-—ZnS„@ûØ-q»wøC=±Kr—BåV­.›ú LR¥[ÓÔNÜ1ã„ÅÊ)sÊ-ÚÂ˜qøÚ¾ûÚm_Gø¾t§Bo¾E»¹FÃÄ04qä§saÃñ(f œr9*<Ä0@>ENé—#üs†‘þP·Ý½x*QÊ"ŠG»–e [Ë2Z…Çæh¸¡™:È²ÌE9­Í”.5™ 6" ®”ÿRÅêŸ—WýF\ÏTL©+›=u0¢1vºUgA$ŒÝ*~j•Caè#·ï­k:¢CL•SîÃáÆCA*}ÁàË:_$õWgËªÉÛª¶ÊuC"!eN‰ÙaõâU€PN.LUcEgü7íþnWQ³¯º·‹¤ÍÖïwo¬HY¶®¯Iô¶-{³I°±3$ôw)aè8•ÇÅ†/ù?Ì–Øª±LØf
+ýÈ­ÊãiEDˆri^tRZ#®`_2Ê‰òãAìû œú^š€ÁãWZ­ZèYh5)ç[¬!¾Â0â§—&ªÃpp\µ¯ÝkØÔTE·J˜Ôœ%!¢"  v+mò`•ÀD†B:Ô‹§NpÓJKR_ŽvEícÉÔ0Â¾‚¯³zÉæè3mÛÎj×AG±ôš(²Z,‹¬Í&vŽ¸Ta‡Æz0ê¸*ÛFÿ*iÒ<;ºÊfUæýxá©EõsnÈÎƒ²yòFÚ<ºú«qþåÿþòoö2tG¡°Íiïó«ÃYæ„b‡Ä©0zþó>nLÜæó¹pi¥òT¸ý+{(Ç´8Ê–EÕ×Î±Ñwaø‘ïÐJÞ?¢`[ÎÑò”Â ;”Rr*¢±ª`nËg¬i*Ê?þÉçùÜ×ØŠï÷ÀY‰µO;´œt*ìî]c6ˆcà‡.m¤9Ùþjëa\‡¦šíÅÍO…ë›3lb³áö0¦óX„LÐ(s¹o!ü7™Ú¡\$KEã#"ÿiDàñÇêºj›³Ö.‡†>@ÒízœÊ€(¹óˆ"Ý
+!ò˜Ä,Š7’Ã$þ-Ù$7ÅcÌaÙ²eK«Â‡2àÎŸ”æ¯GùÀâé«ˆ¤7é×±¼´*§ù¬«{[c3a„C/•)úÜÌ)K3g×e¦Íi6kœŸ¬Š½ÙØâ 
+üxøM‘ƒ2è ¼s…TÃ ‡àÈÓ†-ìòbrºQšæÀ
+¬$Ä>E‘ó§|%ò«±L»õö9S.Æê(ÈXBîüQßÀ”MiþUU ¤Ó²5#0Æö{>¼>î¼O:5DÓ°Í[“˜'…WM§™)®k½‚0RÃçÐìî×h—EX†¡£]h—8†v•`˜0Óù×‡v?Ü–YÝÌs—•aF¡ïVyÐ¾ýV‡lúLDÈ¥RÍ‡&V)	ã0t*3Ì&±
+ …Bá;µÿcuÕ­÷c½Ì­ ŠŠ1cneÅ‘M„Ò©ädãX&¥ÝAJI‡?}û7›ÀHETnuÀjƒHÖ]j÷¶Ë&5ÒÆpD¨œ² ‡ÏbàS!wê8‘Ë®^VU1N# À	×Hg‚„¿Óå›gq$tKûô¢ûR±í<ó²BûuUæ©×¬^^N:Ùïôêª›Ímì„Ä\ÆÊ)”jS_¤üÐ¥r¾ûË‚‹ßy­9:QûW³»ß™ˆðúxM/)Í‘{¦ð·9U1/Ëê¦wðÏ,˜@ 9à;°‰ƒR	E¿áçQ×wú–jIj/·]|p·÷ìêô­[-4P€žCsýù¸÷àÍ~HÌÃmµ4 ¤?vü¼6¾èýŸ×UÛV‹û¿‹lúàî<K4ÿt€ÑçÓªjü9ëÚþÏuA;«fám^3¿é/Oªôû:7Ñc$.ó6›º?ýCãMû¯×Õä®ÿ2Y®þîÿ  ÿÿ PK     ! ³¾‹  ¶   word/_rels/document.xml.rels ¢(                                                                                                                                                                                                                                                                  ¬“ÍjÃ0„ï…¾ƒØ{-;mC	‘s)\[÷d{ýCõc¤MZ¿}EJ‡ÓƒŽ3bg¾…Õzó­; ó½5²$†¦²uoZÅöá˜'ij©¬A#zØä÷wë7T’ÂïúÁ³b¼€ŽhXqî«µô‰Ð„—Æ:-)H×òAVŸ²E¾HÓ%wÓÈ¯2Ù®àvõ#°bð?Ù¶iú
+_mµ×hèF÷H6ó!SºIÀÉIBðÛ‹¨4*œõ\}³Þìu‰.l|!8[sË˜fñp”¿f6Çð“¡±†
+Yª	ÇÙšƒxŠ	ñ…åûŸ“œ˜'~õÛò   ÿÿ PK     ! ÐUv’,  "     word/theme/theme1.xmlìZ[5~Gâ?Xóžffr¯š¢\)ín»ÚÝñèdœ7žñÈvv7BH¨<ñ‚„ˆxã!@ñÂ©ÔŠËÀöL&ãÄC)Ý¢
+íFÚøòãÏçŸLrã‹˜€3Ä8¦Ißñ®¹@Éœ8	ûÎýÓi­ë .`@BÔwÖˆ;oÜ|ýµðºˆPŒ€”OøuØw"!Òëõ:ŸËaÈ¯Ñ%rnAY…ì²°0x.õÆ¤î»n»Cœ8 ±T{o±ÀsN•JçæFù„È‰àj`NØ‰R	–žzãk>"œAÒwä:=?EÂr!'úŽ«ÿœúÍõBˆˆ
+Ù’ÜTÿår¹@°ôµg… ;ñ»M¯Ð¯Dìã&]õ*ôi œÏåN3.e¬×j»]?Ç–@YÓ¢»×ñ&¾¤¿±¯¿×úM¯AY³¹¿Çio2nxÊš­=üÀõ‡½†× ¬ÙÞÃ7'ƒŽ?1ðœ,÷ÑíN·ÛÎÑdAÉ-+¼×n»qß¢ê¥èÊäQk1|HÙT´s¡À	ë-à\â© Œ1O	\; …	årØõ=O^Óõ‹—¶8¼Ž`I:šó½!Åð9Ã©è;·¥V§yòóÏýøøÑO?øàñ£ïÀ#a‘»“°,÷Ç×ÿùåûà÷¾úã“Oíx^Æ?ýöÃ§¿üúwê…Aë³ïŸþøý“Ï?úí›O,ðƒ³2üÇˆƒ»èÓXnÐ² š±ç“8 .K’Ã*z""}w	´à†È´ã&Ó…øæê¡Aø$b+-À;Ql )%CÊ¬{º£Ö*[a•„öÅÙªŒ;†ðÌ¶öhÇË“U*ãÛTŽ"dÐ<"Òå0D	@ÍÑ%B±w06ìzˆçŒrºà†[MrŠgF4m…náXúem#(ýmØæðRbS?Fg&RžHl*1Ìø&\	[Ã˜”‘PD6’'k67Î…ôtˆ“ qn“¹ÇÖÝ;Pæ-«ÛÉ:6‘Là¥y )-#Çt9Š`œZ9ã$*cßâK¢Qa%AÍ¢úÒ0©t÷Œw?ûlß—iÈ jfÅlGQó<®É"›ò‹;`ØÃUh„öBžÃ !pÿ-ž¦†Í·¤oG2«ÜB6ÛÜ†f¬ª~‚¸¬•Tqcq,æFÈž Vð9\ï$ž5LbÈª4ß]š!3™1ymñJæK#•b¦­Ä=û«ÔzA#¬TŸÛãuÍÿý“3&eþôÜ22±ÿcÛœBb,°˜SˆÁ-ÝJÃý[uœ´ØÊ*·0íÖõ¢'ÆÉ3* ÿ®ò‘õÅ“/¾´`/§Ú±_¤Î©J%»ÕMn·¦QàW¿¤ÃUr„ä-b^U4WÍÿ¾¢©:ÏWuÌUsUÇØE^B³-]ô Íc­%®|æ³À„œˆ5A\=\žý`*uG˜ÒH6óå\È nFÅÛXD'Lå2ž^!ä¹êƒ”rY8éa«n5AVñ!ò'xªÂÒO5¥ Ûq·UŒË"Md£íÎöh¡^÷Bý˜uC@É>‰Òb&‰†…Dg3øzg—Â¢gaÑUê+Yè·Ü+òrP=o53F2ÜdHÊO™üÆ»—îé*cšÛö-Ûë)®—ãiƒD)ÜL¥0Œäå±;|É¾îm]jÐS¦Ø§Ñé¾_«$²“HböÀ¹âÔQzæ0í;ù‰I6ãT*ä*UA&}g.rKÿ›Ô’2.ÆGLOeˆ±@Ë`/û$%r=yh^Ur¾rÂ«FN¿•½Œ4#Û®œË”Xg_¬:t%IŸDÁ9˜‘;†ÒP­Ž§¼`.
+W˜•¢{kÅ|•ŸEãËŸí…$`~¥”³y×í‚Nišéî®Ì~¾™Y¨œôÂ×î³…ÔD)kVÜ êÚ´'—wË—Xm¿Á*ËÝ»É®·IvU×Ä‹ß%jÛÅjŠ±…ÚvÔ¤v‰Ai¹"4«.‰Ë¾v£VÝ›ÂR÷ö¾×¦³‡2òÇ²\]‘l„$²§)§GLsŸÑ`7	ÏNI¶§M É1Z \È”i3NþÅq‘ÄŽ³ÔåUZ­j
+æx…Ël!œøß
+zeY{Âº,·)ÅÊ>sX‘5rK©\³gEùÙÁÑækÝ,êÑMŠ¾`Åpßy×mš#¿5ª¹ÝÖ¤Öl4ÝZ·5hÔ­VÃ›´<w<ôß“ôD{­ÌSc²Îû Ç÷~ÿo>°\›Ó¸Nõ§‰ºÖ¿ðüêß?H«HZþÄkúT½v­éÛµn§1¨üöØÈLÞžÞsÀ™{Ãñx:mùµöHâšî U£Z»;úSoÒ»œ;â"ÏÁ¹-6Qyó/   ÿÿ PK     ! Žù!58  {     word/settings.xml´WÛnÛ8}_`ÿÁÐó:²äK¡NÇñ&E¼]Ô)ö™)‹o );îbÿ}‡”h)MPÄ-úbQs93ÎÈï?<q6Øm¨ó(9E"
+‰©ØÎ£/«áy40	Œ˜dˆ‰>\þþÛû}fˆµ`f !LÆ‹yTY«²86EE82gRÊRjŽ,¼êmÌ‘~¬Õ°\!KsÊ¨=Äéh4‹Z9j-²bÈi¡¥‘¥u.™,KZö<ô[â6.KYÔœë#Æš0ÈA
+SQeÿQ4PVd÷½Mì8vûdô†íî¥ÆG·¤ç”–1ˆ³ ]àÉ cì3ˆÝnÑC{2ò«~æÓÓ Ò ³‚<†qÞbÄàÙÇ¡ø4œÙ‡v…Mf?–L ×'A¤ã‡{8÷–ÁW§Á…3Š/²¨BæÈÈ±d§!NzˆÁ˜,û˜ä´¢M€Þ¡y™Ö+¬nT÷4×H7=£¥4/²»­åÒj€Ÿû…Cv¿$O^îjÛ.JæPúKhi_¥äƒ}¦ˆ.à^C?¢Ø)à6Érc‘ÄÌ(Â˜o#Øg[8´¶ ñ>˜”¨föå+íìó]ÚBÒ¨°Do* íZ
+«%vXþ%í5´I·¸õðM³[mšqØù³¦º–˜¸ÌjMß~DÎÁGO¦ýß’004ÅäÁU|cŒ¬ ùýJ®þXKÑ·ÖŸÈà{	á"Ž<Ydk(Ó/
+æObÅ¨ZS­¥¾¸ñË‚Ñ²$PàÚèCµÜû:ß„aNÿ¢¸µ!ÿ€1\ÑñÐòq!­•üö *¨õÏ¤ç{Ü§/|m`Ÿ¥´GÓÑô:¹¸Z6™:í[4‹eš\/^ÓÜ\$éÅ¬ßFå™›Ôë°rÔðÆãñ\S4X»Y;‹\?.¨úœ@C"}Í¦Îƒr8l†#ÆVPÄ ðà¦F-Ié×lô¶Ãm-ô«Rè#X®/ý§–µj´{TCÉ`’L&­'öžò 7u¾	^ZhOUüi§}ºòì3Gì¯ö=òTñ¶D¯¾´Tbzãh@ÖH©†Mù6™GŒn+›8XxÃðÉç_òmÚêR¯KA…ÛX·‹N–YÏndãN6	²I'›Ù´“Í‚lædôÍüˆ–N^JÆäžàÛNÿBÔÁTH‘eÓë^²´Íßvy‚IB0µð%­(æèÉ–ÔÓ²µfè kûÌÖéœ±zŽàæz{•ãgÎžâßäâfPAŽ›Ï»ÑrÖ$Î¨6 `
+Y©ƒî¯K¦~<Yß
+à`?“rÁ­ËâÎÍÔiãóï»óñÍ,¹šo–ç“ádœÞ/VçÓáU’,Éb5¾Yþ×ÞÂð¯áò   ÿÿ PK     ! \·«\€  —m     word/numbering.xmlìËnã6†÷ú†.Ý)É˜d Øq‘¢˜]ËÑ’l']ÎËÌ#ô±æJR}‘-èÖBÎ&²EòÏOŠ:ã8Ÿ>¿þd‡“Ô‹Â»©t+N'8t"×_î¦>/oŒé$ÍìÐµý(ÄwÓwœN?ßÿüÓ§ý,Ü+œŠ¢¦³}ìÜM7YÏ!u68°ÓÛÀs’(ÖÙ­B´^{öQâ
+²(‰ìUœDNS¢3·ÃN9ç­™š›Ø{Ò˜
+ª‚³±“¿4¤Ö"š`
+FUHî D"”¥ª”ÒZ
+	´W!µ“éUEIë¦t!8ÔMI®*éÝ””ª’ÑM©2‚êb’Âu”vFÞ&/B`'¯Ûø†Çvæ­<ßËÞ‰¦ˆJÛ_;ôˆ´â
+â¶VÐ… r±¯¸¥Jt7Ý&á¬hÃÛÓ®ÏòöÅ·À~³Ë’Ë™~Ëü4+Û&M¼Ë›/"gà0c®		ö‰Q˜n¼˜¯AW5R¸)Evuì¿¬·¥†·Úµ¥m‘ÃA°I÷‹±ü¼çõŠ’Ø`4©oÑ¤§×,{|¸p'kŽÌ•.>¥€\@nø°(5ŒBCpw7ÕñÞV¥N>*TÇ;+5\Ï;s$àn[IÈJÙz Í´R7s7íäÊ1h[;³7vÊoš\qÝp!(Õ#Å|‚ù‘Ã×3ª‰Û™¦qÁ÷àhã—~7ê¯I´j^?µ§Ã’½§ÙS­â†?^„Ò~ùº±c²’Îìé%Œ{å“‘ÛwBîÀ	ú“Ldz`/ñ;OçOñbíÓîvB—Äé=ÉíUš%¶“}Ù““wOäV"Ù$Ÿ%˜¤	=™'ŒÖ:ÃÉC‚íWZ…ª„)½ìlg“i%šÊB\y–[?ó~Ç;ì?¿Ç¸¬ÃÎúôl^+b¿,{X¢)I(/ñw´À#‡òZ¬/ee)¯ErÙeÀO®¶¾3Þþ™<ÈÊ¢ßþáçsÊ³>^Õã?ÖbDq,ëK7fqD†Q—EZ]8TôB?ÕÉKÉ›¾°4\AeíB=)Ë(ÌRêzêxd¦~}V‘ÏšZÄÐ“^H„]¼¶‰qyOÓ¿ËžñÎ0]ÅvnDU2ò%â¦ï{[`¤¤ªuN²â.VÎ£mâádòïü<?Û×TyxS|û>€­²Ä}ºd++îbë_¤6EËôÈÔÓs}-UFk©aÔZJ‹Çi©:VK‰Eu–²âqZªÕRU©}2±âqZŠÆj©&Ö>¢Xñ8-ÕGk©^ûxbÅã´Ô«¥H­}<±â±X*œpmQ!4um!’ºœ+s³ŒöbY’ôG>4|
+4…;^`Ògcþ‹t;À˜÷¢Ëó»+&Ô+lOR¸n×¾6\eˆp{fð—Ãíš\×†«n¿ìúr¸]ßÚpµ!Âí™ù›”Ö†‹†·gV:lÂX®>D¸=3Æa“¹ÚpAÂí—Í›hÕ†knÏL«cDŸT­“ E±
+ñ?¯}¤<>>H1¸k|x`'vb›Y	;±}ò8Ø‰½`)ìÄÂNlß¤vb¯Z
+;±°;±°K/}
+!4%h!º(ëšbå=j!²eY’®öØ‰¹n+@@@@@HKB B¸¥ !ÿ?„ÐçW‘–HSÔ¼Gí!ÄDúãbaÁoB B BºÙ
+Â-ùˆBÛÖ¢"éQ6L-ïQ‡c-èA^È|hø i`+@@·      ä#B]ÚCˆiˆº¡§j!¢aÉÈ°àÛy B BºÙ
+Â-ùˆB§qkAº©ksYÏ{ÔB–Ëc.öùv€€€ë¶„ „ „ „ „4°  „[
+òŸ@HÈà#<úJPú¯fî–ý#zÒÔ4U×¡
+ZÿSøÅŠk…4Ù7lkJš¤¢Bÿräª(û<×Qš«TDUMMCÓrV¹¨©Öh²?€©È*ƒU»®©Ôh²Ï³kÊšj(¢f×5Á]Ñd¿žªªˆHWCª	¾œ—Dnž‹jHC*ÒÕMöûª+šôŽ­2eQUeóº&»KÍü˜Ãïý¿   ÿÿ PK     ! æ±Óù  ù¦     word/styles.xmlì]ÛrÛF}ßªýŸv‰"E]*JJ’íµkmG±äÍóŠˆ@€€–•¯ß¹²1 zÐb×–«,âÒgsú4¦·þ¶H‚¯</â,½8<³(Nï/_îÞ¾:EÉÒˆ%YÊ/O¼üüÓßÿöããyQ>%¼@Zœ/Â‹Á¼,—çE8çVü-y*6Î²|ÁJ±˜ß,Xþ°Z¾
+³Å’•ñ4Nâòéàèðp200y”l6‹Cþ:Wž–Êþ ç‰@ÌÒb/‹
+í±Úc–GË<yQˆƒ^$oÁâ´†ŽÐ"ó¬Èfåâ`L”0ª_‹dpŒ8 “ÃaœŒaiãÄgRãÄ‘…ã× Z¡ ŽFU?äinaQÍqpGÒ–•lÎŠù&â,Á!Ž-Dí`I>Ø˜7hÇ5àÓBr¸Ïßß§YÎ¦‰@^Ç
+°ü_ð#ÿ¨Ÿü›Z/‡Åü˜%ò‡µŸ„t£,|Ígl•”…\Ìor³h–ÔŸ·YZÁã9+Â8¾ý.bÑþ»Ë´ˆbgEyYÄ¬qã\þhÜ¥µú*ŽâÁlñç©Øü•‰?Ò«Š?êãjÍµìÔÆº„¥÷Õ:ž¾ºübwN­úr+WMES–¿º½T†Ãñyß³r•‹8&—‚wyt-ŽŸ+W,‘;˜Ñ­áZn/©^.Y«N±YÉETNe’XÑ£“ÓjáóJrÉVefQ úo{ ÁN„¾[ÅV>û |G·¥Øp1Pm‰•_Þßäq–‹({18;3+où"~GO­Óyñßæ<ýRðh½þ×·Ê‘ÍŠ0[¥â÷èd¢¼()¢7ßB¾”qWlM™äô“4HäÞ«xÝ¸2ÿo64´5ÙÏ9“'Ÿ`¸¡º‚8’…u´Í˜«­cW{¡í«¡ñ¾:ÞWC“}5t²¯†”´÷Ñ‚yÎ†â4çµ?l îÂq¨ãÇ¡%4ŽC*h‡Ð8GGã8üãpSN™…./´œ}äðövÜÝç?ÜÝ§?ÜÝg ?ÜÝßww|÷ÃÝÎýpwGo?ÜÝÁ«§ZÁ{!³´ì­²Y–•iVò@Nz{£±T`©ŒœOžôxNr0:²™qo´©åÝ¢Dê>/eâd³`ßË”§wÇyú•'Ù’,Š!`ÎERæŸÎùŒç<9¥cÓÊL0HW‹)o.Ù=O#âá«I‚BíÐ"žK‘ÄN½`ažõïZÆÈâÃ‡¸è?V$¸Z%	'ÂúDãb
+«n `ú§
+¦f `ú'gTCdÐˆFÊ ˜A#7íŸTãfÐˆÆÍ ›Aë?nwq™¨oÏ:†Ýkw×I&¯¡ôîÇm|Ÿªªlo$S3nXÎîs¶œ²ªÝk3¶«,z
+î(Îi5Õ¼^¹ˆ¬eÇéªÿ€n Q‰«Æ#’WG$°¯¿Ä>Ši²œ ½£ÉgnWÓ²Q´
+©“hoY²ÒÚþjce[àmœd2h†%ðàOr:+é¤ˆ|ë^öïØ«¿¬¶£i÷$A/åWš0üîiÉs‘–=ôFz›%IöÈ#:ÄÛ2Ï´¯Ù’?R”t’ü›ÅrÎŠXåJÝOõÕÝÁG¶ì}@7	‹SÞÞ¼Z°8	èfïî>~î²¥L3åÀÐ ^ee™-È0M%ð¿ñé?i:x)’àô‰èh/‰ÊC
+ì:&8Éh¤,"BÓÌ8IÎ¡
+ïßüiš±<¢A»É¹¾¥äDˆ·l±Ô“m‰¸ø(âÁlHáý‡å±¬Q‰êŽÌ*«éï<ìê>eIeè—U©êjª«¬éàúO6àúO›âô ý—à`7àúìÕÁ^'¬(bç%To<ªÃ­ð¨·ògð²$Ëg«„n +@²¬ É†0KV‹´ <b…GxÀ
+úx	]Fá”äÞ¿ò8"#CQ1¡À¨hP`T(0Rúß¡cõ¿MÇë¯Ž#šX`T~Fzú'ºÊcQù™£ò3Fåg
+ŒÊÏF¯>›‰I0Ý)Æ‚¤ò9’îD“–|±Ìr–?A¾Iø=#(j´›<›É'a²TßÄM )kÔ	ád[ÃQ‘üŸ’uMbQö‹ "Ê’$ËˆjkëŽ²Ü¼wm—™z¤wnòy–D<w“ÛVäË·ú±Œíî«nt*{~ˆïçep;¯«ý6Ìäp§e•°o˜ín°iÌ'æ™F³<ŠW‹ª£ðaŠÉ¨»±òèãê±›ãõLbÃò¸£%ls²Ûr=KÞ°<éh	Û<íh©tºaÙ¦‡×,ht„“6ÿ©s<‡ó´yQmÜØl›#Õ–M.xÒæER	.ÃP^-€ìtÓŒÛ¾›xÜö¹Q0rr£tÖ•¢M`Ÿù×XžÙ1ASµWß=â¾šDwŠœ¿®2]·ß¸àÔý¡®÷bâ”<hÄu¿pµeÜãØ9Ü¸!:Ç7Dç ä†è‰œæ¨äFé›Üƒ”­à­ =.ZA{ŸhQ|¢UY€¢ótÀ*„@µÇLÁ*0÷*DAB …
+!ÐB…0œP¡=N¨ÐÞG¨ÅG¨-T*„@B …
+!ÐBõœÛ;Í½„
+QÐB…h¡B´PÕ|±‡P¡=N¨ÐÞG¨ÅG¨-T*„@B …
+!ÐB…(¡s/¡B´P!Z¨-Tý¨¡¿P¡=N¨ÐÞG¨ÅG¨-T*„@B …
+!ÐB…(¡s/¡B´P!Z¨-Tu±°‡P¡=N¨ÐÞG¨ÅG¨-T*„@B …
+!ÐB…(¡s/¡B´P!Z¨¢Í?Í%J×möC|ÕÓyÇ~÷KW¦SŸíG¹m¨Qw¨ªWn¬îÏ"\eÙCÐøàáHåÝ@âigªDí¸¬nãª["P>¹nÂÇFïùÒ%ó,„ºf
+ÀÇ]-AMeÜæò¶%HòÆmžn[‚Yç¸-úÚ–à48nºJ—ÕM)âtŒÛÂŒe<t˜·EkËq[Œ¶á·EfËp[<¶œ·­;ŽÓ¤¾¿ ´¹£…pâFhsKÈUŽ¡0º’æFèÊž¡+nŸN<±n(4Ãn(?ª¡Ì°TûÕ€¥"xQ`ü©†PÞTC(?ªa`ÄR°Tûg7‚Õ ÆŸjåM5„ò£žÊ°TC,ÕKuÏ²ÆŸjåM5„ò£Nî°TC,ÕK5Dð¢ÀøS¡¼©†P~Tƒ,M5DÀR°TC/ªŒ?ÕÊ›jÕFµª¢lPbØ2ÇMÂ,CÜ	Ù2ÄgËÐ#[²¬=³%Á3[‚\Uœã²%›47BWöÜ]it# øtÂà‰uC¡vCùQË–š¨öªK5.[rRË–Z©ÆeK­Tã²%7Õ¸l©‰j\¶ÔDµpv#xQË–Z©ÆeK­Tã²%7Õ¸l©‰j\¶ÔD5.[j¢ºç	Ù	ãO5.[j¥—-¹©ÆeKMTã²¥&ªqÙRÕ¸lÉI5.[j¥—-µRË–ÜTã²¥&ªqÙRÕ¸l©‰j\¶ä¤—-µRË–Z©ÆeK…ILð
+¨ÛËË€î}qïX1/Yÿ—~Is^dÉW´‡úu”Ÿ¿’ØêS„bÿRŒ™|ºõ¸R¤ß k ÕŽï£ú3UÒXö$0_3«U‡ÍåZÝ¢2ÜÑTn®üúãVª…)Gõ‹Ðx*_ŒØ°^:Dµ¾jæzÎr½uíªÕ>FŒëcy<Ï‹8ª6_Ï._ë½ÌÇË8_~í«urAðÃµ´þ®ÙT¾SLŒÀHØÌ|æìÔ¨6Óomúð5©[2Ô™6Z?2Ç~oùÈœÜøÆ¬“Û7¾3·a¹þÎœ\}Ug.”*¯ûõv|2Q¾¡vVàbÀ”þ×«åM)èê­FX–®ºØl–N¯³>çã<GNç1!ˆÆyŽ:8ÏZ–z¿Q>³{™ïæít¯*2|gî52dÛî¥×õt¯‘Ó½Ìí4î5úNÜ«r‡{ír¢}¸Ê‘™¹m| S­ëé*c§«˜û{h\eüÂ]åÔö”*ìCOQò¡÷”Xÿ­{××ozzÄ±Ó#Ì}[4qü}x„RÉË‹=}@¶ÉLKã“îcÛœ. d±× p|&ÿm;„üêÒÚîbù5ßKÅWOo8qzƒ©HÐxÃÉwáÕ€?g@Ø3ÿ§NþÍ¬„†ÿÓÊÿ.Æ•öªÿ£ù¯ÿ¯)æˆgNþ+4üŸýEù¯†ø9OÏx(›…æÅìŽ:šùÀRý† õy¥m_p|…ÉÁ£)ŽâÜ-eù¶¥“ª¼ÛZñÓ`§guv­ršhnÅ÷©ô¬GéuO£oLC‰í×<I>2½w¶tïšð™Ô‡Ø:<T/àÜÚ>Õß’pÚçê¢ƒà`³3z±Ý1ô×%cý4Œ³À*+ëÃ­Íê;Ò6\bhnåÛýÛ(žn÷Òl†Á:àlE°FÇwÅ­Ê¥]1Ë…þ_'ESªKš.Jˆ(5…¹®§¡ïŸá>¥J$ÃºªèbxDÄ°)„Ò3ügeü6[}ª…H¶taÏÅÖ˜ˆ-S‹|9lí»b‡dE×\¬±bêß†ÈyÐ."LMî/¡úÒ’]erQrBD‰)Œ½Piüé$èR‹„S"ÌYð/¡‹gNðwS¢«/.JÎˆ(1#ÿBu±¯ºš~#ÆöXëµMCŒ-¨)¤5aU“°¡Še "¦/‘Éj˜:]—ŸWÒÉØªÌª!Nå®XbÞÐ¯GîÜÌ±>"uÔ¯ªayày=öë¹tµæØœoíÙµ^G'Ê5ƒ^ÒW–«¹ãefµûç¬YÃõÇ¹·	ª7P(¹k³)@¡Äœ®úGœÀû¬ÌÆg®icg!€û¡I@ö›ønPâ"¿¯@7ÈÍùŸ8>3eÍÊÔØfF¯¥Ð¤Bjä‘™Ìxž]íÛ×Ô¿‡•¥Ì]¹jh³en9>”ÿº°F¯‡ª‘Ž¾*±8u³°S"{¹f—•WMÖßáØ+õÃzó.†C12õ3”CÆê
+—¼>%ß©g\±m.×Ñ]êƒ6/š«ß~·}Øàõx8GiðÔ‰r·wìñ¾,3Í¡móë)»Ü£Kˆ³›k‹t#Ÿ<by©¿úº¨Ú¯žd¾Ãý‡¼§Nþþ%ã‰RŸvÏ²x}õ™[’20G¶ëA
+¹¤ÝÊÒØéDõF]ÐÕKj—¾ÁÿO-ƒ?juÝ¾§ƒ‘ìðØ§ûÖ¹~§k ×{ô’Õ¥>T”œêVÍh"¨$×lI3v`YÝp¹5¢Õ¯â§ÿ  ÿÿ PK     ! &ÞúHo  -     word/webSettings.xmlœÓÝnÂ  àû%{‡†{¥:5Kc5Y—Ý,K¶= Â©%§\uO?¨ÕÕxcwSÐóåð7_îµJ¾Á:‰&'£aJ0…4›œ|}®$qžÁÈÉY.îïæuVÃú¼º$(Æešç¤ô¾Ê(u¼ÍÜ+0a²@«™]»¡šÙí®pÔór-•ô:NÓi{‹‚E!9<#ßi0¾É§TÑ¸RVî¤Õ·h5ZQYäà\XVGO3iÎÌhriÉ-:,ü0,¦­¨¡Bú(m"­þ€i?`|Ì8ìû­ACf×‘¢Ÿ3;;RtœÿÓÄ®1~8Õ›˜Þ±œð¢ìÇÎˆÆ\æYÉ\y)ªŸ8éˆÇ¦o»&ôÛ´é<èx†šg¯ƒ–­UÂ­LÂÅJ8~ÃùÄ¦	aßŒÇmiƒBÅ ìÚ"¼_¬¼ÔòVhŸ,Ö,ÃL)¬ßß^B‡^<òÅ/   ÿÿ PK     ! \9æ”       word/fontTable.xmlÜ•[oÛ €ß'í?X~o}ÉµQÓj½I}ÙÃÚjÏã˜8&ù÷;`§uæ^Â&MÚ9ÆøÌù ûô|#EôÄ´á æqvœÆS
+®–óøáþæhGÆUŠÍã-3ñùÙçO§ëY	Êšû+3“tWÖÖ³$1´b’˜c¨™ÂÊ´$oõ2‘D?®ê#
+²&–/¸àv›äi:Ž[Œ>„eÉ)»º’LYß?ÑL ”©xmv´õ!´5è¢Ö@™1˜³O®ž1Ù°’œj0PÚcL¦‘Ga÷,õ%)^ £0@ÞŒ)Û„1¦-#Áž]/Â8ãg/:œßLP¬‚ù`7wqÝ;,SØ¢
+Ãíæ(q}‰%1Õ>±aÄa‡Ø,0ô±ËdaÒFÏÀ­ts(éìv©@“…@®ÊVäÁîçÇ]|‘m|Üii¥p´vÖîÜh=SD"èn+ |¼&
+Ë°ê‰`öéYêVô$ãu”NâÄ5¤Ñ†9FÓ0oÂ%‘\lwQ’¨¦¢æ–V»øÑÜåÐT¾ÄŠ•Y¤Èi¸‰døBÚä½6ƒýõœé~$ë´Ág&€žˆ{.™‰¾²uôÍü5#nåŒÓšâ™ciøºÿ¤?7rcÎ¯on^Œ\bd2]ôŒœ¼gÄßfçp#—°Òœiçä4pâ­8Ã 
+¦_ÓQò+w1üßñëà¾ŠæÒ;v
+YYø‡6Ê—ÚB£á y6knLPz¹A>¼¤×Žª?Óï¦ço³“À™öéEWÜÔ‚lÿß4ïØXôp]KøÁßØßí¾nN|ßìïp!¿¤ïñŽö–u»f?‚J>ÒÌÙO   ÿÿ PK     ! #NøPn  ï   docProps/core.xml ¢(                                                                                                                                                                                                                                                                  œ’_OÂ0ÅßMüKßG»Ñ,c$jx’Ä(Fã[i/PYÿ¤-Œ}{»†(O¾õöüîéíióÉ^–Ñ¬ZQ2 (Å4j5Foói|‡"ç©â´Ô
+Æ¨‡&ÅõUÎLÆ´…g«X/ÀEÁI¹Œ™1Z{o2Œ[ƒ¤nÄ¥¶’úPÚ6”mè
+pJÈKð”SOqc›Þ,9ë-ÍÖ–­gJ ¼ÃÉ Á'Öƒ•îbC«ü ¥ðµ‹èQìé½=XUÕ ¶h˜?Á³§×öª±PMVP‘s–yáK(r|Z†•Û.¾€ùn»/ÂšY ^ÛâE/Âõ£7k„k¡£ÐD¾ºÒ–»Ð~VŒƒcV²3?ÛtIŸ…—]
+à÷õ¯sþêM‹…h~F‘¶D_æ‡˜»Ù€G!ž¬ó¨¼çST¤$Åä6Noæd˜¥$#ä³ï¬ÿd(üÛñhÐ%tþE‹o   ÿÿ PK     ! ¿–¤7z  Î   docProps/app.xml ¢(                                                                                                                                                                                                                                                                  œRËNÃ0¼#ñQîÔ¡*¥ ­*BxIp¶ìMbáØ–mý{Ö„† nä´;ëÏL½)Þ1Díìº<žUeV:¥m».Ÿêë£UYÄ$¬ÆY\—;Œå?<€Çà<†¤1DaãºìRòçŒEÙa/âŒÆ–&½HÔ†–¹¦Ñ¯œ|ëÑ&6¯ª%Ã„V¡:ò#a90ž¿§ÿ’*'³¾ø\ï<ñq¨±÷F$ä÷yÓÌ”K=°…Ú%ajÝ#¯x-F¾6ðâ‚Š|1?6”°éD2Q‚|¾X,M ¸ôÞh)…Ëï´.º&_Š‹L lzÈÅå[Ði—…L[¸Õ–Ì	*ÒD„ï"?ÉÇ¶RÜP ¼&"° 6®÷Â+â{O¾vW9‹ï•ßàÄæ‹NÝÖ™Å¬N«©áÉ¶„¢"£†€ú+Áäh×¶¨ögþr„ÏÃóäÇËYEßWf{ŒŒï†  ÿÿ PK-      ! 2‘oWf  ¥                   [Content_Types].xmlPK-      ! ‘·ï   N               Ÿ  _rels/.relsPK-      ! "9ß¬]  ÂÆ               ¿  word/document.xmlPK-      ! ³¾‹  ¶               K  word/_rels/document.xml.relsPK-      ! ÐUv’,  "               ’  word/theme/theme1.xmlPK-      ! Žù!58  {               ñ"  word/settings.xmlPK-      ! \·«\€  —m               X'  word/numbering.xmlPK-      ! æ±Óù  ù¦               .  word/styles.xmlPK-      ! &ÞúHo  -               E>  word/webSettings.xmlPK-      ! \9æ”                 æ?  word/fontTable.xmlPK-      ! #NøPn  ï               ªB  docProps/core.xmlPK-      ! ¿–¤7z  Î               OE  docProps/app.xmlPK        ÿG    
+
+==================================================
+FILE: Teracom_Code_For_Copilot.txt
+==================================================
+==================================================
+FILENAME: D:\Website_Teracom\Teracom_Commerce_Platform_Foundation\teracom-commerce-platform\app\api\admin\import-feed\route.js
+==================================================
+
+import {NextResponse} from 'next/server';
+import {z} from 'zod';
+import {parseFeed} from '@/lib/feed-importer';
+const ImportRequest=z.object({token:z.string(),type:z.enum(['csv','json','xml']),content:z.string()});
+export async function POST(req){const parsed=ImportRequest.safeParse(await req.json());if(!parsed.success)return NextResponse.json({error:'Invalid import request'},{status:400});if(parsed.data.token!==process.env.ADMIN_IMPORT_TOKEN)return NextResponse.json({error:'Unauthorised'},{status:401});const products=parseFeed(parsed.data.content,parsed.data.type);return NextResponse.json({imported:products.length,products})}
+
+
+==================================================
+FILENAME: D:\Website_Teracom\Teracom_Commerce_Platform_Foundation\teracom-commerce-platform\app\api\checkout\route.js
+==================================================
+
+import {NextResponse} from 'next/server';
+import {z} from 'zod';
+import {stripe} from '@/lib/stripe';
+import {findProduct} from '@/lib/products';
+const CheckoutRequest=z.object({productId:z.string(),quantity:z.number().int().positive().default(1)});
+export async function POST(req){const siteUrl=process.env.NEXT_PUBLIC_SITE_URL||'http://localhost:3000';const parsed=CheckoutRequest.safeParse(await req.json());if(!parsed.success)return NextResponse.json({error:'Invalid checkout request'},{status:400});const product=findProduct(parsed.data.productId);if(!product)return NextResponse.json({error:'Product not found'},{status:404});const isSubscription=product.type==='subscription';const session=await stripe.checkout.sessions.create({mode:isSubscription?'subscription':'payment',line_items:[{price_data:{currency:'aud',product_data:{name:product.name,description:product.description,metadata:{sku:product.sku,productType:product.type}},unit_amount:product.priceCents,...(isSubscription?{recurring:{interval:'month'}}:{})},quantity:parsed.data.quantity}],success_url:`${siteUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,cancel_url:`${siteUrl}/checkout/cancel`,metadata:{productId:product.id,sku:product.sku,productType:product.type}});return NextResponse.json({url:session.url})}
+
+
+==================================================
+FILENAME: D:\Website_Teracom\Teracom_Commerce_Platform_Foundation\teracom-commerce-platform\app\api\leads\route.js
+==================================================
+
+import {NextResponse} from 'next/server';
+export async function POST(req){const form=await req.formData();const lead=Object.fromEntries(form.entries());console.log('Teracom lead received',lead);return NextResponse.redirect(new URL('/?lead=received',req.url),303)}
+
+
+==================================================
+FILENAME: D:\Website_Teracom\Teracom_Commerce_Platform_Foundation\teracom-commerce-platform\app\api\webhooks\stripe\route.js
+==================================================
+
+import {NextResponse} from 'next/server';
+import {stripe} from '@/lib/stripe';
+import {findProduct} from '@/lib/products';
+import {createZohoContact,createZohoInvoice} from '@/lib/zoho';
+export const runtime='nodejs';
+export async function POST(req){const body=await req.text();const signature=req.headers.get('stripe-signature');const webhookSecret=process.env.STRIPE_WEBHOOK_SECRET;if(!signature||!webhookSecret)return NextResponse.json({error:'Missing webhook signature or secret'},{status:400});let event;try{event=stripe.webhooks.constructEvent(body,signature,webhookSecret)}catch(error){return NextResponse.json({error:error.message||'Invalid webhook'},{status:400})}if(event.type==='checkout.session.completed'){const session=event.data.object;const product=findProduct(session.metadata?.productId);const email=session.customer_details?.email;if(product&&email&&process.env.ZOHO_REFRESH_TOKEN){try{const contact=await createZohoContact({contactName:session.customer_details?.name||email,email});const customerId=contact?.contact?.contact_id||contact?.contact_id;if(customerId){await createZohoInvoice({customerId,referenceNumber:session.id,lineItems:[{name:product.name,description:product.description,rate:product.priceCents/100,quantity:1}]})}}catch(error){console.error('Zoho sync failed',error)}}}return NextResponse.json({received:true})}
+
+
+==================================================
+FILENAME: D:\Website_Teracom\Teracom_Commerce_Platform_Foundation\teracom-commerce-platform\app\checkout\cancel\page.js
+==================================================
+
+import Link from 'next/link';
+export default function Cancel(){return <main className="section"><div className="container"><span className="eyebrow">Checkout cancelled</span><h1>No payment was taken.</h1><p className="lead">Return to the Teracom Store when you're ready.</p><Link className="btn btn-primary" href="/store">Back to Store</Link></div></main>}
+
+
+==================================================
+FILENAME: D:\Website_Teracom\Teracom_Commerce_Platform_Foundation\teracom-commerce-platform\app\checkout\success\page.js
+==================================================
+
+import Link from 'next/link';
+export default function Success(){return <main className="section"><div className="container"><span className="eyebrow">Payment successful</span><h1>Thank you for your order.</h1><p className="lead">The Stripe webhook route is ready to receive payment events and trigger the Zoho Books sync foundation.</p><Link className="btn btn-primary" href="/store">Back to Store</Link></div></main>}
+
+
+==================================================
+FILENAME: D:\Website_Teracom\Teracom_Commerce_Platform_Foundation\teracom-commerce-platform\app\globals.css
+==================================================
+
+:root{--bg:#050505;--panel:#0d0d0d;--panel2:#141414;--text:#fff;--muted:#b7b7b7;--soft:#777;--line:rgba(255,255,255,.11);--red:#ff1717;--red2:#ff4b4b;--shadow:0 35px 100px rgba(255,23,23,.14)}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;line-height:1.6}img{max-width:100%;display:block}a{color:inherit;text-decoration:none}.container{width:min(1180px,calc(100% - 44px));margin-inline:auto}.site-header{position:sticky;top:0;z-index:50;background:rgba(5,5,5,.8);backdrop-filter:blur(22px);border-bottom:1px solid var(--line)}.nav-wrap{height:86px;display:flex;align-items:center;justify-content:space-between;gap:28px}.brand img{width:245px;height:auto}.nav{display:flex;gap:30px;align-items:center;color:#d7d7d7;font-size:14px}.nav a{opacity:.86}.nav a:hover{opacity:1;color:#fff}.btn{display:inline-flex;align-items:center;justify-content:center;border-radius:999px;padding:14px 22px;font-weight:800;border:1px solid transparent;transition:.25s ease;cursor:pointer;white-space:nowrap}.btn-primary{background:var(--red);color:#fff;box-shadow:0 18px 44px rgba(255,23,23,.22)}.btn-primary:hover{background:var(--red2);transform:translateY(-2px)}.btn-secondary{background:rgba(255,255,255,.045);border-color:var(--line);color:#fff}.btn-secondary:hover{background:rgba(255,255,255,.08);transform:translateY(-2px)}.hero{position:relative;padding:110px 0 90px;overflow:hidden}.hero:before{content:"";position:absolute;inset:-30%;background:radial-gradient(circle at 80% 18%,rgba(255,23,23,.23),transparent 36%),radial-gradient(circle at 15% 65%,rgba(255,255,255,.08),transparent 32%);pointer-events:none}.hero-layout{position:relative;display:grid;grid-template-columns:.9fr 1.1fr;gap:70px;align-items:center}.hero-copy{padding:36px 0}.eyebrow{display:inline-flex;color:var(--red2);font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.18em;margin-bottom:18px}.hero h1,.section-heading h2,.showcase-copy h2,.section-sticky h2,.about-layout h2,.contact-card h2{font-size:clamp(44px,6vw,82px);line-height:.98;letter-spacing:-.07em;margin:0}.hero-product h1{font-size:clamp(42px,5.3vw,72px)}.lead{font-size:clamp(18px,2.1vw,22px);color:#d0d0d0;max-width:760px;margin:28px 0 0}.hero-copy p:not(.lead),.section-sticky p,.showcase-copy p,.intro-grid p,.copy-block p,.contact-card p{color:var(--muted);font-size:18px}.hero-actions{display:flex;gap:14px;flex-wrap:wrap;margin-top:34px}.hero-image{border-radius:44px;overflow:hidden;box-shadow:var(--shadow)}.section{padding:120px 0}.section-spacious{padding:150px 0}.alt{background:#090909}.intro-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:80px;align-items:start}.intro-grid h2{font-size:clamp(34px,4.8vw,60px);line-height:1;letter-spacing:-.055em;margin:0}.two-column{display:grid;grid-template-columns:.85fr 1.15fr;gap:90px;align-items:start}.section-sticky{position:sticky;top:130px}.large-service-list{display:grid;gap:34px}.large-service-list article{padding:0 0 38px;border-bottom:1px solid var(--line)}.large-service-list span{color:var(--red);font-weight:900}.large-service-list h3{font-size:34px;line-height:1.08;letter-spacing:-.04em;margin:10px 0}.showcase-grid{display:grid;grid-template-columns:1.08fr .92fr;gap:86px;align-items:center}.showcase-grid.reverse{grid-template-columns:.9fr 1.1fr}.showcase-image{border-radius:40px;overflow:hidden;box-shadow:var(--shadow)}.showcase-copy h2{font-size:clamp(40px,5vw,70px)}.large-text{font-size:24px!important;color:#fff!important}.tick-list{list-style:none;padding:0;margin:24px 0 32px;display:grid;gap:12px;color:#e8e8e8}.tick-list li{position:relative;padding-left:30px}.tick-list li:before{content:"";position:absolute;left:0;top:.55em;width:13px;height:13px;background:var(--red);clip-path:polygon(14% 50%,40% 75%,88% 20%,100% 32%,42% 92%,0 60%)}.section-heading{text-align:center;max-width:820px;margin:0 auto 60px}.section-heading.left{text-align:left;margin:0}.section-heading h2{font-size:clamp(40px,5vw,72px)}.section-heading p{color:var(--muted);font-size:19px}.logo-wall{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.logo-wall span{border:1px solid var(--line);background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.025));border-radius:22px;padding:28px 20px;text-align:center;font-size:20px;font-weight:900;letter-spacing:.08em;color:#f2f2f2}.mini-services{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px}.mini-services span{border:1px solid var(--line);border-radius:999px;padding:10px 15px;color:#dedede;background:rgba(255,255,255,.04)}.about-layout{display:grid;grid-template-columns:.82fr 1.18fr;gap:90px}.copy-block{border-left:1px solid var(--line);padding-left:42px}.contact-card{display:grid;grid-template-columns:1fr 420px;gap:70px;align-items:start;border:1px solid var(--line);border-radius:42px;background:linear-gradient(135deg,rgba(255,23,23,.11),rgba(255,255,255,.035));padding:58px}.contact-card h2{font-size:clamp(38px,4.8vw,66px)}.contact-form{display:grid;gap:13px}.contact-form input,.contact-form select,.contact-form textarea{width:100%;background:#0b0b0b;border:1px solid var(--line);border-radius:18px;padding:16px 18px;color:#fff;font:inherit}.contact-form textarea{min-height:126px;resize:vertical}.form-note{font-size:13px!important;margin:0}.feature-grid,.product-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}.feature-grid article,.product-card{border:1px solid var(--line);background:rgba(255,255,255,.04);border-radius:28px;padding:30px;min-height:210px}.product-card{display:flex;flex-direction:column;justify-content:space-between;min-height:360px}.feature-grid h3,.product-card h3{font-size:24px;letter-spacing:-.03em;margin:0 0 12px}.feature-grid p,.product-card p{color:var(--muted);margin:0}.badge{display:inline-flex;width:fit-content;border-radius:999px;background:rgba(255,23,23,.15);color:var(--red2);padding:7px 11px;font-size:11px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;margin-bottom:16px}.price{font-size:28px;font-weight:900;margin:24px 0 14px!important;color:#fff!important}.site-footer{border-top:1px solid var(--line);padding:70px 0 30px;background:#050505}.footer-main{display:grid;grid-template-columns:1fr auto;gap:60px;align-items:start}.footer-brand img{width:260px}.footer-brand p{color:#fff;margin:18px 0 0;font-weight:800;letter-spacing:.12em}.footer-brand .muted{font-weight:400;letter-spacing:0;color:var(--muted);max-width:430px}.footer-links{display:grid;gap:12px;color:#d6d6d6}.footer-bottom{display:flex;justify-content:space-between;border-top:1px solid var(--line);margin-top:50px;padding-top:24px;color:var(--soft);font-size:14px}@media(max-width:980px){.nav{display:none}.hero-layout,.intro-grid,.two-column,.showcase-grid,.showcase-grid.reverse,.about-layout,.contact-card{grid-template-columns:1fr;gap:48px}.section-sticky{position:static}.feature-grid,.logo-wall,.product-grid{grid-template-columns:1fr 1fr}.hero{padding:80px 0}.section,.section-spacious{padding:90px 0}.copy-block{border-left:0;padding-left:0}.contact-card{padding:36px}.brand img{width:220px}}@media(max-width:640px){.container{width:min(100% - 28px,1180px)}.brand img{width:178px}.hero h1{font-size:42px}.feature-grid,.logo-wall,.product-grid{grid-template-columns:1fr}.footer-main{grid-template-columns:1fr}.footer-bottom{display:grid;gap:12px}.contact-card{padding:28px}.large-service-list h3{font-size:28px}}
+
+
+==================================================
+FILENAME: D:\Website_Teracom\Teracom_Commerce_Platform_Foundation\teracom-commerce-platform\app\layout.js
+==================================================
+
+import './globals.css';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
+
+export const metadata = {
+  title: 'Teracom Solutions | AI, Security & Technical Solutions',
+  description: 'Teracom Solutions combines electronic security expertise with AI, technical consulting, security system design, software innovation and SecurityOS AI.',
+};
+
+export default function RootLayout({ children }) {
+  return (
+    <html lang="en">
+      <body><Header />{children}<Footer /></body>
+    </html>
+  );
+}
+
+
+==================================================
+FILENAME: D:\Website_Teracom\Teracom_Commerce_Platform_Foundation\teracom-commerce-platform\app\page.js
+==================================================
+
+import Image from 'next/image';
+import Link from 'next/link';
+
+export default function Home(){return <main><section className="hero hero-home"><div className="container hero-layout"><div className="hero-copy"><div className="eyebrow">AI â€¢ Security â€¢ Technology</div><h1>Security expertise and AI innovation, built for the real world.</h1><p className="lead">Teracom Solutions combines deep electronic security experience with modern consulting, software and AI-powered solutions to help organisations design, deliver and support smarter systems.</p><div className="hero-actions"><Link className="btn btn-primary" href="/securityos-ai">Explore SecurityOS AI</Link><Link className="btn btn-secondary" href="#what-we-do">View What We Do</Link></div></div><div className="hero-image"><Image src="/assets/hero-technology.svg" alt="Abstract technology dashboard for security and AI" width={1400} height={900}/></div></div></section><section className="section intro-section"><div className="container intro-grid"><div><span className="eyebrow">The balance</span><h2>We bring together security knowledge and digital innovation.</h2></div><p>Teracom is not just a traditional security company and not just an AI startup. It sits between both: practical field experience, deep product understanding, technical consulting and the next generation of AI-enabled industry tools.</p></div></section><section className="section section-spacious alt" id="what-we-do"><div className="container two-column"><div className="section-sticky"><span className="eyebrow">What we do</span><h2>Security capability on one side. Digital innovation on the other.</h2><p>Built for organisations that need both practical security expertise and smarter technology platforms.</p></div><div className="large-service-list"><article><span>01</span><h3>Security Expertise</h3><p>Access control, video surveillance, intercom, intrusion, integrations, technical design, architecture reviews, standards and documentation.</p></article><article><span>02</span><h3>Digital Innovation</h3><p>AI solutions, SecurityOS AI, workflow automation, knowledge management, software development and security technology platforms.</p></article><article><span>03</span><h3>Consulting & Advisory</h3><p>Independent guidance for system selection, solution validation, technical strategy, project risk reduction and operational improvement.</p></article></div></div></section><section className="section product-showcase" id="securityos"><div className="container showcase-grid"><div className="showcase-image"><Image src="/assets/securityos-dashboard.svg" alt="SecurityOS AI dashboard concept" width={1200} height={760}/></div><div className="showcase-copy"><span className="eyebrow">Flagship product</span><h2>SecurityOS AI</h2><p className="large-text">The AI operating system for electronic security professionals.</p><p>SecurityOS AI helps technicians, engineers, estimators and project teams access expert knowledge, generate documentation and solve technical challenges faster.</p><ul className="tick-list"><li>AI Support Agents</li><li>Scope of Works Generation</li><li>Estimation Assistance</li><li>Tender Response Support</li><li>Training and Knowledge Tools</li></ul><Link className="btn btn-primary" href="/securityos-ai">View SecurityOS AI</Link></div></div></section><section className="section section-spacious" id="expertise"><div className="container"><div className="section-heading"><span className="eyebrow">Industry expertise</span><h2>Technologies we understand.</h2><p>Teracom is built around the real platforms, products and technical challenges used across the electronic security industry.</p></div><div className="logo-wall"><span>GENETEC</span><span>GALLAGHER</span><span>INTEGRITI</span><span>TECOM CHALLENGER</span><span>MILESTONE</span><span>HID</span><span>AXIS</span><span>NETWORKING</span><span>CYBER SECURITY</span></div></div></section><section className="section visual-split alt"><div className="container showcase-grid reverse"><div className="showcase-copy"><span className="eyebrow">Consulting</span><h2>Practical advice, clear design and better project outcomes.</h2><p>We support security teams with solution architecture, system design, product selection, documentation, integration planning and technical validation.</p><div className="mini-services"><span>System Design</span><span>Architecture Reviews</span><span>Technical Documentation</span><span>Integration Planning</span></div></div><div className="showcase-image"><Image src="/assets/consulting-visual.svg" alt="Consulting and technical strategy visual" width={1200} height={700}/></div></div></section><section className="section store-strip"><div className="container showcase-grid"><div className="showcase-image"><Image src="/assets/store-preview.svg" alt="Teracom Store preview" width={1200} height={700}/></div><div className="showcase-copy"><span className="eyebrow">Teracom Store</span><h2>Products, software and resources.</h2><p>The Teracom Store provides selected security products, digital templates, training resources, consulting services and SecurityOS AI subscriptions.</p><Link className="btn btn-secondary" href="/store">View Store Page</Link></div></div></section><section className="section about-section alt"><div className="container about-layout"><div className="section-heading left"><span className="eyebrow">About</span><h2>Built from industry experience. Focused on what comes next.</h2></div><div className="copy-block"><p>Teracom Solutions was created to help transform the electronic security industry through technical excellence, practical consulting and intelligent technology.</p><p>With experience across access control, video surveillance, networking, systems integration, project delivery and business improvement, Teracom understands the real challenges faced by technicians, engineers, project teams and business leaders.</p><p>The future of the security industry will combine human expertise with AI-powered tools. Teracom Solutions is being built to support that future.</p></div></div></section><section className="section contact-section" id="contact"><div className="container contact-card"><div><span className="eyebrow">Contact</span><h2>Let's start the conversation.</h2><p>Whether you're interested in SecurityOS AI, technical consulting, partnerships or the Teracom Store, we'd love to hear from you.</p></div><form className="contact-form" action="/api/leads" method="post"><input name="name" placeholder="Name" required/><input name="company" placeholder="Company"/><input name="email" type="email" placeholder="Email" required/><select name="interest" required><option value="">Enquiry type</option><option>SecurityOS AI</option><option>Technical Consulting</option><option>Teracom Store</option><option>Partnership</option></select><textarea name="message" placeholder="Message"></textarea><button className="btn btn-primary" type="submit">Get In Touch</button></form></div></section></main>}
+
+
+==================================================
+FILENAME: D:\Website_Teracom\Teracom_Commerce_Platform_Foundation\teracom-commerce-platform\app\portal\page.js
+==================================================
+
+export default function Portal(){return <main><section className="hero hero-product"><div className="container"><div className="hero-copy"><span className="eyebrow">Customer Portal</span><h1>Portal foundation.</h1><p className="lead">This area is reserved for future SecurityOS AI access, subscription management, downloads, training resources and customer tools.</p></div></div></section><section className="section"><div className="container feature-grid"><article><h3>Subscriptions</h3><p>Future Stripe customer portal integration.</p></article><article><h3>Downloads</h3><p>Digital documents, templates and packs.</p></article><article><h3>SecurityOS AI</h3><p>Future access to AI support agents and knowledge tools.</p></article></div></section></main>}
+
+
+==================================================
+FILENAME: D:\Website_Teracom\Teracom_Commerce_Platform_Foundation\teracom-commerce-platform\app\robots.txt\route.js
+==================================================
+
+export function GET(){return new Response('User-agent: *\nAllow: /\nSitemap: https://www.teracomsolutions.com.au/sitemap.xml\nDisallow: /admin/\nDisallow: /private/\n',{headers:{'content-type':'text/plain'}})}
+
+
+==================================================
+FILENAME: D:\Website_Teracom\Teracom_Commerce_Platform_Foundation\teracom-commerce-platform\app\securityos-ai\page.js
+==================================================
+
+import Image from 'next/image';
+import Link from 'next/link';
+export default function SecurityOSAI(){return <main><section className="hero hero-product"><div className="container hero-layout"><div className="hero-copy"><span className="eyebrow">SecurityOS AI</span><h1>The AI operating system for electronic security professionals.</h1><p className="lead">A focused platform for technical support, documentation, estimation assistance, tender support and knowledge management.</p><div className="hero-actions"><Link className="btn btn-primary" href="/store">View Plans</Link><Link className="btn btn-secondary" href="/">Back to Teracom</Link></div></div><div className="hero-image"><Image src="/assets/securityos-dashboard.svg" alt="SecurityOS AI dashboard concept" width={1200} height={760}/></div></div></section><section className="section section-spacious"><div className="container"><div className="section-heading"><span className="eyebrow">Capabilities</span><h2>Designed for the workflows security teams repeat every day.</h2></div><div className="feature-grid"><article><h3>AI Support Agents</h3><p>Product-specific assistants for platforms including Tecom Challenger, Gallagher, Genetec, Milestone, Integriti and HID.</p></article><article><h3>Scope Generation</h3><p>Create structured scopes, technical inclusions, exclusions and solution descriptions faster.</p></article><article><h3>Estimation Assistance</h3><p>Turn requirements into clearer estimate-ready details and practical solution summaries.</p></article><article><h3>Tender Support</h3><p>Draft consistent technical responses, compliance content and project documentation.</p></article><article><h3>Design Guidance</h3><p>Support product fit, architecture, integration pathways, network considerations and deployment planning.</p></article><article><h3>Training Tools</h3><p>Build structured technical learning and knowledge resources for technicians and project teams.</p></article></div></div></section></main>}
+
+
+==================================================
+FILENAME: D:\Website_Teracom\Teracom_Commerce_Platform_Foundation\teracom-commerce-platform\app\sitemap.xml\route.js
+==================================================
+
+export function GET(){const xml=`<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="https://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://www.teracomsolutions.com.au/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url><url><loc>https://www.teracomsolutions.com.au/securityos-ai</loc><changefreq>weekly</changefreq><priority>0.9</priority></url><url><loc>https://www.teracomsolutions.com.au/store</loc><changefreq>weekly</changefreq><priority>0.8</priority></url></urlset>`;return new Response(xml,{headers:{'content-type':'application/xml'}})}
+
+
+==================================================
+FILENAME: D:\Website_Teracom\Teracom_Commerce_Platform_Foundation\teracom-commerce-platform\app\store\page.js
+==================================================
+
+import Image from 'next/image';
+import CheckoutButton from '@/components/CheckoutButton';
+import {products,formatMoney} from '@/lib/products';
+export default function Store(){return <main><section className="hero hero-product"><div className="container hero-layout"><div className="hero-copy"><span className="eyebrow">Teracom Store</span><h1>Security products, software and industry resources.</h1><p className="lead">A marketplace connecting security professionals with selected products, digital resources, training and SecurityOS AI subscriptions.</p></div><div className="hero-image"><Image src="/assets/store-preview.svg" alt="Teracom Store preview" width={1200} height={700}/></div></div></section><section className="section section-spacious"><div className="container"><div className="section-heading"><span className="eyebrow">Products & subscriptions</span><h2>A practical store for the electronic security industry.</h2><p>Start with subscriptions, digital products and services. Add supplier-fed hardware products as data feeds become available.</p></div><div className="product-grid">{products.map(p=><article className="product-card" key={p.id}><div><span className="badge">{p.type}</span><h3>{p.name}</h3><p>{p.description}</p></div><div><p className="price">{formatMoney(p.priceCents)}</p><CheckoutButton productId={p.id} label={p.type==='subscription'?'Subscribe':'Buy'} /></div></article>)}</div></div></section></main>}
+
+
+==================================================
+FILENAME: D:\Website_Teracom\Teracom_Commerce_Platform_Foundation\teracom-commerce-platform\components\CheckoutButton.js
+==================================================
+
+'use client';
+import {useState} from 'react';
+export default function CheckoutButton({productId,label}){const[loading,setLoading]=useState(false);async function checkout(){setLoading(true);try{const res=await fetch('/api/checkout',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({productId,quantity:1})});const data=await res.json();if(!res.ok)throw new Error(data.error||'Checkout failed');if(data.url)window.location.href=data.url;}catch(e){alert(e.message||'Checkout failed')}finally{setLoading(false)}}return <button className="btn btn-primary" onClick={checkout} disabled={loading}>{loading?'Opening...':label}</button>}
+
+
+==================================================
+FILENAME: D:\Website_Teracom\Teracom_Commerce_Platform_Foundation\teracom-commerce-platform\components\Footer.js
+==================================================
+
+import Image from 'next/image';
+import Link from 'next/link';
+export default function Footer(){return <footer className="site-footer"><div className="container footer-main"><div className="footer-brand"><Image src="/assets/teracom-logo.png" alt="Teracom Solutions" width={260} height={68}/><p>AI â€¢ Security â€¢ Technology</p><p className="muted">Building smarter solutions for the electronic security industry.</p></div><div className="footer-links"><Link href="/">Home</Link><Link href="/securityos-ai">SecurityOS AI</Link><Link href="/store">Teracom Store</Link><Link href="/portal">Portal</Link></div></div><div className="container footer-bottom"><span>Â© Teracom Solutions</span><Link href="#top">Back to top â†‘</Link></div></footer>}
+
+
+==================================================
+FILENAME: D:\Website_Teracom\Teracom_Commerce_Platform_Foundation\teracom-commerce-platform\components\Header.js
+==================================================
+
+import Image from 'next/image';
+import Link from 'next/link';
+export default function Header(){return <header className="site-header"><div className="container nav-wrap"><Link className="brand" href="/"><Image src="/assets/teracom-logo.png" alt="Teracom Solutions" width={245} height={64} priority /></Link><nav className="nav"><Link href="/#what-we-do">What We Do</Link><Link href="/securityos-ai">SecurityOS AI</Link><Link href="/#expertise">Expertise</Link><Link href="/store">Store</Link><Link href="/portal">Portal</Link></nav><Link className="btn btn-primary" href="/store">Open Store</Link></div></header>}
+
+
+==================================================
+FILENAME: D:\Website_Teracom\Teracom_Commerce_Platform_Foundation\teracom-commerce-platform\jsconfig.json
+==================================================
+
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"]
+    }
+  }
+}
+
+
+==================================================
+FILENAME: D:\Website_Teracom\Teracom_Commerce_Platform_Foundation\teracom-commerce-platform\lib\feed-importer.js
+==================================================
+
+export function parseCsvFeed(csv){const lines=csv.trim().split(/\r?\n/).filter(Boolean);if(lines.length<2)return[];const headers=lines[0].split(',').map(h=>h.trim().toLowerCase());return lines.slice(1).map(line=>{const values=line.split(',').map(v=>v.trim());const row={};headers.forEach((h,i)=>{row[h]=values[i]||''});return{sku:row.sku,name:row.name||row.product,description:row.description||'',price:Number(row.price||0),stock:Number(row.stock||0),category:row.category||'Uncategorised',supplier:row.supplier||'Unknown'}})}
+export function parseJsonFeed(json){const data=JSON.parse(json);return Array.isArray(data)?data:data.products||[]}
+export function parseXmlFeed(xml){const blocks=Array.from(xml.matchAll(/<product>([\s\S]*?)<\/product>/gi)).map(m=>m[1]);return blocks.map(block=>{const get=tag=>block.match(new RegExp(`<${tag}>([\\s\\S]*?)<\\/${tag}>`,'i'))?.[1]?.trim()||'';return{sku:get('sku'),name:get('name')||get('product'),description:get('description'),price:Number(get('price')||0),stock:Number(get('stock')||0),category:get('category'),supplier:get('supplier')}})}
+export function parseFeed(content,type){if(type==='csv')return parseCsvFeed(content);if(type==='json')return parseJsonFeed(content);if(type==='xml')return parseXmlFeed(content);throw new Error('Unsupported feed type')}
+
+
+==================================================
+FILENAME: D:\Website_Teracom\Teracom_Commerce_Platform_Foundation\teracom-commerce-platform\lib\products.js
+==================================================
+
+export const products = [
+  { id:'securityos-starter', sku:'SECOS-STARTER', name:'SecurityOS AI Starter', description:'Entry subscription for AI support agents and electronic security knowledge workflows.', priceCents:4900, type:'subscription', category:'SecurityOS AI' },
+  { id:'securityos-pro', sku:'SECOS-PRO', name:'SecurityOS AI Professional', description:'Professional plan for support agents, scope generation, documentation and knowledge tools.', priceCents:14900, type:'subscription', category:'SecurityOS AI' },
+  { id:'sow-template-pack', sku:'DIG-SOW-PACK', name:'Security Scope of Works Template Pack', description:'Digital template pack for electronic security project documentation and technical scopes.', priceCents:9900, type:'digital', category:'Digital Resources' },
+  { id:'design-review', sku:'SVC-DESIGN-REVIEW', name:'Security Design Review', description:'Consulting service for architecture, product fit, risks, standards and technical validation.', priceCents:75000, type:'service', category:'Consulting' },
+  { id:'sample-reader', sku:'HW-READER-SAMPLE', name:'Sample Access Control Reader', description:'Placeholder hardware product for supplier feed and catalogue testing.', priceCents:29500, type:'hardware', category:'Access Control' }
+];
+export function formatMoney(cents){return new Intl.NumberFormat('en-AU',{style:'currency',currency:'AUD'}).format(cents/100)}
+export function findProduct(id){return products.find(p=>p.id===id)}
+
+
+==================================================
+FILENAME: D:\Website_Teracom\Teracom_Commerce_Platform_Foundation\teracom-commerce-platform\lib\stripe.js
+==================================================
+
+import Stripe from 'stripe';
+export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || 'sk_test_missing', { apiVersion: '2024-06-20' });
+
+
+==================================================
+FILENAME: D:\Website_Teracom\Teracom_Commerce_Platform_Foundation\teracom-commerce-platform\lib\zoho.js
+==================================================
+
+async function getZohoAccessToken(){const accountsBase=process.env.ZOHO_ACCOUNTS_BASE_URL||'https://accounts.zoho.com.au';const params=new URLSearchParams({refresh_token:process.env.ZOHO_REFRESH_TOKEN||'',client_id:process.env.ZOHO_CLIENT_ID||'',client_secret:process.env.ZOHO_CLIENT_SECRET||'',grant_type:'refresh_token'});const response=await fetch(`${accountsBase}/oauth/v2/token`,{method:'POST',body:params});if(!response.ok)throw new Error(`Zoho token refresh failed: ${response.status}`);const data=await response.json();return data.access_token}
+async function zohoFetch(path,init={}){const base=process.env.ZOHO_BOOKS_BASE_URL||'https://www.zohoapis.com.au/books/v3';const organizationId=process.env.ZOHO_ORGANIZATION_ID;if(!organizationId)throw new Error('Missing ZOHO_ORGANIZATION_ID');const token=await getZohoAccessToken();const separator=path.includes('?')?'&':'?';const response=await fetch(`${base}${path}${separator}organization_id=${organizationId}`,{...init,headers:{Authorization:`Zoho-oauthtoken ${token}`,'Content-Type':'application/json',...(init.headers||{})}});if(!response.ok)throw new Error(`Zoho API failed: ${response.status}`);return response.json()}
+export async function createZohoContact({contactName,email,companyName}){return zohoFetch('/contacts',{method:'POST',body:JSON.stringify({contact_name:contactName,company_name:companyName,contact_persons:email?[{email,first_name:contactName}]:[]})})}
+export async function createZohoInvoice({customerId,lineItems,referenceNumber}){return zohoFetch('/invoices',{method:'POST',body:JSON.stringify({customer_id:customerId,reference_number:referenceNumber,line_items:lineItems})})}
+
+
+==================================================
+FILENAME: D:\Website_Teracom\Teracom_Commerce_Platform_Foundation\teracom-commerce-platform\next.config.mjs
+==================================================
+
+/** @type {import('next').NextConfig} */
+const nextConfig = { reactStrictMode: true };
+export default nextConfig;
+
+
+==================================================
+FILENAME: D:\Website_Teracom\Teracom_Commerce_Platform_Foundation\teracom-commerce-platform\package.json
+==================================================
+
+{
+  "name": "teracom-commerce-platform-v3",
+  "version": "3.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@types/node": "^22.15.21",
+    "@types/react": "^18.3.18",
+    "next": "14.2.15",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "stripe": "17.3.1",
+    "typescript": "^5.8.3",
+    "zod": "3.23.8"
+  },
+  "devDependencies": {}
+}
+
+
+==================================================
+FILENAME: D:\Website_Teracom\Teracom_Commerce_Platform_Foundation\teracom-commerce-platform\README.md
+==================================================
+
+# Teracom Commerce Platform V3
+
+This is the premium Teracom Solutions website rebuilt as a Vercel-ready Next.js application with the business engine underneath it.
+
+## Included
+
+- Premium Teracom homepage design
+- SecurityOS AI product page
+- Teracom Store page with products and plans
+- Customer Portal placeholder
+- Stripe Checkout API route
+- Stripe webhook route
+- Zoho Books helper integration foundation
+- Supplier CSV / JSON / XML feed parser
+- Admin feed import API route
+- Lead capture API route
+- Sitemap and robots routes
+
+## Deploy
+
+Vercel root directory should remain:
+
+```text
+teracom-commerce-platform
+```
+
+## Environment variables to add later
+
+```text
+NEXT_PUBLIC_SITE_URL
+STRIPE_SECRET_KEY
+STRIPE_WEBHOOK_SECRET
+ZOHO_CLIENT_ID
+ZOHO_CLIENT_SECRET
+ZOHO_REFRESH_TOKEN
+ZOHO_ORGANIZATION_ID
+ADMIN_IMPORT_TOKEN
+```
+
+## Notes
+
+Stripe and Zoho routes are built but require live credentials before taking real payments or creating invoices.
+
+
+==================================================
+FILENAME: D:\Website_Teracom\Teracom_Commerce_Platform_Foundation\teracom-commerce-platform\sample-supplier-feed.csv
+==================================================
+
+SKU,Name,Description,Price,Stock,Category,Supplier
+HID-SIGNO,Sample Signo Reader,Access control reader,295.00,42,Access Control,Supplier A
+GEN-SW,Sample Security Software,Software licence,149.00,100,Software,Supplier B
+
+
+==================================================
+FILENAME: D:\Website_Teracom\Teracom_Commerce_Platform_Foundation\teracom-commerce-platform\sample-supplier-feed.json
+==================================================
+
+{
+  "products": [
+    {
+      "sku": "MIL-VMS",
+      "name": "Sample VMS Licence",
+      "description": "Video management licence",
+      "price": 199,
+      "stock": 50,
+      "category": "Video Surveillance",
+      "supplier": "Supplier C"
+    }
+  ]
+}
+
+==================================================
+FILENAME: D:\Website_Teracom\Teracom_Commerce_Platform_Foundation\teracom-commerce-platform\sample-supplier-feed.xml
+==================================================
+
+<products><product><sku>TEC-CTRL</sku><name>Sample Controller</name><description>Access control controller</description><price>499.00</price><stock>10</stock><category>Access Control</category><supplier>Supplier D</supplier></product></products>
+
+==================================================
+FILENAME: D:\Website_Teracom\Teracom_Commerce_Platform_Foundation\teracom-commerce-platform\tsconfig.json
+==================================================
+
+{
+  "compilerOptions": {
+    "target": "es5",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": false,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"]
+    }
+  },
+  "include": ["next-env.d.ts", "**/*.js", "**/*.jsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"]
+}
+
+
+
+
+==================================================
+FILE: tsconfig.json
+==================================================
+{
+  "compilerOptions": {
+    "target": "es5",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": false,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"]
+    }
+  },
+  "include": ["next-env.d.ts", "**/*.js", "**/*.jsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"]
+}
+
+
+==================================================
+FILE: app\globals.css
+==================================================
+:root{--bg:#050505;--panel:#0d0d0d;--panel2:#141414;--text:#fff;--muted:#b7b7b7;--soft:#777;--line:rgba(255,255,255,.11);--red:#ff1717;--red2:#ff4b4b;--shadow:0 35px 100px rgba(255,23,23,.14)}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;line-height:1.6}img{max-width:100%;display:block}a{color:inherit;text-decoration:none}.container{width:min(1180px,calc(100% - 44px));margin-inline:auto}.site-header{position:sticky;top:0;z-index:50;background:rgba(5,5,5,.8);backdrop-filter:blur(22px);border-bottom:1px solid var(--line)}.nav-wrap{height:86px;display:flex;align-items:center;justify-content:space-between;gap:28px}.brand img{width:245px;height:auto}.nav{display:flex;gap:30px;align-items:center;color:#d7d7d7;font-size:14px}.nav a{opacity:.86}.nav a:hover{opacity:1;color:#fff}.btn{display:inline-flex;align-items:center;justify-content:center;border-radius:999px;padding:14px 22px;font-weight:800;border:1px solid transparent;transition:.25s ease;cursor:pointer;white-space:nowrap}.btn-primary{background:var(--red);color:#fff;box-shadow:0 18px 44px rgba(255,23,23,.22)}.btn-primary:hover{background:var(--red2);transform:translateY(-2px)}.btn-secondary{background:rgba(255,255,255,.045);border-color:var(--line);color:#fff}.btn-secondary:hover{background:rgba(255,255,255,.08);transform:translateY(-2px)}.hero{position:relative;padding:110px 0 90px;overflow:hidden}.hero:before{content:"";position:absolute;inset:-30%;background:radial-gradient(circle at 80% 18%,rgba(255,23,23,.23),transparent 36%),radial-gradient(circle at 15% 65%,rgba(255,255,255,.08),transparent 32%);pointer-events:none}.hero-layout{position:relative;display:grid;grid-template-columns:.9fr 1.1fr;gap:70px;align-items:center}.hero-copy{padding:36px 0}.eyebrow{display:inline-flex;color:var(--red2);font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.18em;margin-bottom:18px}.hero h1,.section-heading h2,.showcase-copy h2,.section-sticky h2,.about-layout h2,.contact-card h2{font-size:clamp(44px,6vw,82px);line-height:.98;letter-spacing:-.07em;margin:0}.hero-product h1{font-size:clamp(42px,5.3vw,72px)}.lead{font-size:clamp(18px,2.1vw,22px);color:#d0d0d0;max-width:760px;margin:28px 0 0}.hero-copy p:not(.lead),.section-sticky p,.showcase-copy p,.intro-grid p,.copy-block p,.contact-card p{color:var(--muted);font-size:18px}.hero-actions{display:flex;gap:14px;flex-wrap:wrap;margin-top:34px}.hero-image{border-radius:44px;overflow:hidden;box-shadow:var(--shadow)}.section{padding:120px 0}.section-spacious{padding:150px 0}.alt{background:#090909}.intro-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:80px;align-items:start}.intro-grid h2{font-size:clamp(34px,4.8vw,60px);line-height:1;letter-spacing:-.055em;margin:0}.two-column{display:grid;grid-template-columns:.85fr 1.15fr;gap:90px;align-items:start}.section-sticky{position:sticky;top:130px}.large-service-list{display:grid;gap:34px}.large-service-list article{padding:0 0 38px;border-bottom:1px solid var(--line)}.large-service-list span{color:var(--red);font-weight:900}.large-service-list h3{font-size:34px;line-height:1.08;letter-spacing:-.04em;margin:10px 0}.showcase-grid{display:grid;grid-template-columns:1.08fr .92fr;gap:86px;align-items:center}.showcase-grid.reverse{grid-template-columns:.9fr 1.1fr}.showcase-image{border-radius:40px;overflow:hidden;box-shadow:var(--shadow)}.showcase-copy h2{font-size:clamp(40px,5vw,70px)}.large-text{font-size:24px!important;color:#fff!important}.tick-list{list-style:none;padding:0;margin:24px 0 32px;display:grid;gap:12px;color:#e8e8e8}.tick-list li{position:relative;padding-left:30px}.tick-list li:before{content:"";position:absolute;left:0;top:.55em;width:13px;height:13px;background:var(--red);clip-path:polygon(14% 50%,40% 75%,88% 20%,100% 32%,42% 92%,0 60%)}.section-heading{text-align:center;max-width:820px;margin:0 auto 60px}.section-heading.left{text-align:left;margin:0}.section-heading h2{font-size:clamp(40px,5vw,72px)}.section-heading p{color:var(--muted);font-size:19px}.logo-wall{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.logo-wall span{border:1px solid var(--line);background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.025));border-radius:22px;padding:28px 20px;text-align:center;font-size:20px;font-weight:900;letter-spacing:.08em;color:#f2f2f2}.mini-services{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px}.mini-services span{border:1px solid var(--line);border-radius:999px;padding:10px 15px;color:#dedede;background:rgba(255,255,255,.04)}.about-layout{display:grid;grid-template-columns:.82fr 1.18fr;gap:90px}.copy-block{border-left:1px solid var(--line);padding-left:42px}.contact-card{display:grid;grid-template-columns:1fr 420px;gap:70px;align-items:start;border:1px solid var(--line);border-radius:42px;background:linear-gradient(135deg,rgba(255,23,23,.11),rgba(255,255,255,.035));padding:58px}.contact-card h2{font-size:clamp(38px,4.8vw,66px)}.contact-form{display:grid;gap:13px}.contact-form input,.contact-form select,.contact-form textarea{width:100%;background:#0b0b0b;border:1px solid var(--line);border-radius:18px;padding:16px 18px;color:#fff;font:inherit}.contact-form textarea{min-height:126px;resize:vertical}.form-note{font-size:13px!important;margin:0}.feature-grid,.product-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}.feature-grid article,.product-card{border:1px solid var(--line);background:rgba(255,255,255,.04);border-radius:28px;padding:30px;min-height:210px}.product-card{display:flex;flex-direction:column;justify-content:space-between;min-height:360px}.feature-grid h3,.product-card h3{font-size:24px;letter-spacing:-.03em;margin:0 0 12px}.feature-grid p,.product-card p{color:var(--muted);margin:0}.badge{display:inline-flex;width:fit-content;border-radius:999px;background:rgba(255,23,23,.15);color:var(--red2);padding:7px 11px;font-size:11px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;margin-bottom:16px}.price{font-size:28px;font-weight:900;margin:24px 0 14px!important;color:#fff!important}.site-footer{border-top:1px solid var(--line);padding:70px 0 30px;background:#050505}.footer-main{display:grid;grid-template-columns:1fr auto;gap:60px;align-items:start}.footer-brand img{width:260px}.footer-brand p{color:#fff;margin:18px 0 0;font-weight:800;letter-spacing:.12em}.footer-brand .muted{font-weight:400;letter-spacing:0;color:var(--muted);max-width:430px}.footer-links{display:grid;gap:12px;color:#d6d6d6}.footer-bottom{display:flex;justify-content:space-between;border-top:1px solid var(--line);margin-top:50px;padding-top:24px;color:var(--soft);font-size:14px}@media(max-width:980px){.nav{display:none}.hero-layout,.intro-grid,.two-column,.showcase-grid,.showcase-grid.reverse,.about-layout,.contact-card{grid-template-columns:1fr;gap:48px}.section-sticky{position:static}.feature-grid,.logo-wall,.product-grid{grid-template-columns:1fr 1fr}.hero{padding:80px 0}.section,.section-spacious{padding:90px 0}.copy-block{border-left:0;padding-left:0}.contact-card{padding:36px}.brand img{width:220px}}@media(max-width:640px){.container{width:min(100% - 28px,1180px)}.brand img{width:178px}.hero h1{font-size:42px}.feature-grid,.logo-wall,.product-grid{grid-template-columns:1fr}.footer-main{grid-template-columns:1fr}.footer-bottom{display:grid;gap:12px}.contact-card{padding:28px}.large-service-list h3{font-size:28px}}
+
+
+==================================================
+FILE: app\layout.js
+==================================================
+import './globals.css';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
+
+export const metadata = {
+  title: 'Teracom Solutions | AI, Security & Technical Solutions',
+  description: 'Teracom Solutions combines electronic security expertise with AI, technical consulting, security system design, software innovation and SecurityOS AI.',
+};
+
+export default function RootLayout({ children }) {
+  return (
+    <html lang="en">
+      <body><Header />{children}<Footer /></body>
+    </html>
+  );
+}
+
+
+==================================================
+FILE: app\page.js
+==================================================
+import Image from 'next/image';
+import Link from 'next/link';
+
+export default function Home(){return <main><section className="hero hero-home"><div className="container hero-layout"><div className="hero-copy"><div className="eyebrow">AI â€¢ Security â€¢ Technology</div><h1>Security expertise and AI innovation, built for the real world.</h1><p className="lead">Teracom Solutions combines deep electronic security experience with modern consulting, software and AI-powered solutions to help organisations design, deliver and support smarter systems.</p><div className="hero-actions"><Link className="btn btn-primary" href="/securityos-ai">Explore SecurityOS AI</Link><Link className="btn btn-secondary" href="#what-we-do">View What We Do</Link></div></div><div className="hero-image"><Image src="/assets/hero-technology.svg" alt="Abstract technology dashboard for security and AI" width={1400} height={900}/></div></div></section><section className="section intro-section"><div className="container intro-grid"><div><span className="eyebrow">The balance</span><h2>We bring together security knowledge and digital innovation.</h2></div><p>Teracom is not just a traditional security company and not just an AI startup. It sits between both: practical field experience, deep product understanding, technical consulting and the next generation of AI-enabled industry tools.</p></div></section><section className="section section-spacious alt" id="what-we-do"><div className="container two-column"><div className="section-sticky"><span className="eyebrow">What we do</span><h2>Security capability on one side. Digital innovation on the other.</h2><p>Built for organisations that need both practical security expertise and smarter technology platforms.</p></div><div className="large-service-list"><article><span>01</span><h3>Security Expertise</h3><p>Access control, video surveillance, intercom, intrusion, integrations, technical design, architecture reviews, standards and documentation.</p></article><article><span>02</span><h3>Digital Innovation</h3><p>AI solutions, SecurityOS AI, workflow automation, knowledge management, software development and security technology platforms.</p></article><article><span>03</span><h3>Consulting & Advisory</h3><p>Independent guidance for system selection, solution validation, technical strategy, project risk reduction and operational improvement.</p></article></div></div></section><section className="section product-showcase" id="securityos"><div className="container showcase-grid"><div className="showcase-image"><Image src="/assets/securityos-dashboard.svg" alt="SecurityOS AI dashboard concept" width={1200} height={760}/></div><div className="showcase-copy"><span className="eyebrow">Flagship product</span><h2>SecurityOS AI</h2><p className="large-text">The AI operating system for electronic security professionals.</p><p>SecurityOS AI helps technicians, engineers, estimators and project teams access expert knowledge, generate documentation and solve technical challenges faster.</p><ul className="tick-list"><li>AI Support Agents</li><li>Scope of Works Generation</li><li>Estimation Assistance</li><li>Tender Response Support</li><li>Training and Knowledge Tools</li></ul><Link className="btn btn-primary" href="/securityos-ai">View SecurityOS AI</Link></div></div></section><section className="section section-spacious" id="expertise"><div className="container"><div className="section-heading"><span className="eyebrow">Industry expertise</span><h2>Technologies we understand.</h2><p>Teracom is built around the real platforms, products and technical challenges used across the electronic security industry.</p></div><div className="logo-wall"><span>GENETEC</span><span>GALLAGHER</span><span>INTEGRITI</span><span>TECOM CHALLENGER</span><span>MILESTONE</span><span>HID</span><span>AXIS</span><span>NETWORKING</span><span>CYBER SECURITY</span></div></div></section><section className="section visual-split alt"><div className="container showcase-grid reverse"><div className="showcase-copy"><span className="eyebrow">Consulting</span><h2>Practical advice, clear design and better project outcomes.</h2><p>We support security teams with solution architecture, system design, product selection, documentation, integration planning and technical validation.</p><div className="mini-services"><span>System Design</span><span>Architecture Reviews</span><span>Technical Documentation</span><span>Integration Planning</span></div></div><div className="showcase-image"><Image src="/assets/consulting-visual.svg" alt="Consulting and technical strategy visual" width={1200} height={700}/></div></div></section><section className="section store-strip"><div className="container showcase-grid"><div className="showcase-image"><Image src="/assets/store-preview.svg" alt="Teracom Store preview" width={1200} height={700}/></div><div className="showcase-copy"><span className="eyebrow">Teracom Store</span><h2>Products, software and resources.</h2><p>The Teracom Store provides selected security products, digital templates, training resources, consulting services and SecurityOS AI subscriptions.</p><Link className="btn btn-secondary" href="/store">View Store Page</Link></div></div></section><section className="section about-section alt"><div className="container about-layout"><div className="section-heading left"><span className="eyebrow">About</span><h2>Built from industry experience. Focused on what comes next.</h2></div><div className="copy-block"><p>Teracom Solutions was created to help transform the electronic security industry through technical excellence, practical consulting and intelligent technology.</p><p>With experience across access control, video surveillance, networking, systems integration, project delivery and business improvement, Teracom understands the real challenges faced by technicians, engineers, project teams and business leaders.</p><p>The future of the security industry will combine human expertise with AI-powered tools. Teracom Solutions is being built to support that future.</p></div></div></section><section className="section contact-section" id="contact"><div className="container contact-card"><div><span className="eyebrow">Contact</span><h2>Let's start the conversation.</h2><p>Whether you're interested in SecurityOS AI, technical consulting, partnerships or the Teracom Store, we'd love to hear from you.</p></div><form className="contact-form" action="/api/leads" method="post"><input name="name" placeholder="Name" required/><input name="company" placeholder="Company"/><input name="email" type="email" placeholder="Email" required/><select name="interest" required><option value="">Enquiry type</option><option>SecurityOS AI</option><option>Technical Consulting</option><option>Teracom Store</option><option>Partnership</option></select><textarea name="message" placeholder="Message"></textarea><button className="btn btn-primary" type="submit">Get In Touch</button></form></div></section></main>}
+
+
+==================================================
+FILE: app\api\admin\import-feed\route.js
+==================================================
+import {NextResponse} from 'next/server';
+import {z} from 'zod';
+import {parseFeed} from '@/lib/feed-importer';
+const ImportRequest=z.object({token:z.string(),type:z.enum(['csv','json','xml']),content:z.string()});
+export async function POST(req){const parsed=ImportRequest.safeParse(await req.json());if(!parsed.success)return NextResponse.json({error:'Invalid import request'},{status:400});if(parsed.data.token!==process.env.ADMIN_IMPORT_TOKEN)return NextResponse.json({error:'Unauthorised'},{status:401});const products=parseFeed(parsed.data.content,parsed.data.type);return NextResponse.json({imported:products.length,products})}
+
+
+==================================================
+FILE: app\api\checkout\route.js
+==================================================
+import {NextResponse} from 'next/server';
+import {z} from 'zod';
+import {stripe} from '@/lib/stripe';
+import {findProduct} from '@/lib/products';
+const CheckoutRequest=z.object({productId:z.string(),quantity:z.number().int().positive().default(1)});
+export async function POST(req){const siteUrl=process.env.NEXT_PUBLIC_SITE_URL||'http://localhost:3000';const parsed=CheckoutRequest.safeParse(await req.json());if(!parsed.success)return NextResponse.json({error:'Invalid checkout request'},{status:400});const product=findProduct(parsed.data.productId);if(!product)return NextResponse.json({error:'Product not found'},{status:404});const isSubscription=product.type==='subscription';const session=await stripe.checkout.sessions.create({mode:isSubscription?'subscription':'payment',line_items:[{price_data:{currency:'aud',product_data:{name:product.name,description:product.description,metadata:{sku:product.sku,productType:product.type}},unit_amount:product.priceCents,...(isSubscription?{recurring:{interval:'month'}}:{})},quantity:parsed.data.quantity}],success_url:`${siteUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,cancel_url:`${siteUrl}/checkout/cancel`,metadata:{productId:product.id,sku:product.sku,productType:product.type}});return NextResponse.json({url:session.url})}
+
+
+==================================================
+FILE: app\api\leads\route.js
+==================================================
+import {NextResponse} from 'next/server';
+export async function POST(req){const form=await req.formData();const lead=Object.fromEntries(form.entries());console.log('Teracom lead received',lead);return NextResponse.redirect(new URL('/?lead=received',req.url),303)}
+
+
+==================================================
+FILE: app\api\webhooks\stripe\route.js
+==================================================
+import {NextResponse} from 'next/server';
+import {stripe} from '@/lib/stripe';
+import {findProduct} from '@/lib/products';
+import {createZohoContact,createZohoInvoice} from '@/lib/zoho';
+export const runtime='nodejs';
+export async function POST(req){const body=await req.text();const signature=req.headers.get('stripe-signature');const webhookSecret=process.env.STRIPE_WEBHOOK_SECRET;if(!signature||!webhookSecret)return NextResponse.json({error:'Missing webhook signature or secret'},{status:400});let event;try{event=stripe.webhooks.constructEvent(body,signature,webhookSecret)}catch(error){return NextResponse.json({error:error.message||'Invalid webhook'},{status:400})}if(event.type==='checkout.session.completed'){const session=event.data.object;const product=findProduct(session.metadata?.productId);const email=session.customer_details?.email;if(product&&email&&process.env.ZOHO_REFRESH_TOKEN){try{const contact=await createZohoContact({contactName:session.customer_details?.name||email,email});const customerId=contact?.contact?.contact_id||contact?.contact_id;if(customerId){await createZohoInvoice({customerId,referenceNumber:session.id,lineItems:[{name:product.name,description:product.description,rate:product.priceCents/100,quantity:1}]})}}catch(error){console.error('Zoho sync failed',error)}}}return NextResponse.json({received:true})}
+
+
+==================================================
+FILE: app\checkout\cancel\page.js
+==================================================
+import Link from 'next/link';
+export default function Cancel(){return <main className="section"><div className="container"><span className="eyebrow">Checkout cancelled</span><h1>No payment was taken.</h1><p className="lead">Return to the Teracom Store when you're ready.</p><Link className="btn btn-primary" href="/store">Back to Store</Link></div></main>}
+
+
+==================================================
+FILE: app\checkout\success\page.js
+==================================================
+import Link from 'next/link';
+export default function Success(){return <main className="section"><div className="container"><span className="eyebrow">Payment successful</span><h1>Thank you for your order.</h1><p className="lead">The Stripe webhook route is ready to receive payment events and trigger the Zoho Books sync foundation.</p><Link className="btn btn-primary" href="/store">Back to Store</Link></div></main>}
+
+
+==================================================
+FILE: app\portal\page.js
+==================================================
+export default function Portal(){return <main><section className="hero hero-product"><div className="container"><div className="hero-copy"><span className="eyebrow">Customer Portal</span><h1>Portal foundation.</h1><p className="lead">This area is reserved for future SecurityOS AI access, subscription management, downloads, training resources and customer tools.</p></div></div></section><section className="section"><div className="container feature-grid"><article><h3>Subscriptions</h3><p>Future Stripe customer portal integration.</p></article><article><h3>Downloads</h3><p>Digital documents, templates and packs.</p></article><article><h3>SecurityOS AI</h3><p>Future access to AI support agents and knowledge tools.</p></article></div></section></main>}
+
+
+==================================================
+FILE: app\robots.txt\route.js
+==================================================
+export function GET(){return new Response('User-agent: *\nAllow: /\nSitemap: https://www.teracomsolutions.com.au/sitemap.xml\nDisallow: /admin/\nDisallow: /private/\n',{headers:{'content-type':'text/plain'}})}
+
+
+==================================================
+FILE: app\securityos-ai\page.js
+==================================================
+import Image from 'next/image';
+import Link from 'next/link';
+export default function SecurityOSAI(){return <main><section className="hero hero-product"><div className="container hero-layout"><div className="hero-copy"><span className="eyebrow">SecurityOS AI</span><h1>The AI operating system for electronic security professionals.</h1><p className="lead">A focused platform for technical support, documentation, estimation assistance, tender support and knowledge management.</p><div className="hero-actions"><Link className="btn btn-primary" href="/store">View Plans</Link><Link className="btn btn-secondary" href="/">Back to Teracom</Link></div></div><div className="hero-image"><Image src="/assets/securityos-dashboard.svg" alt="SecurityOS AI dashboard concept" width={1200} height={760}/></div></div></section><section className="section section-spacious"><div className="container"><div className="section-heading"><span className="eyebrow">Capabilities</span><h2>Designed for the workflows security teams repeat every day.</h2></div><div className="feature-grid"><article><h3>AI Support Agents</h3><p>Product-specific assistants for platforms including Tecom Challenger, Gallagher, Genetec, Milestone, Integriti and HID.</p></article><article><h3>Scope Generation</h3><p>Create structured scopes, technical inclusions, exclusions and solution descriptions faster.</p></article><article><h3>Estimation Assistance</h3><p>Turn requirements into clearer estimate-ready details and practical solution summaries.</p></article><article><h3>Tender Support</h3><p>Draft consistent technical responses, compliance content and project documentation.</p></article><article><h3>Design Guidance</h3><p>Support product fit, architecture, integration pathways, network considerations and deployment planning.</p></article><article><h3>Training Tools</h3><p>Build structured technical learning and knowledge resources for technicians and project teams.</p></article></div></div></section></main>}
+
+
+==================================================
+FILE: app\sitemap.xml\route.js
+==================================================
+export function GET(){const xml=`<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="https://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://www.teracomsolutions.com.au/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url><url><loc>https://www.teracomsolutions.com.au/securityos-ai</loc><changefreq>weekly</changefreq><priority>0.9</priority></url><url><loc>https://www.teracomsolutions.com.au/store</loc><changefreq>weekly</changefreq><priority>0.8</priority></url></urlset>`;return new Response(xml,{headers:{'content-type':'application/xml'}})}
+
+
+==================================================
+FILE: app\store\page.js
+==================================================
+import Image from 'next/image';
+import CheckoutButton from '@/components/CheckoutButton';
+import {products,formatMoney} from '@/lib/products';
+export default function Store(){return <main><section className="hero hero-product"><div className="container hero-layout"><div className="hero-copy"><span className="eyebrow">Teracom Store</span><h1>Security products, software and industry resources.</h1><p className="lead">A marketplace connecting security professionals with selected products, digital resources, training and SecurityOS AI subscriptions.</p></div><div className="hero-image"><Image src="/assets/store-preview.svg" alt="Teracom Store preview" width={1200} height={700}/></div></div></section><section className="section section-spacious"><div className="container"><div className="section-heading"><span className="eyebrow">Products & subscriptions</span><h2>A practical store for the electronic security industry.</h2><p>Start with subscriptions, digital products and services. Add supplier-fed hardware products as data feeds become available.</p></div><div className="product-grid">{products.map(p=><article className="product-card" key={p.id}><div><span className="badge">{p.type}</span><h3>{p.name}</h3><p>{p.description}</p></div><div><p className="price">{formatMoney(p.priceCents)}</p><CheckoutButton productId={p.id} label={p.type==='subscription'?'Subscribe':'Buy'} /></div></article>)}</div></div></section></main>}
+
+
+==================================================
+FILE: components\CheckoutButton.js
+==================================================
+'use client';
+import {useState} from 'react';
+export default function CheckoutButton({productId,label}){const[loading,setLoading]=useState(false);async function checkout(){setLoading(true);try{const res=await fetch('/api/checkout',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({productId,quantity:1})});const data=await res.json();if(!res.ok)throw new Error(data.error||'Checkout failed');if(data.url)window.location.href=data.url;}catch(e){alert(e.message||'Checkout failed')}finally{setLoading(false)}}return <button className="btn btn-primary" onClick={checkout} disabled={loading}>{loading?'Opening...':label}</button>}
+
+
+==================================================
+FILE: components\Footer.js
+==================================================
+import Image from 'next/image';
+import Link from 'next/link';
+export default function Footer(){return <footer className="site-footer"><div className="container footer-main"><div className="footer-brand"><Image src="/assets/teracom-logo.png" alt="Teracom Solutions" width={260} height={68}/><p>AI â€¢ Security â€¢ Technology</p><p className="muted">Building smarter solutions for the electronic security industry.</p></div><div className="footer-links"><Link href="/">Home</Link><Link href="/securityos-ai">SecurityOS AI</Link><Link href="/store">Teracom Store</Link><Link href="/portal">Portal</Link></div></div><div className="container footer-bottom"><span>Â© Teracom Solutions</span><Link href="#top">Back to top â†‘</Link></div></footer>}
+
+
+==================================================
+FILE: components\Header.js
+==================================================
+import Image from 'next/image';
+import Link from 'next/link';
+export default function Header(){return <header className="site-header"><div className="container nav-wrap"><Link className="brand" href="/"><Image src="/assets/teracom-logo.png" alt="Teracom Solutions" width={245} height={64} priority /></Link><nav className="nav"><Link href="/#what-we-do">What We Do</Link><Link href="/securityos-ai">SecurityOS AI</Link><Link href="/#expertise">Expertise</Link><Link href="/store">Store</Link><Link href="/portal">Portal</Link></nav><Link className="btn btn-primary" href="/store">Open Store</Link></div></header>}
+
+
+==================================================
+FILE: lib\feed-importer.js
+==================================================
+export function parseCsvFeed(csv){const lines=csv.trim().split(/\r?\n/).filter(Boolean);if(lines.length<2)return[];const headers=lines[0].split(',').map(h=>h.trim().toLowerCase());return lines.slice(1).map(line=>{const values=line.split(',').map(v=>v.trim());const row={};headers.forEach((h,i)=>{row[h]=values[i]||''});return{sku:row.sku,name:row.name||row.product,description:row.description||'',price:Number(row.price||0),stock:Number(row.stock||0),category:row.category||'Uncategorised',supplier:row.supplier||'Unknown'}})}
+export function parseJsonFeed(json){const data=JSON.parse(json);return Array.isArray(data)?data:data.products||[]}
+export function parseXmlFeed(xml){const blocks=Array.from(xml.matchAll(/<product>([\s\S]*?)<\/product>/gi)).map(m=>m[1]);return blocks.map(block=>{const get=tag=>block.match(new RegExp(`<${tag}>([\\s\\S]*?)<\\/${tag}>`,'i'))?.[1]?.trim()||'';return{sku:get('sku'),name:get('name')||get('product'),description:get('description'),price:Number(get('price')||0),stock:Number(get('stock')||0),category:get('category'),supplier:get('supplier')}})}
+export function parseFeed(content,type){if(type==='csv')return parseCsvFeed(content);if(type==='json')return parseJsonFeed(content);if(type==='xml')return parseXmlFeed(content);throw new Error('Unsupported feed type')}
+
+
+==================================================
+FILE: lib\products.js
+==================================================
+export const products = [
+  { id:'securityos-starter', sku:'SECOS-STARTER', name:'SecurityOS AI Starter', description:'Entry subscription for AI support agents and electronic security knowledge workflows.', priceCents:4900, type:'subscription', category:'SecurityOS AI' },
+  { id:'securityos-pro', sku:'SECOS-PRO', name:'SecurityOS AI Professional', description:'Professional plan for support agents, scope generation, documentation and knowledge tools.', priceCents:14900, type:'subscription', category:'SecurityOS AI' },
+  { id:'sow-template-pack', sku:'DIG-SOW-PACK', name:'Security Scope of Works Template Pack', description:'Digital template pack for electronic security project documentation and technical scopes.', priceCents:9900, type:'digital', category:'Digital Resources' },
+  { id:'design-review', sku:'SVC-DESIGN-REVIEW', name:'Security Design Review', description:'Consulting service for architecture, product fit, risks, standards and technical validation.', priceCents:75000, type:'service', category:'Consulting' },
+  { id:'sample-reader', sku:'HW-READER-SAMPLE', name:'Sample Access Control Reader', description:'Placeholder hardware product for supplier feed and catalogue testing.', priceCents:29500, type:'hardware', category:'Access Control' }
+];
+export function formatMoney(cents){return new Intl.NumberFormat('en-AU',{style:'currency',currency:'AUD'}).format(cents/100)}
+export function findProduct(id){return products.find(p=>p.id===id)}
+
+
+==================================================
+FILE: lib\stripe.js
+==================================================
+import Stripe from 'stripe';
+export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || 'sk_test_missing', { apiVersion: '2024-06-20' });
+
+
+==================================================
+FILE: lib\zoho.js
+==================================================
+async function getZohoAccessToken(){const accountsBase=process.env.ZOHO_ACCOUNTS_BASE_URL||'https://accounts.zoho.com.au';const params=new URLSearchParams({refresh_token:process.env.ZOHO_REFRESH_TOKEN||'',client_id:process.env.ZOHO_CLIENT_ID||'',client_secret:process.env.ZOHO_CLIENT_SECRET||'',grant_type:'refresh_token'});const response=await fetch(`${accountsBase}/oauth/v2/token`,{method:'POST',body:params});if(!response.ok)throw new Error(`Zoho token refresh failed: ${response.status}`);const data=await response.json();return data.access_token}
+async function zohoFetch(path,init={}){const base=process.env.ZOHO_BOOKS_BASE_URL||'https://www.zohoapis.com.au/books/v3';const organizationId=process.env.ZOHO_ORGANIZATION_ID;if(!organizationId)throw new Error('Missing ZOHO_ORGANIZATION_ID');const token=await getZohoAccessToken();const separator=path.includes('?')?'&':'?';const response=await fetch(`${base}${path}${separator}organization_id=${organizationId}`,{...init,headers:{Authorization:`Zoho-oauthtoken ${token}`,'Content-Type':'application/json',...(init.headers||{})}});if(!response.ok)throw new Error(`Zoho API failed: ${response.status}`);return response.json()}
+export async function createZohoContact({contactName,email,companyName}){return zohoFetch('/contacts',{method:'POST',body:JSON.stringify({contact_name:contactName,company_name:companyName,contact_persons:email?[{email,first_name:contactName}]:[]})})}
+export async function createZohoInvoice({customerId,lineItems,referenceNumber}){return zohoFetch('/invoices',{method:'POST',body:JSON.stringify({customer_id:customerId,reference_number:referenceNumber,line_items:lineItems})})}
+
+
+==================================================
+FILE: public\assets\consulting-visual.svg
+==================================================
+<svg width="1200" height="700" viewBox="0 0 1200 700" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="1200" height="700" rx="40" fill="#070707"/><defs><linearGradient id="r" x1="0" x2="1"><stop stop-color="#ff1a1a"/><stop offset="1" stop-color="#ff6666"/></linearGradient></defs><g transform="translate(110 90)"><rect width="980" height="500" rx="34" fill="#101010" stroke="#fff" stroke-opacity=".1"/><path d="M100 380L250 245L400 310L560 170L740 250L878 122" stroke="url(#r)" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/><g fill="#fff" fill-opacity=".07"><rect x="90" y="70" width="180" height="70" rx="18"/><rect x="310" y="70" width="180" height="70" rx="18"/><rect x="530" y="70" width="180" height="70" rx="18"/><rect x="750" y="70" width="140" height="70" rx="18"/></g><g stroke="#fff" stroke-opacity=".12"><path d="M95 430H885"/><path d="M95 330H885"/><path d="M95 230H885"/><path d="M95 130H885"/></g><g fill="#ff1a1a"><circle cx="250" cy="245" r="13"/><circle cx="560" cy="170" r="13"/><circle cx="878" cy="122" r="13"/></g></g></svg>
+
+==================================================
+FILE: public\assets\favicon.svg
+==================================================
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#050505"/><path d="M32 9l20 12v22L32 55 12 43V21L32 9z" fill="none" stroke="#ff1717" stroke-width="5"/><circle cx="32" cy="32" r="6" fill="#fff"/></svg>
+
+==================================================
+FILE: public\assets\hero-technology.svg
+==================================================
+<svg width="1400" height="900" viewBox="0 0 1400 900" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="1400" height="900" rx="42" fill="#050505"/><defs><radialGradient id="g1" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(980 180) rotate(132) scale(740 540)"><stop stop-color="#ff1a1a" stop-opacity="0.55"/><stop offset="0.42" stop-color="#ff1a1a" stop-opacity="0.08"/><stop offset="1" stop-color="#050505" stop-opacity="0"/></radialGradient><linearGradient id="panel" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#161616"/><stop offset="1" stop-color="#080808"/></linearGradient></defs><rect width="1400" height="900" fill="url(#g1)"/><g opacity="0.55"><path d="M148 728C378 535 536 574 683 433C850 272 1003 282 1220 118" stroke="#fff" stroke-opacity="0.13" stroke-width="2"/><path d="M130 604C338 516 500 388 706 392C930 397 1059 253 1280 244" stroke="#ff1a1a" stroke-opacity="0.32" stroke-width="2"/></g><g transform="translate(145 145)"><rect width="540" height="380" rx="30" fill="url(#panel)" stroke="#fff" stroke-opacity="0.12"/><rect x="34" y="36" width="472" height="54" rx="16" fill="#0D0D0D" stroke="#fff" stroke-opacity="0.10"/><circle cx="64" cy="63" r="9" fill="#ff1a1a"/><circle cx="95" cy="63" r="9" fill="#fff" fill-opacity="0.28"/><rect x="36" y="124" width="138" height="188" rx="20" fill="#111" stroke="#fff" stroke-opacity="0.10"/><rect x="203" y="124" width="138" height="188" rx="20" fill="#111" stroke="#ff1a1a" stroke-opacity="0.35"/><rect x="370" y="124" width="138" height="188" rx="20" fill="#111" stroke="#fff" stroke-opacity="0.10"/><path d="M70 260L105 200L145 240" stroke="#ff1a1a" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><path d="M238 265L272 185L308 265" stroke="#fff" stroke-opacity="0.8" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><path d="M402 230H472M402 262H444" stroke="#fff" stroke-opacity="0.55" stroke-width="8" stroke-linecap="round"/></g><g transform="translate(748 223)"><rect width="430" height="430" rx="42" fill="#0A0A0A" stroke="#fff" stroke-opacity="0.12"/><path d="M215 58L352 136V294L215 372L78 294V136L215 58Z" stroke="#ff1a1a" stroke-width="18" stroke-linejoin="round"/><path d="M215 128L292 172V258L215 302L138 258V172L215 128Z" stroke="#fff" stroke-opacity="0.82" stroke-width="10" stroke-linejoin="round"/><circle cx="215" cy="215" r="18" fill="#ff1a1a"/></g></svg>
+
+==================================================
+FILE: public\assets\securityos-dashboard.svg
+==================================================
+<svg width="1200" height="760" viewBox="0 0 1200 760" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="1200" height="760" rx="40" fill="#070707"/><rect x="42" y="44" width="1116" height="672" rx="34" fill="#0F0F0F" stroke="#fff" stroke-opacity="0.12"/><rect x="82" y="84" width="1036" height="74" rx="22" fill="#151515"/><circle cx="121" cy="121" r="10" fill="#ff1a1a"/><circle cx="156" cy="121" r="10" fill="#fff" fill-opacity=".28"/><rect x="82" y="196" width="310" height="430" rx="28" fill="#111" stroke="#fff" stroke-opacity=".09"/><rect x="426" y="196" width="310" height="430" rx="28" fill="#111" stroke="#ff1a1a" stroke-opacity=".35"/><rect x="770" y="196" width="348" height="430" rx="28" fill="#111" stroke="#fff" stroke-opacity=".09"/><rect x="116" y="236" width="160" height="14" rx="7" fill="#fff" fill-opacity=".75"/><rect x="116" y="276" width="225" height="12" rx="6" fill="#fff" fill-opacity=".22"/><path d="M118 485C162 410 203 438 235 372C276 290 324 344 352 262" stroke="#ff1a1a" stroke-width="8" stroke-linecap="round"/><rect x="462" y="236" width="176" height="14" rx="7" fill="#fff" fill-opacity=".75"/><rect x="462" y="282" width="232" height="54" rx="16" fill="#ff1a1a" fill-opacity=".12" stroke="#ff1a1a" stroke-opacity=".3"/><rect x="462" y="358" width="232" height="54" rx="16" fill="#fff" fill-opacity=".06"/><circle cx="920" cy="420" r="104" stroke="#ff1a1a" stroke-width="22" stroke-dasharray="430 120"/><circle cx="920" cy="420" r="62" stroke="#fff" stroke-opacity=".15" stroke-width="18"/></svg>
+
+==================================================
+FILE: public\assets\store-preview.svg
+==================================================
+<svg width="1200" height="700" viewBox="0 0 1200 700" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="1200" height="700" rx="40" fill="#070707"/><rect x="100" y="90" width="1000" height="520" rx="36" fill="#111" stroke="#fff" stroke-opacity=".12"/><rect x="160" y="150" width="290" height="360" rx="30" fill="#171717" stroke="#ff1a1a" stroke-opacity=".38"/><rect x="485" y="150" width="250" height="360" rx="30" fill="#171717" stroke="#fff" stroke-opacity=".1"/><rect x="770" y="150" width="270" height="360" rx="30" fill="#171717" stroke="#fff" stroke-opacity=".1"/><path d="M224 248H386M224 304H350M224 360H392" stroke="#fff" stroke-opacity=".75" stroke-width="14" stroke-linecap="round"/><path d="M554 248H668M554 304H640M554 360H690" stroke="#fff" stroke-opacity=".25" stroke-width="14" stroke-linecap="round"/><path d="M834 248H978M834 304H950M834 360H1000" stroke="#fff" stroke-opacity=".25" stroke-width="14" stroke-linecap="round"/><rect x="224" y="424" width="150" height="44" rx="22" fill="#ff1a1a"/><rect x="554" y="424" width="120" height="44" rx="22" fill="#fff" fill-opacity=".08"/><rect x="834" y="424" width="130" height="44" rx="22" fill="#fff" fill-opacity=".08"/></svg>
+
+==================================================
+FILE: public\assets\teracom-logo.png
+==================================================
+‰PNG
+
+   IHDR     ˆ   µã   PLTE   ÿ ÿ  ÿ ÿ ÿ ÿ  ÿ ÿ ÿ  ÿ  ÿ ÿ  ÿ  ÿ ÿ ÿ ÿ ÿ ÿ ÿ ÿ ÿ ÿ ÿ ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ  ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ ÿÿÿP”WÙ   °tRNS _o@¿ßŸ¯ ïP0Ïð`à€À Ð°X•ÃÙðôþûòÈ¢q5Bäœù‚¼öëÓ³K—ýZ®ãõÕIpúˆjó]à£&Ø@©î±QÂ´ç’vGÇ†8»üÜ\èÞÎ”÷y…béÑ¦êñÌi¯¨Íïhlp*Åx¾ƒžâåwÝ¹§¬ªenÔßcíŒU`Ò ²ÛMË™=½¡×„O~ø¤ÖÚ€ÄÊ;mÐ¥Ž‡fìŠ›°SŸæEÉ‰|¿‹é_   bKGDìnµˆ   	pHYs  .#  .#x¥?v  IDATxÚí]ùc5(TK©Z„Ç®eZµH¥Å£¥Ä‚XZ
+±}H9*—.RÐW/°Ë.²õ@<ÀoWöPÖuÝÝÎ¸ofòý&“I2ÉC:¤Íç§vÞ¼y™ä“äó=’xžƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ˜7?ï8Ü¨Z0=½°*ïR8äŒê»¦#Ü]“wIòÄ¢ÚiÀ¢ê¼ã/œfP;/ïò8ä‚ºÓîqRaîÄÁôô’úÅKáo'ææ£8Xjƒ†%0?8©0—P…â ‘5ËáÊB'æ
+jP,]L¯VÝW8©0P½ÅACr¨‡ùaú.'f=æ¡8X™jíê4%å]N‡ÛŠª{ ©ïŽÿ5(›>ÛÁÔÜM}+$ÖAš’êò.¯ÃmAõ¢„÷¨Vsl RÁ™’³Tàè/±ª—;©0kQ…&ccµH¬ƒªÆ,²8äˆÂªßüö¾¦Õ~¢¹¥é¾ûx°Uë›5èO^6lõ²Ì˜cýÒ,²ÌÖ<T„µæOh{˜ûíu’Û[:Ö?òèc¼ÍãÑ:¯´:º6t7‹Š´±gí¦Œ¯Vc°yÉfr‰Z²˜#5%¥º2]ÉOl1z§'{™ï¶lÕù…;„ÍÛžÊª|ÛŸ&_}z»9<¯oG‡//Žß?°SñåyèO^Æ´(µd1Çšl]™ªäA£×ÚÅ~ÕF"„•¿{ÏÁ+ïm'ßkßkNƒgöµegÛ³ñ—ëqü„Z’.¯ NVr—Á{o›D(£iOÁÓåþ.S4ë”¦ø¨èËÕIqÀ}¸\=?$LY€:YÉþ~ƒ7ÛòÄì Bà?w@ó•7â—FÍ&•Âž&½w88,øvZ$Q×¨êò±#§±®ä*Ù`ê+J|Ób"”Xï‰Ta&‡ï÷õJR<’þòb¡8`A­	‘÷(ºÜàm^¢7¸J{^ûÝºúg‚±£:¯ŒR1„‰\<v<õ‹íý='ÊXß±:A‘ô€@ÅÁJÉ¨^½(ácJy˜)D0nð•¼NûåN&9.%BëÈ	!^€®õœøsÚI±Œ/žPãw§$D{é§ÇOŒ¶síræ¬Æ+¿¼šùFï“ÚUµ79-øÇ^)1?öèD?©ÌÔ8CƒÍ÷ÊtÞ¼DêªÀ{D`§T€š'‚öÔ—”Š
+"È ”êÆ)`{CP¸Ò«¯%š§[ãÅf’¾\|=Áº#"±õ7C.lã„Å(ê%§®Æå5ï%BùpK-•„J>ô„„’2<?á\¯D(£pþ-:ªù“™O#RÑï7ë3‡[Xü^j­ö]hIÕ>xƒ2ÅAcäj¤¦$#	Y"Pk³!ù$¨ä— ƒÒ´¥	qþÐb-ÊT8B;ë™?f=HÅÕšMúÌÙ3Ì¤0Þ§ºuèb‰»Ò )–Ö“K5+Ó¦$×îD*Hˆ°†=Í©¤âè^›‰àyi3eõ…·ãû.ýiÊ Ï¤<hßcúê%¢5‘ÈUKç,¦Ú½NEôëM}ûÉ ºëá6«‰àƒfÊê¡†Öá¬Óg
+#tö™ºhZþ˜b•XÇˆƒä'õ\"Bz P¡øžÒ+B€!Õ¾×v"x“¾fAÈ˜ÙüíÙ% <¦tR"T'Å÷a2gÑŒè,ÑŠ<T|zû;Í–úC”Ï¯âÔ»Þ{/ê!‰‰AË@å!#BZ$A¥BÙ”4$ºOÇõk¸¬—ÖjÔµê¹Á›€¦z_ù,è(ãT-d÷™ËèŠÔsYñA,’`rˆðÐ°t"OLï°ŸG ±Êu ƒÈV€¹!K.îD¢ÿiÙ#ˆˆ I KÙ”0Üû'3Ë½cÐ›D@a“ª€TŒº	L'Yr‘z_ê(¯4ÒDÐp5â­Ë*#Âö+¤Ð—²ò¦`h#Zu-ÂC„ëÜæu4qbÀM-©÷5û%ÅH¡.ÓÕÈ‚&0™ù›y‚Þ2Æ~"àãUwÁdX¶B€DV›X4Pÿ‘~ÊC)"Te¸y KY—Ç?dôsV¢Ò.f™#D !Aà…R.Ò@}û«¦%'a¥A"*q)ë!ª„ñ€²B£æ¢érn!5ÀL¡’‹Ô0ÕõÛ§ &B½Ñ3ªÍ‰°E/ò·k×µV&CLU„äE•\Ds„Ì'@LÃ5
+æD@q£Lº€Þ‹¯YO„w§²Â]|Å`ŽÊiùƒ'`@0Lkc¼ ›çØ;b¡Ôc=03Yn-$`†Jp%Èå"Mõ˜0-7"/"hEžÀ¸ˆ=²öšTÑ^`$0¾6 r¹ˆþ‰Î#^¥È‹¨‰ƒÌdÔ°žøÎòn¼…5§À+‚Áz™–‘t"O IXO_|/ë–„ƒêAê‘Ÿ„™¡ûÓr#r#Fžä¤&‘ñÎv"®™¯R1¡`d”zäß‡ëDñ$ÈXuÒîÑÅeìÙNL‚Ð;¸&Ñƒâ“n ‚:¼­D~DÈŒ<ä’2,'Í(|_j2Ã$Àu˜0$Â†ÿ±i±)ò#ÚÇžÓÔ$ra&‰ †àA™D +VKóÈP*rs^[[[´_PŽüˆ€=^R|ššD.ØLf]jñšôç¥=”µX.ÞÒÂi@ŽDÈˆ<TDÏŠ½Dè¡ù„þˆ< R1•·"ÑÌi^3r$:F…<‡‰oê]¸b#Z·>¿áÓÌWýÁRö¯§làJN£ÖAybR“¬ BŠ»ÑA¨ÛæIá+XOUä	¤"ãY™Dhú³âÇQ
+ª£õRÀ÷
+ë‰€ö± Q	ÜçWh¥XO„æe–HEá 	ÊZ4ÚOEä‰MM"˜I"œ{@…7>“þ†‚=ûžQÿ8HEaŒ”µH.ÚOyä	d2Û¬p(ÉÐ±¶”ñœ(…FVÕ•ô¼a?0³&>…h,ëA±šo—²ž RQ’Ð«øøúçäGV¿lZlŠ|‰ ‹<%S“¬&B1+S@ÕåU•0l÷,†,‘O¦&XA„Þë[ @p|§ú‰=EUHËÅ.ð^ßB^JÞD û˜KÈ]µ‚|áVAšbÖžQ§5y Èj¡¶Îi¯bäLqä‰KM"°’Þ`¬^qÀo¥@ÊÍPø>zÍ´Ø9Óøj€KM"°“t¹ºR/&÷U"-'à#‰¾ÐAÞDÀÈkå/\’¾Dðžã®¨Øl–ÛST”\„™”	Ì#o"ˆ–Èw‰7³”… ™zQ[*
+›Œí[1r'Œ‰ŒËì¤x¿K‰à]ÄÍ3åzñ¤æ¾¹R>ècH£ÊÕ¢˜f'?Ï¿"¤#O`áÝ#¶Áû ZYª±^Pm÷úe_U4i±r‘ Ykpò3œ\!ÐnB”JM"°–t7“¯JâoÃ°¨Þ!…DJ.NÀìÖËAº,^óägzjp¥DÀé4P*5‰ÀZ"xû‹äS‰^ÄÎØg·lçç\[y³”Z'?ÓÝU¸…ôDà#O SA8{‰Pú
+ÚI¬aï´¬fD73¤£Ëâ+^« BöÉÏô`@~—" æ%C@:5‰À^"x_cÎâUQ†HÅÌ<òühI­ÏŠÏSA-è©ÁéÓ>Lˆ€<;¬$AjÅD(|%Ò‹(3w¹À|e^?Ñs>”¶) Ù(^JæÔ`Ái&DHFž@*¦õ¯ÅDðþˆ«[zQs×ñÈó‰ëôä‡iÑcÈütCM¡T`NnÍFD@ž‡ŽAjÍDðv€	™Ö‹:ÃØóùœ.4Qƒ¦S™OAîP¢‡¼¦Ïî¡â`©ø¬x#" ÏËÃš(5‰Àj"ÐáÔ*î#Tz.ãê6ž44Ê)µQÕPyqoUîìz”Ç’ÉcˆÀ.‘‡?‹»¬&‚wLÈ”^ÔÞk0xäSÓTKhäˆˆÀÇ’p1ã‰-iÇgÎùZ.‘’±U©Oì‡†D©Iva;®]çô¢ÞvR LààïÞt‡²&4ð£?kÀmvÔEÿ3ç|5Êüók§Íˆ@#O[D©IvÁ{pIŽÝlÑ:	§Ñ”©ù-dû#&gÎÆhàG>èDï	ÉB”ìÚN]Î&D€<\¼é¢à‰åD i—ÙË°å¤æÙ¸žâ5QËõøÝ°ÖÃÐúÈèŸŽ>âŽËµ+PÈÏ€’ž¨"ŸŸ#ô¬ØNªçX½¨½	-z	@7SƒçMß€9¡/ýEaèd‹¤‘ª½UDàÃ°BÏŠíD Yk¬^ÌØ ”‹©LUöp¯ÀWfËýEp·S}Êâ|fómÕ‘ª½•DH&fˆ÷µž4kmìk¼c¡Ö¹F!p9Kº·0§ù”Qì9/Cßt7s#¨¨]´XHÖ­°RRBêr,¬$B2UKìY™I"T|¬²p˜µFõ¢ /'HÁüù:wììØ#Isëƒ=4A’$:ø×JˆÀÄ€àž€.çFñ¼¡$B2ySìY¹sÁ*Î†VŽf­¡^œ æ½çéB*½Ô‘ÀÑðÚòVLÞõ½EzYš-UÅþ’±¿ž5  .ç¥²yCMê,—®Ü²ŸLÖÑ‹Ôƒ¢oúËåbº5ß@±Ì‚ž÷+ÍY¤DÒ×HÅÁféãÕD`OC–xVfÿß7QËŸeóg §Qá—Jt·¦J‰Àâ'ÏIAƒñ5fˆ®’%UEÏG—áfhÖZ¤q¾7Ê'ÁiT<Œœß­“	«^xEcŽòôU*â[˜Ó£ëTÏÎ ºÌ¤{ØÏ"Ð¬µè.lRíóàC¨äbˆÂß:n•ìy¿Òœ:p¬¨fO^¬~rh„UæY™D Yk_PŸ€aÎ).h‘ñ§p¾§¨,ïDv%¢"¬/»½
+µ+è‘º•,«*8ÕB„›D`²Ö¦V¡ìÓŠ7Q ×Eá|(ýýÆFqÙ7~ºCÏ›M{üB©T >¨Ë³³ß³ˆ ÝCšš_1æ,Ö}d}GÙF£ØÛ2zbdí?J¨IzE l™VÄ!lGëuß¦‚4é0°™zÃ>5–èé`)èy¿©Lf&;e¹Ñ*I+A¥Â=	0³S2Ov˜ ÆMkdRWëó.ŸÃŒÔ¡÷ÈK¤®:q0§@sÙj±âÀäôèJ±Ó ãpÛAsÙ¦ÅAáZ¿ß¶¯ü×wá‡bðùÁIí:êÃ?·¶=	^ôY±7ôãÁÏƒâÈó¶¾p
+ÑßÒ·o,hºVéAØ·ˆzÎHƒÍ…‘(ÒÕÏ
+7Á}º;Nà1%Â©ÝäÚØÍB|ï8ÿ(&BœŸYÙ
+‡_4—6“õí×ËvÑ@Gûëá§†D8Ü‚ã5å{Ïœ¿$-\ªpÅ¯Ã­ƒæ²%2Ñ‚Î½r# ÂÇ¿mõ~Ú0F2p¤Dˆ°."„±ú±?y­ß'{‡›ÇƒML„ÖKAËõ¡'í;üŠˆsÙ¸L´É %Ù4øWcqðYwL6#Â`¹Õãƒ†®úQªF´Ûô‰Rx)"Â'ÝÁÏÿÎ»¼ú%©L´-OçÄ>ÞIÚÌ‹2ìÃ…;FDèêÇyÀ+ˆò”""ø¿„Oí!\QŽå0S¨Ny¶ß(Ï± g3	vEë/Œˆp¤“É³(kñèÞÑ3±6Œ‰p¬?ðo¸‰áNÄð?h
+·ï(ÏßÌ°ýp[¸1”è,]ºÔÝ{t,:2“˜§‚àË¾ìb9Ì8Jƒ~d#”›ŽYTnÂu†DX—È8‰>º÷?cÁØQ ‚wà\l«tç0‡Û‰Â¤¶Ôí<ïZ±Ì4 ‚·iZw
+Š¡Æ¿=¡'vZÅíÂú¾Ô^9ì0³(\›]m5LVh5„÷–n„îKÜ7nÓ¹`*ïWvàÑ*·wšƒµ~„}²ür'œ3¢åGˆHSæEL„Â©ðAKÞ¯íDa[÷Å¡ÿvDMªô,>Ù»¼¾—Úp¥––g1=ÂCù–áï:7•v´åýâI¬y“ÄÂe;l¬¡åpø1nS¶&qL <ØXC|˜6FÊsMùXà÷‹;p8¯J‰'wAô‘¡ôaÂW ùSDDÑ$½x&¼års‚JwúþW6óñÔãg&§ü yÛMÌG`Ö¤ž=Ø¾‰~¥‰àÝÜÖøS“äy¼£WÂ[¾¿RôûŸ2ß3ÌÁÁÁÁÁÁÁÁÁÁÁÁÁÁÁÁÁÁÁÅÿ²]Ùd ·   tEXtAuthor Online Logo MakeroÀ   %tEXtdate:create 2017-03-04T17:24:59-08:00©Õq   %tEXtdate:modify 2017-03-04T17:24:59-08:00fômÍ   DtEXtDesc Logo created with www.onlinelogomaker.com, the free logo maker!Ÿ–Þñ    IEND®B`‚
+

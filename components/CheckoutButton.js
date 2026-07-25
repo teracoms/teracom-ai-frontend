@@ -1,0 +1,3 @@
+'use client';
+import {useState} from 'react';
+export default function CheckoutButton({productId,label}){const[loading,setLoading]=useState(false);async function checkout(){setLoading(true);try{const res=await fetch('/api/checkout',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({productId,quantity:1})});const data=await res.json();if(!res.ok)throw new Error(data.error||'Checkout failed');if(data.url)window.location.href=data.url;}catch(e){alert(e.message||'Checkout failed')}finally{setLoading(false)}}return <button className="btn btn-primary" onClick={checkout} disabled={loading}>{loading?'Opening...':label}</button>}

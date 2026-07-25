@@ -1,0 +1,6 @@
+import {NextResponse} from 'next/server';
+import {stripe} from '@/lib/stripe';
+import {findProduct} from '@/lib/products';
+import {createZohoContact,createZohoInvoice} from '@/lib/zoho';
+export const runtime='nodejs';
+export async function POST(req){const body=await req.text();const signature=req.headers.get('stripe-signature');const webhookSecret=process.env.STRIPE_WEBHOOK_SECRET;if(!signature||!webhookSecret)return NextResponse.json({error:'Missing webhook signature or secret'},{status:400});let event;try{event=stripe.webhooks.constructEvent(body,signature,webhookSecret)}catch(error){return NextResponse.json({error:error.message||'Invalid webhook'},{status:400})}if(event.type==='checkout.session.completed'){const session=event.data.object;const product=findProduct(session.metadata?.productId);const email=session.customer_details?.email;if(product&&email&&process.env.ZOHO_REFRESH_TOKEN){try{const contact=await createZohoContact({contactName:session.customer_details?.name||email,email});const customerId=contact?.contact?.contact_id||contact?.contact_id;if(customerId){await createZohoInvoice({customerId,referenceNumber:session.id,lineItems:[{name:product.name,description:product.description,rate:product.priceCents/100,quantity:1}]})}}catch(error){console.error('Zoho sync failed',error)}}}return NextResponse.json({received:true})}

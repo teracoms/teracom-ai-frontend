@@ -1,0 +1,13 @@
+{
+  "products": [
+    {
+      "sku": "MIL-VMS",
+      "name": "Sample VMS Licence",
+      "description": "Video management licence",
+      "price": 199,
+      "stock": 50,
+      "category": "Video Surveillance",
+      "supplier": "Supplier C"
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+import {NextResponse} from 'next/server';
+import {z} from 'zod';
+import {stripe} from '@/lib/stripe';
+import {findProduct} from '@/lib/products';
+const CheckoutRequest=z.object({productId:z.string(),quantity:z.number().int().positive().default(1)});
+export async function POST(req){const siteUrl=process.env.NEXT_PUBLIC_SITE_URL||'http://localhost:3000';const parsed=CheckoutRequest.safeParse(await req.json());if(!parsed.success)return NextResponse.json({error:'Invalid checkout request'},{status:400});const product=findProduct(parsed.data.productId);if(!product)return NextResponse.json({error:'Product not found'},{status:404});const isSubscription=product.type==='subscription';const session=await stripe.checkout.sessions.create({mode:isSubscription?'subscription':'payment',line_items:[{price_data:{currency:'aud',product_data:{name:product.name,description:product.description,metadata:{sku:product.sku,productType:product.type}},unit_amount:product.priceCents,...(isSubscription?{recurring:{interval:'month'}}:{})},quantity:parsed.data.quantity}],success_url:`${siteUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,cancel_url:`${siteUrl}/checkout/cancel`,metadata:{productId:product.id,sku:product.sku,productType:product.type}});return NextResponse.json({url:session.url})}
