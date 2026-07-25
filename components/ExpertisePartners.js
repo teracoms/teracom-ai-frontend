@@ -4,82 +4,96 @@ export default function ExpertisePartners() {
   const partners = [
     {
       name: 'Genetec',
-      category: 'Unified Physical Security Software',
-      description: 'Video surveillance, access control, and integrated security management platform.',
-      logo: 'https://brandsoftheworld.com/wp-content/uploads/images/logos/genetec-inc/genetec-inc-logo.png',
+      logo: 'https://www.genetec.com/static/images/logo.png',
       url: 'https://www.genetec.com',
-      alt: 'Genetec - Unified Security Software Platform',
+      alt: 'Genetec - Unified Security Software',
     },
     {
       name: 'Gallagher',
-      category: 'Access Control & Security Systems',
-      description: 'Global leader in integrated access control, video, and security solutions.',
-      logo: 'https://security.gallagher.com/-/media/project/gallagher/images/logos/gallagher-symbol-white.svg',
+      logo: 'https://security.gallagher.com/-/media/project/gallagher/images/logos/gallagher-logo-white.svg',
       url: 'https://security.gallagher.com',
-      alt: 'Gallagher Security - Access Control Solutions',
+      alt: 'Gallagher Security',
     },
     {
-      name: 'Inner Range',
-      category: 'Smart Security Systems',
-      description: 'Australian manufacturer of advanced access control and intrusion detection systems.',
-      logo: 'https://brandfetch.com/innerrange.com/logo',
-      url: 'https://www.innerrange.com.au',
-      alt: 'Inner Range - Smart Security Systems',
+      name: 'Integriti',
+      logo: 'https://www.integriti.com.au/images/logo.png',
+      url: 'https://www.integriti.com.au',
+      alt: 'Integriti - Access Control Systems',
     },
     {
-      name: 'Tecom',
-      category: 'Access Control Hardware',
-      description: 'Taiwan-based manufacturer of access control and smart security hardware solutions.',
-      logo: 'https://seeklogo.com/images/T/Tecom-logo-EC17E081C4-seeklogo.com.png',
+      name: 'Tecom Challenger',
+      logo: 'https://www.tecomemail.com/images/logo.png',
       url: 'https://www.tecomemail.com',
-      alt: 'Tecom - Access Control Hardware',
+      alt: 'Tecom - Access Control',
+    },
+    {
+      name: 'Milestone',
+      logo: 'https://www.milestonesys.com/static/images/logo.png',
+      url: 'https://www.milestonesys.com',
+      alt: 'Milestone Systems - Video Management',
+    },
+    {
+      name: 'HID',
+      logo: 'https://www.hidglobal.com/images/logo.png',
+      url: 'https://www.hidglobal.com',
+      alt: 'HID Global - Access Control',
+    },
+    {
+      name: 'Axis',
+      logo: 'https://www.axis.com/images/logo.png',
+      url: 'https://www.axis.com',
+      alt: 'Axis - Network Video',
+    },
+    {
+      name: 'Networking',
+      logo: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 100"%3E%3Ctext x="50" y="50" font-size="20" fill="%23fff" text-anchor="middle" dominant-baseline="middle"%3ENETWORKING%3C/text%3E%3C/svg%3E',
+      url: '#',
+      alt: 'Network Infrastructure',
+    },
+    {
+      name: 'Cyber Security',
+      logo: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 100"%3E%3Ctext x="50" y="50" font-size="18" fill="%23fff" text-anchor="middle" dominant-baseline="middle"%3ECYBER SECURITY%3C/text%3E%3C/svg%3E',
+      url: '#',
+      alt: 'Cyber Security Solutions',
     },
   ];
 
   return (
-    <section className="expertise-partners">
+    <section className="expertise-section">
       <div className="container">
         <div className="expertise-header">
-          <span className="eyebrow">Our Expertise</span>
-          <h2>Integrated With Industry-Leading Manufacturers</h2>
-          <p className="lead">
-            Teracom Solutions works with and supports the world's leading security manufacturers
-            to deliver integrated, best-in-class hardware and software solutions.
+          <span className="eyebrow">Industry Expertise</span>
+          <h2>Technologies we understand.</h2>
+          <p className="expertise-subtext">
+            Teracom is built around the real platforms, products and technical challenges used across the
+            electronic security industry.
           </p>
         </div>
 
-        <div className="partners-grid">
+        <div className="expertise-grid">
           {partners.map((partner) => (
             <a
               key={partner.name}
               href={partner.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="partner-card"
+              className="expertise-card"
               title={partner.alt}
             >
-              <div className="partner-logo">
+              <div className="expertise-logo">
                 <Image
                   src={partner.logo}
                   alt={partner.alt}
-                  width={200}
-                  height={100}
+                  width={180}
+                  height={80}
                   quality={85}
                   onError={(e) => {
-                    // Fallback: show partner name if image fails
                     e.target.style.display = 'none';
-                    e.target.nextSibling.style.display = 'block';
+                    e.target.parentElement.textContent = partner.name.toUpperCase();
                   }}
                 />
-                <div className="partner-fallback" style={{ display: 'none' }}>
-                  {partner.name}
-                </div>
               </div>
-              <div className="partner-info">
-                <h3 className="partner-name">{partner.name}</h3>
-                <p className="partner-category">{partner.category}</p>
-                <p className="partner-description">{partner.description}</p>
-              </div>
+              <span className="expertise-name">{partner.name.toUpperCase()}</span>
             </a>
           ))}
         </div>
