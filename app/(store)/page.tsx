@@ -1,1 +1,0 @@
-export default function Page(){return <section><h1>Store</h1></section>}
