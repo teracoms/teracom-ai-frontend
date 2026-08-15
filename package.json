@@ -2,20 +2,26 @@
   "name": "teracom-commerce-platform-v3",
   "version": "3.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "lint": "next lint",
+    "test": "node --test"
   },
   "dependencies": {
     "@types/node": "^22.15.21",
     "@types/react": "^18.3.18",
-    "next": "14.2.15",
+    "next": "14.2.35",
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "stripe": "17.3.1",
     "typescript": "^5.8.3",
     "zod": "3.23.8"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "eslint": "^8.57.1",
+    "eslint-config-next": "14.2.35"
+  }
 }

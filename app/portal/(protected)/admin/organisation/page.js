@@ -1,0 +1,77 @@
+import { getSessionToken } from '@/lib/api/auth';
+import { fetchOrganisationSummary } from '@/lib/api/dashboard';
+import { isForbidden, errorMessage } from '@/lib/api/results';
+import OrganisationSummaryCard from '@/components/portal/OrganisationSummaryCard';
+
+export const metadata = {
+  title: 'Organisation | Teracom AI Portal',
+};
+
+/**
+ * Reuses fetchOrganisationSummary (Package 2, lib/api/dashboard.js) and
+ * OrganisationSummaryCard (Package 2) as-is — this is the exact same
+ * GET /organisations/ call and rendering Dashboard already built, since
+ * neither the endpoint nor the data it returns (name, slug only — no other
+ * organisation profile field exists backend-side) changes based on which
+ * page shows it. See ADMIN_IMPLEMENTATION_REPORT.md §2 for why this page
+ * still exists as a dedicated route despite the overlap: §C.11/§C.3 name it
+ * explicitly, and this is the one place in the app framed as the
+ * organisation's own settings/profile page rather than a dashboard widget.
+ */
+export default async function AdminOrganisationPage() {
+  const token = getSessionToken();
+
+  if (!token) {
+    return (
+      <main>
+        <section className="section">
+          <div className="container">
+            <span className="eyebrow">Organisation</span>
+            <h1>Your session has ended.</h1>
+            <p className="lead">Please sign in again to view your organisation.</p>
+          </div>
+        </section>
+      </main>
+    );
+  }
+
+  let organisation = null;
+  let loadError = null;
+
+  try {
+    organisation = await fetchOrganisationSummary(token);
+  } catch (error) {
+    loadError = error;
+  }
+
+  const restricted = isForbidden(loadError);
+
+  return (
+    <main>
+      <section className="hero hero-product">
+        <div className="container">
+          <div className="hero-copy">
+            <span className="eyebrow">Organisation</span>
+            <h1>Your organisation.</h1>
+            <p className="lead">
+              A read-only profile — teracom-ai-backend records only a name and slug per
+              organisation today, no plan, seats or billing fields yet.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section className="section">
+        <div className="container">
+          {loadError && !restricted ? (
+            <p className="form-error" role="alert">
+              {errorMessage(loadError)}
+            </p>
+          ) : (
+            <OrganisationSummaryCard organisation={organisation} restricted={restricted} />
+          )}
+        </div>
+      </section>
+    </main>
+  );
+}

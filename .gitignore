@@ -1,0 +1,19 @@
+# dependencies
+/node_modules
+
+# next.js build output
+/.next/
+/out/
+
+# local env files
+.env
+.env.local
+.env.*.local
+
+# misc
+.DS_Store
+*.log
+
+# typescript (tsconfig.json exists for editor tooling only — this repo is JS)
+*.tsbuildinfo
+next-env.d.ts
