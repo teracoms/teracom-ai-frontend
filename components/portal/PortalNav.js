@@ -20,6 +20,7 @@ const LINKS = [
   { href: '/portal/chat', label: 'Chat' },
   { href: '/portal/memory', label: 'Memory' },
   { href: '/portal/marketplace', label: 'Marketplace' },
+  { href: '/portal/cto', label: 'CTO' },
 ];
 
 const ADMIN_LINK = { href: '/portal/admin', label: 'Admin' };

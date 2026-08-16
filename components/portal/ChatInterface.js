@@ -5,6 +5,7 @@ import { useState } from 'react';
 import ChatThread from '@/components/portal/ChatThread';
 import ChatComposer from '@/components/portal/ChatComposer';
 import ChatSessionStarter from '@/components/portal/ChatSessionStarter';
+import OrchestrationPanel from '@/components/portal/OrchestrationPanel';
 
 /**
  * Owns the live, in-page conversation thread for one worker. This thread is
@@ -22,6 +23,11 @@ export default function ChatInterface({ workerId }) {
     setMessages((current) => [...current, { id: `local-${current.length}`, role, content }]);
   }
 
+  function handleConsultationComplete(originalMessage, result) {
+    appendMessage('user', originalMessage);
+    appendMessage('assistant', result.primary_worker_final_response);
+  }
+
   return (
     <div>
       <ChatThread
@@ -33,6 +39,8 @@ export default function ChatInterface({ workerId }) {
       <ChatComposer workerId={workerId} onMessage={appendMessage} />
 
       <ChatSessionStarter workerId={workerId} />
+
+      <OrchestrationPanel workerId={workerId} onConsultationComplete={handleConsultationComplete} />
     </div>
   );
 }

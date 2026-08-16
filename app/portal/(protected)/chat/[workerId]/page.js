@@ -1,10 +1,12 @@
 import Link from 'next/link';
 
 import { getSessionToken } from '@/lib/api/auth';
-import { fetchWorkerSummary } from '@/lib/api/workers';
-import { errorMessage } from '@/lib/api/results';
+import { fetchWorkerSummary, fetchWorkerList } from '@/lib/api/workers';
+import { fetchConsultations } from '@/lib/api/orchestration';
+import { errorMessage, settle } from '@/lib/api/results';
 import { ApiError } from '@/lib/api/client';
 import ChatInterface from '@/components/portal/ChatInterface';
+import OrchestrationHistory from '@/components/portal/OrchestrationHistory';
 
 export const metadata = {
   title: 'Chat | Teracom AI Portal',
@@ -66,6 +68,20 @@ export default async function WorkerChatPage({ params }) {
 
   const worker = summary.worker;
 
+  // Per-section resilience (ADR-008): the consultation history is
+  // supplementary to the chat page itself, so a failure here shouldn't
+  // block the page from rendering the live chat.
+  const [consultationsSettled, workerListSettled] = await Promise.allSettled([
+    fetchConsultations(token),
+    fetchWorkerList(token),
+  ]);
+  const consultationsResult = settle(consultationsSettled);
+  const allConsultations = consultationsResult.value ?? [];
+  const consultations = allConsultations.filter((entry) => entry.primary_worker_id === workerId);
+  const workerNamesById = new Map(
+    (workerListSettled.status === 'fulfilled' ? workerListSettled.value : []).map((w) => [w.id, w.name])
+  );
+
   return (
     <main>
       <section className="hero hero-product">
@@ -89,6 +105,24 @@ export default async function WorkerChatPage({ params }) {
       <section className="section">
         <div className="container">
           <ChatInterface workerId={workerId} />
+        </div>
+      </section>
+
+      <section className="section alt">
+        <div className="container">
+          <div className="section-heading left">
+            <span className="eyebrow">Orchestration Intelligence</span>
+            <h2>Consultation History</h2>
+            <p>Past consultations this worker has run with a colleague worker, on your approval.</p>
+          </div>
+
+          {consultationsResult.error ? (
+            <p className="form-error" role="alert">
+              {errorMessage(consultationsResult.error)}
+            </p>
+          ) : (
+            <OrchestrationHistory consultations={consultations} workerNamesById={workerNamesById} />
+          )}
         </div>
       </section>
     </main>

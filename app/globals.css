@@ -64,6 +64,28 @@
 .chat-typing-indicator{color:var(--muted);font-size:13px;margin:0}
 .chat-session-starter{margin-top:40px;padding-top:32px;border-top:1px solid var(--line)}
 @media(max-width:640px){.chat-message{max-width:100%}}
+/* Portal orchestration (extends existing tokens/components — no new colours) */
+.orchestration-panel{margin-top:40px;padding-top:32px;border-top:1px solid var(--line);display:grid;gap:14px}
+.orchestration-panel textarea{width:100%;background:#0b0b0b;border:1px solid var(--line);border-radius:18px;padding:16px 18px;color:#fff;font:inherit;resize:vertical;min-height:60px}
+.orchestration-panel form{display:grid;gap:12px}
+.orchestration-suggestion,.orchestration-result{border:1px solid var(--line);background:rgba(255,255,255,.04);border-radius:20px;padding:22px 26px;display:grid;gap:8px}
+.orchestration-suggestion p,.orchestration-result p{color:var(--muted);margin:0}
+.orchestration-suggestion .btn,.orchestration-result .btn{margin-top:8px;justify-self:start}
+/* Portal CTO orchestration (extends existing tokens/components — no new colours) */
+.cto-panel{display:grid;gap:14px}
+.cto-panel-form{display:grid;gap:12px}
+.cto-panel-form label{font-size:13px;font-weight:700;color:var(--muted)}
+.cto-panel-form select,.cto-panel-form input,.cto-panel-form textarea{width:100%;background:#0b0b0b;border:1px solid var(--line);border-radius:18px;padding:14px 18px;color:#fff;font:inherit}
+.cto-panel-form textarea{resize:vertical;min-height:90px}
+.cto-panel-actions{display:flex;gap:12px;flex-wrap:wrap}
+.cto-plan-preview,.cto-result{border:1px solid var(--line);background:rgba(255,255,255,.04);border-radius:20px;padding:22px 26px;display:grid;gap:12px}
+.cto-plan-preview p,.cto-result p{color:var(--muted);margin:0}
+.cto-roadmap,.cto-chain-steps{list-style:none;margin:0;padding:0;display:grid;gap:14px}
+.cto-roadmap li,.cto-chain-steps li{border-bottom:1px solid var(--line);padding-bottom:14px}
+.cto-roadmap li:last-child,.cto-chain-steps li:last-child{border-bottom:0;padding-bottom:0}
+.cto-roadmap strong,.cto-chain-steps strong{display:block;color:#fff;font-size:14px;margin-bottom:4px}
+.cto-subtask{font-style:italic}
+.cto-plan-preview .btn,.cto-result .btn{justify-self:start}
 /* Portal memory (extends existing tokens/components — no new colours) */
 .memory-groups{display:grid;gap:36px}
 .memory-group{padding-bottom:28px;border-bottom:1px solid var(--line)}
