@@ -15,8 +15,16 @@ export async function generateMetadata({ params }) {
 // PHASE_0_PACKAGE_D_MARKETPLACE_IMPLEMENTATION_REPORT.md §6): a 403 here is
 // an expected, real outcome for a pack whose min_tier the organisation's
 // current licence doesn't meet, not an error to hide.
-export default async function MarketplacePackDetailPage({ params }) {
+//
+// `?ref=recommendation` (Phase 0 Package E) — set by MarketplacePackCard's
+// link when this page is reached from the Recommended Worker Packs section
+// — is forwarded to the backend as `source=recommendation`, which logs the
+// pack-view signal RECOMMENDATION_ENGINE_MVP_V1.md §7 step 4 says to start
+// capturing now. A direct visit (from the full catalogue, or a bookmark)
+// carries no `ref` and logs nothing extra.
+export default async function MarketplacePackDetailPage({ params, searchParams }) {
   const { slug } = params;
+  const source = searchParams?.ref === 'recommendation' ? 'recommendation' : undefined;
   const token = getSessionToken();
 
   if (!token) {
@@ -38,7 +46,7 @@ export default async function MarketplacePackDetailPage({ params }) {
   let loadError = null;
 
   try {
-    pack = await fetchMarketplacePackDetail(token, slug);
+    pack = await fetchMarketplacePackDetail(token, slug, { source });
   } catch (error) {
     if (error instanceof ApiError && error.status === 404) {
       notFound();
