@@ -6,8 +6,8 @@ import { usePathname } from 'next/navigation';
 import { useAuth } from '@/components/portal/AuthProvider';
 
 // Minimal in-app navigation for the authenticated portal area. Every section
-// that exists today (Overview, Dashboard, Workers, Knowledge, Chat, Memory)
-// is listed unconditionally; Admin is the one exception — see ADMIN_LINK
+// that exists today (Overview, Dashboard, Workers, Knowledge, Chat, Memory,
+// Marketplace) is listed unconditionally; Admin is the one exception — see ADMIN_LINK
 // below — since the entire /portal/admin/** tree is role-gated
 // (FRONTEND_ARCHITECTURE_V1.md §C.11) and showing it to everyone would just
 // point most users at a "requires admin access" wall. New entries get added
@@ -19,6 +19,7 @@ const LINKS = [
   { href: '/portal/knowledge', label: 'Knowledge' },
   { href: '/portal/chat', label: 'Chat' },
   { href: '/portal/memory', label: 'Memory' },
+  { href: '/portal/marketplace', label: 'Marketplace' },
 ];
 
 const ADMIN_LINK = { href: '/portal/admin', label: 'Admin' };
