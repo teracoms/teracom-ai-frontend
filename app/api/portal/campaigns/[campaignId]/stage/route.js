@@ -2,12 +2,12 @@ import { NextResponse } from 'next/server';
 
 import { getSessionToken } from '@/lib/api/auth';
 import { ApiError } from '@/lib/api/client';
-import { assignDepartmentFunction } from '@/lib/api/departments';
-import { parseDepartmentFunctionPayload } from '@/lib/api/validation';
+import { updateCampaignStage } from '@/lib/api/marketing';
+import { parseCampaignStagePayload } from '@/lib/api/validation';
 
-// Same-origin proxy for DepartmentFunctionControl →
-// PATCH /departments/{department_id}/function. Admin-gated backend-side; a
-// `function` of `null` clears the tag.
+// Same-origin proxy for CampaignDetail → PATCH /campaigns/{id}/stage.
+// Campaign management (objective #5) — stage only ever moves forward;
+// the backend 400s a backward move, surfaced as-is here.
 export async function PATCH(request, { params }) {
   const token = getSessionToken();
 
@@ -22,17 +22,14 @@ export async function PATCH(request, { params }) {
     return NextResponse.json({ error: 'Invalid request body.' }, { status: 400 });
   }
 
-  const parsed = parseDepartmentFunctionPayload(payload);
+  const parsed = parseCampaignStagePayload(payload);
 
   if (!parsed.valid) {
-    return NextResponse.json(
-      { error: 'function must be "sales", "customer_success", "marketing", or null.' },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: 'A valid stage is required.' }, { status: 400 });
   }
 
   try {
-    const data = await assignDepartmentFunction(token, params.departmentId, parsed.function);
+    const data = await updateCampaignStage(token, params.campaignId, parsed.stage);
     return NextResponse.json(data);
   } catch (error) {
     if (error instanceof ApiError) {
@@ -40,6 +37,6 @@ export async function PATCH(request, { params }) {
       return NextResponse.json({ error: error.message }, { status });
     }
 
-    return NextResponse.json({ error: 'Unexpected error updating this department\'s function.' }, { status: 500 });
+    return NextResponse.json({ error: "Unexpected error updating this campaign's stage." }, { status: 500 });
   }
 }

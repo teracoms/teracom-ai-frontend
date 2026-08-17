@@ -24,6 +24,8 @@ const LINKS = [
   { href: '/portal/departments', label: 'Departments' },
   { href: '/portal/sales', label: 'Sales' },
   { href: '/portal/customer-success', label: 'Customer Success' },
+  { href: '/portal/marketing', label: 'Marketing' },
+  { href: '/portal/media-centre', label: 'Media Centre' },
 ];
 
 const ADMIN_LINK = { href: '/portal/admin', label: 'Admin' };

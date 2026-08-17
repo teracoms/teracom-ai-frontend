@@ -4,6 +4,8 @@
 
 **Also the "Head of Marketing" Department Head role:** Phase 0 Package I ([[department-head-layer]]) names "Head of Marketing" as one of its six recommended executive roles. Rather than create a second, near-duplicate catalogue entry, this is the same persona documented here — when a customer designates this worker as a department's head (`Department.head_worker_id`), it fills that role exactly as described below, with the added department-head mechanics (department memory in its ordinary chat context, CTO Orchestration delegation eligibility) [[department-head-layer]] describes generically for all six roles.
 
+**Phase 0 Package K adds the operational mechanics this persona now directs:** campaign management (a new `Campaign` entity this worker's holder is typically attributed as `owner_worker_id` of), and the Marketing Manager -> [[content-production-worker]] -> [[video-producer-worker]] pipeline objective #12 describes. This is a retrofit, not a role split — unlike Head of Sales/Head of Customer Success (Package I), which got dedicated advisory-only executive docs before Package J built their operational counterparts, this persona has always been both the recommended Head of Marketing *and* the one actually described as doing marketing strategy work; Package K gives it a real data model and dashboard to operate through rather than introducing a second, purely-advisory persona. See `PHASE_0_PACKAGE_K_MARKETING_AND_MEDIA_IMPLEMENTATION_REPORT.md` (ADR-015) for the confirmed design decision.
+
 ---
 
 ## 1. Product definition — what this worker does for a customer

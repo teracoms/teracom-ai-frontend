@@ -1,9 +1,11 @@
 import { getSessionToken } from '@/lib/api/auth';
 import { fetchWorkerList } from '@/lib/api/workers';
 import { fetchCtoExecutions } from '@/lib/api/ctoOrchestration';
+import { fetchMarketingSummary } from '@/lib/api/marketing';
 import { errorMessage, settle } from '@/lib/api/results';
 import CtoOrchestrationPanel from '@/components/portal/CtoOrchestrationPanel';
 import CtoExecutionHistory from '@/components/portal/CtoExecutionHistory';
+import MarketingSummaryWidget from '@/components/portal/MarketingSummaryWidget';
 import EmptyState from '@/components/portal/EmptyState';
 
 export const metadata = {
@@ -27,17 +29,19 @@ export default async function CtoOrchestrationPage() {
     );
   }
 
-  // Per-section resilience (ADR-008): the worker list and the
-  // execution history are independent of each other.
-  const [workerListSettled, executionsSettled] = await Promise.allSettled([
+  // Per-section resilience (ADR-008): the worker list, execution history,
+  // and marketing summary are independent of each other.
+  const [workerListSettled, executionsSettled, marketingSummarySettled] = await Promise.allSettled([
     fetchWorkerList(token),
     fetchCtoExecutions(token),
+    fetchMarketingSummary(token),
   ]);
 
   const workerListResult = settle(workerListSettled);
   const activeWorkers = (workerListResult.value ?? []).filter((worker) => worker.status === 'active');
 
   const executionsResult = settle(executionsSettled);
+  const marketingSummaryResult = settle(marketingSummarySettled);
 
   return (
     <main>
@@ -86,6 +90,18 @@ export default async function CtoOrchestrationPage() {
             </p>
           ) : (
             <CtoExecutionHistory executions={executionsResult.value ?? []} />
+          )}
+        </div>
+      </section>
+
+      <section className="section">
+        <div className="container">
+          {marketingSummaryResult.error ? (
+            <p className="form-error" role="alert">
+              {errorMessage(marketingSummaryResult.error)}
+            </p>
+          ) : (
+            <MarketingSummaryWidget summary={marketingSummaryResult.value} />
           )}
         </div>
       </section>

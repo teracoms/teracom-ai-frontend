@@ -5,6 +5,7 @@ import { ApiError } from '@/lib/api/client';
 import { fetchDepartment, fetchDepartments, fetchDepartmentWorkers } from '@/lib/api/departments';
 import { fetchDepartmentHeadConsultations } from '@/lib/api/departmentHeads';
 import { fetchPipelineSummary } from '@/lib/api/crm';
+import { fetchMarketingSummary } from '@/lib/api/marketing';
 import { settle, errorMessage } from '@/lib/api/results';
 import DepartmentDashboard from '@/components/portal/DepartmentDashboard';
 
@@ -38,13 +39,14 @@ export default async function DepartmentDashboardPage({ params }) {
     );
   }
 
-  const [departmentResult, workersResult, allDepartmentsResult, consultationsResult, pipelineSummaryResult] =
+  const [departmentResult, workersResult, allDepartmentsResult, consultationsResult, pipelineSummaryResult, marketingSummaryResult] =
     await Promise.allSettled([
       fetchDepartment(token, departmentId),
       fetchDepartmentWorkers(token, departmentId),
       fetchDepartments(token),
       fetchDepartmentHeadConsultations(token),
       fetchPipelineSummary(token),
+      fetchMarketingSummary(token),
     ]);
 
   const department = settle(departmentResult);
@@ -76,6 +78,7 @@ export default async function DepartmentDashboardPage({ params }) {
   const allDepartments = settle(allDepartmentsResult);
   const consultations = settle(consultationsResult);
   const pipelineSummary = settle(pipelineSummaryResult);
+  const marketingSummary = settle(marketingSummaryResult);
 
   const head = department.value.head_worker_id
     ? (workers.value ?? []).find((worker) => worker.id === department.value.head_worker_id)
@@ -103,6 +106,8 @@ export default async function DepartmentDashboardPage({ params }) {
       consultations={relevantConsultations}
       pipelineSummary={pipelineSummary.value}
       pipelineSummaryError={pipelineSummary.error}
+      marketingSummary={marketingSummary.value}
+      marketingSummaryError={marketingSummary.error}
     />
   );
 }

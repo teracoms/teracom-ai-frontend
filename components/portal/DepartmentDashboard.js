@@ -4,6 +4,7 @@ import EmptyState from '@/components/portal/EmptyState';
 import DepartmentHeadConsultationPanel from '@/components/portal/DepartmentHeadConsultationPanel';
 import PipelineSummaryWidget from '@/components/portal/PipelineSummaryWidget';
 import CustomerHealthWidget from '@/components/portal/CustomerHealthWidget';
+import MarketingSummaryWidget from '@/components/portal/MarketingSummaryWidget';
 
 /**
  * The Department Head dashboard's presentational body (Phase 0 Package I).
@@ -20,6 +21,8 @@ export default function DepartmentDashboard({
   consultations,
   pipelineSummary,
   pipelineSummaryError,
+  marketingSummary,
+  marketingSummaryError,
 }) {
   return (
     <main>
@@ -53,6 +56,20 @@ export default function DepartmentDashboard({
               <PipelineSummaryWidget summary={pipelineSummary} />
             ) : (
               <CustomerHealthWidget summary={pipelineSummary} />
+            )}
+          </div>
+        </section>
+      )}
+
+      {department.function === 'marketing' && (
+        <section className="section">
+          <div className="container">
+            {marketingSummaryError ? (
+              <p className="form-error" role="alert">
+                Unable to load marketing data.
+              </p>
+            ) : (
+              <MarketingSummaryWidget summary={marketingSummary} />
             )}
           </div>
         </section>
