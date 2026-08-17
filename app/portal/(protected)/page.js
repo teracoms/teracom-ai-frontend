@@ -60,7 +60,10 @@ export default function PortalHome() {
           </article>
           <article>
             <h3>Memory</h3>
-            <p>Review facts your workers have remembered across conversations.</p>
+            <p>
+              Review facts your workers have remembered, plus department and organisation-wide
+              memory and long-term summaries.
+            </p>
             <Link className="btn btn-secondary card-action" href="/portal/memory">
               Open Memory
             </Link>

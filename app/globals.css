@@ -91,6 +91,10 @@
 .memory-group{padding-bottom:28px;border-bottom:1px solid var(--line)}
 .memory-group:last-child{border-bottom:0;padding-bottom:0}
 .memory-group .activity-list{margin-top:20px}
+/* Phase 0 Package H: Departments & Memory Intelligence (extends existing tokens/components — no new colours) */
+.department-list-view{display:grid;gap:28px}
+.memory-summary-panel{display:grid;gap:16px}
+.memory-summary-list{margin-top:8px}
 /* Portal connectors (extends existing tokens/components — no new colours) */
 .connector-card{opacity:.7}
 .connector-card .btn:disabled{cursor:not-allowed;opacity:.55}

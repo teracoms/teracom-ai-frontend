@@ -2,10 +2,12 @@ import Link from 'next/link';
 
 import { getSessionToken } from '@/lib/api/auth';
 import { fetchWorkerSummary, fetchWorkerMemories } from '@/lib/api/workers';
+import { fetchMemorySummaries } from '@/lib/api/memorySummaries';
 import { settle, errorMessage } from '@/lib/api/results';
 import { ApiError } from '@/lib/api/client';
 import AddMemoryForm from '@/components/portal/AddMemoryForm';
 import MemoryListItem from '@/components/portal/MemoryListItem';
+import MemorySummaryPanel from '@/components/portal/MemorySummaryPanel';
 import EmptyState from '@/components/portal/EmptyState';
 
 export const metadata = {
@@ -30,13 +32,15 @@ export default async function WorkerMemoryPage({ params }) {
     );
   }
 
-  const [summaryResult, memoriesResult] = await Promise.allSettled([
+  const [summaryResult, memoriesResult, summariesResult] = await Promise.allSettled([
     fetchWorkerSummary(token, workerId),
     fetchWorkerMemories(token, workerId),
+    fetchMemorySummaries(token, 'worker', workerId),
   ]);
 
   const summary = settle(summaryResult);
   const memories = settle(memoriesResult);
+  const memorySummaries = settle(summariesResult);
 
   // GET /worker-summary/{id} is ownership-checked backend-side — a worker
   // that doesn't exist or belongs to another organisation returns 404 or
@@ -112,6 +116,22 @@ export default async function WorkerMemoryPage({ params }) {
                 <MemoryListItem key={memory.id} memory={memory} workerId={workerId} />
               ))}
             </ul>
+          )}
+        </div>
+      </section>
+
+      <section className="section">
+        <div className="container">
+          <div className="section-heading left">
+            <span className="eyebrow">Retention</span>
+            <h2>Long-term summaries.</h2>
+          </div>
+          {memorySummaries.error ? (
+            <p className="form-error" role="alert">
+              {errorMessage(memorySummaries.error)}
+            </p>
+          ) : (
+            <MemorySummaryPanel scope="worker" scopeId={workerId} summaries={memorySummaries.value ?? []} />
           )}
         </div>
       </section>

@@ -1,9 +1,14 @@
+import Link from 'next/link';
+
 import { getSessionToken } from '@/lib/api/auth';
+import { decodeJwtPayload } from '@/lib/api/jwt';
 import { fetchWorkerList, fetchWorkerMemories } from '@/lib/api/workers';
 import { fetchMemorySummary } from '@/lib/api/memory';
+import { fetchDepartments } from '@/lib/api/departments';
 import { settle, errorMessage } from '@/lib/api/results';
 import StatTile from '@/components/portal/StatTile';
 import MemoryOverviewView from '@/components/portal/MemoryOverviewView';
+import EmptyState from '@/components/portal/EmptyState';
 
 export const metadata = {
   title: 'Memory | Teracom AI Portal',
@@ -29,13 +34,17 @@ export default async function MemoryPage() {
     );
   }
 
-  const [summaryResult, workersResult] = await Promise.allSettled([
+  const isAdmin = decodeJwtPayload(token)?.role === 'admin';
+
+  const [summaryResult, workersResult, departmentsResult] = await Promise.allSettled([
     fetchMemorySummary(token),
     fetchWorkerList(token),
+    fetchDepartments(token),
   ]);
 
   const summary = settle(summaryResult);
   const workersList = settle(workersResult);
+  const departments = settle(departmentsResult);
 
   // There is no "all memories for my organisation" endpoint (§C.10) — this
   // fans out one GET /memory/{worker_id} call per worker, the same bounded,
@@ -91,6 +100,65 @@ export default async function MemoryPage() {
             </p>
           ) : (
             <StatTile label="Total Memories" value={summary.value.total_memories} />
+          )}
+        </div>
+      </section>
+
+      <section className="section">
+        <div className="container">
+          <div className="section-heading left">
+            <span className="eyebrow">Memory Hierarchy</span>
+            <h2>Departments and organisation memory.</h2>
+            <p>
+              Phase 0 Package H adds two tiers above per-worker memory: department memory (any
+              organisation member can view; an admin can add) and organisation memory
+              (admin-only). Both feed into CTO Orchestration&apos;s executive synthesis.
+            </p>
+          </div>
+
+          {isAdmin && (
+            <p>
+              <Link className="btn btn-secondary btn-small" href="/portal/memory/organisation">
+                View Organisation Memory
+              </Link>{' '}
+              <Link className="btn btn-secondary btn-small" href="/portal/admin/departments">
+                Manage Departments
+              </Link>
+            </p>
+          )}
+
+          {departments.error ? (
+            <p className="form-error" role="alert">
+              {errorMessage(departments.error)}
+            </p>
+          ) : (departments.value ?? []).length === 0 ? (
+            <EmptyState
+              title="No departments yet"
+              description={
+                isAdmin
+                  ? 'Create one from Manage Departments above to unlock department-level memory.'
+                  : 'An organisation admin has not created any departments yet.'
+              }
+            />
+          ) : (
+            <ul className="activity-list">
+              {departments.value.map((department) => (
+                <li key={department.id}>
+                  <div className="assignment-row">
+                    <div>
+                      <p className="activity-title">{department.name}</p>
+                      {department.description && <p className="activity-meta">{department.description}</p>}
+                    </div>
+                    <Link
+                      className="btn btn-secondary btn-small"
+                      href={`/portal/memory/department/${department.id}`}
+                    >
+                      View Memory
+                    </Link>
+                  </div>
+                </li>
+              ))}
+            </ul>
           )}
         </div>
       </section>
