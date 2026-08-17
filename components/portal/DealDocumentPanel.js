@@ -14,6 +14,65 @@ const ENDPOINTS = {
 const LABELS = { proposal: 'Proposal', quote: 'Quote', contract: 'Contract' };
 
 /**
+ * Phase 0 Package M — an inline internal-cost-estimate control for a
+ * single proposal, distinct from and alongside the customer-facing
+ * `amount` field. Not a pricing decision, so no admin gate — any org
+ * member may set it.
+ */
+function ProposalCostEstimateField({ proposal, onSaved }) {
+  const [value, setValue] = useState(proposal.internal_cost_estimate ?? '');
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState(null);
+
+  async function handleSave() {
+    if (value === '' || Number.isNaN(Number(value))) return;
+
+    setError(null);
+    setSaving(true);
+
+    try {
+      const response = await fetch(`/api/portal/proposals/${proposal.id}/cost-estimate`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ internal_cost_estimate: Number(value) }),
+      });
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(data.error || "Unable to update this proposal's cost estimate.");
+      }
+
+      onSaved?.();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unable to update this proposal's cost estimate.");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <div>
+      <input
+        type="number"
+        value={value}
+        onChange={(event) => setValue(event.target.value)}
+        placeholder="Internal cost estimate"
+        disabled={saving}
+        aria-label={`Internal cost estimate for ${proposal.title}`}
+      />{' '}
+      <button type="button" className="btn btn-secondary btn-small" onClick={handleSave} disabled={saving || value === ''}>
+        {saving ? 'Saving...' : 'Save Cost Estimate'}
+      </button>
+      {error && (
+        <p className="form-error" role="alert">
+          {error}
+        </p>
+      )}
+    </div>
+  );
+}
+
+/**
  * Phase 0 Package J — one shared component for all three approval-gated
  * document kinds (proposal/quote/contract), parametrised by `{kind,
  * contactId}` — the same "one shared component, not three near-duplicates"
@@ -21,7 +80,9 @@ const LABELS = { proposal: 'Proposal', quote: 'Quote', contract: 'Contract' };
  * `kind="proposal"` gets the "Draft with AI" affordance — quotes/contracts
  * are always human-entered (see lib/api/dealDocuments.js). Decide
  * (approve/reject) buttons only render for an admin — a presentation-layer
- * convenience, the real gate is backend-side.
+ * convenience, the real gate is backend-side. `kind="proposal"` rows also
+ * get a `ProposalCostEstimateField` (Phase 0 Package M) — an internal
+ * cost-to-deliver figure, distinct from the customer-facing `amount`.
  */
 export default function DealDocumentPanel({ kind, contactId, documents, workers }) {
   const { user } = useAuth();
@@ -233,6 +294,12 @@ export default function DealDocumentPanel({ kind, contactId, documents, workers 
                   </p>
                   <p className="activity-meta">{document.content}</p>
                   {document.amount != null && <p className="activity-meta">Amount: {document.amount}</p>}
+                  {kind === 'proposal' && document.internal_cost_estimate != null && (
+                    <p className="activity-meta">Internal cost estimate: {document.internal_cost_estimate}</p>
+                  )}
+                  {kind === 'proposal' && (
+                    <ProposalCostEstimateField proposal={document} onSaved={() => router.refresh()} />
+                  )}
                 </div>
                 <div>
                   {document.status === 'draft' && kind === 'proposal' && (

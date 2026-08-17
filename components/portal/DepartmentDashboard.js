@@ -5,6 +5,8 @@ import DepartmentHeadConsultationPanel from '@/components/portal/DepartmentHeadC
 import PipelineSummaryWidget from '@/components/portal/PipelineSummaryWidget';
 import CustomerHealthWidget from '@/components/portal/CustomerHealthWidget';
 import MarketingSummaryWidget from '@/components/portal/MarketingSummaryWidget';
+import FinanceSummaryWidget from '@/components/portal/FinanceSummaryWidget';
+import DepartmentBudgetPanel from '@/components/portal/DepartmentBudgetPanel';
 
 /**
  * The Department Head dashboard's presentational body (Phase 0 Package I).
@@ -23,6 +25,9 @@ export default function DepartmentDashboard({
   pipelineSummaryError,
   marketingSummary,
   marketingSummaryError,
+  financeSummary,
+  financeSummaryError,
+  departmentBudgets,
 }) {
   return (
     <main>
@@ -73,6 +78,27 @@ export default function DepartmentDashboard({
             )}
           </div>
         </section>
+      )}
+
+      {department.function === 'finance' && (
+        <>
+          <section className="section">
+            <div className="container">
+              {financeSummaryError ? (
+                <p className="form-error" role="alert">
+                  Unable to load finance data.
+                </p>
+              ) : (
+                <FinanceSummaryWidget summary={financeSummary} />
+              )}
+            </div>
+          </section>
+          <section className="section alt">
+            <div className="container">
+              <DepartmentBudgetPanel departmentId={department.id} budgets={departmentBudgets} />
+            </div>
+          </section>
+        </>
       )}
 
       <section className="section">

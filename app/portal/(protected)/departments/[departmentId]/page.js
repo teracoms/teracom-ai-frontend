@@ -6,6 +6,8 @@ import { fetchDepartment, fetchDepartments, fetchDepartmentWorkers } from '@/lib
 import { fetchDepartmentHeadConsultations } from '@/lib/api/departmentHeads';
 import { fetchPipelineSummary } from '@/lib/api/crm';
 import { fetchMarketingSummary } from '@/lib/api/marketing';
+import { fetchFinanceSummary } from '@/lib/api/finance';
+import { fetchDepartmentBudgets } from '@/lib/api/departmentBudgets';
 import { settle, errorMessage } from '@/lib/api/results';
 import DepartmentDashboard from '@/components/portal/DepartmentDashboard';
 
@@ -39,15 +41,25 @@ export default async function DepartmentDashboardPage({ params }) {
     );
   }
 
-  const [departmentResult, workersResult, allDepartmentsResult, consultationsResult, pipelineSummaryResult, marketingSummaryResult] =
-    await Promise.allSettled([
-      fetchDepartment(token, departmentId),
-      fetchDepartmentWorkers(token, departmentId),
-      fetchDepartments(token),
-      fetchDepartmentHeadConsultations(token),
-      fetchPipelineSummary(token),
-      fetchMarketingSummary(token),
-    ]);
+  const [
+    departmentResult,
+    workersResult,
+    allDepartmentsResult,
+    consultationsResult,
+    pipelineSummaryResult,
+    marketingSummaryResult,
+    financeSummaryResult,
+    departmentBudgetsResult,
+  ] = await Promise.allSettled([
+    fetchDepartment(token, departmentId),
+    fetchDepartmentWorkers(token, departmentId),
+    fetchDepartments(token),
+    fetchDepartmentHeadConsultations(token),
+    fetchPipelineSummary(token),
+    fetchMarketingSummary(token),
+    fetchFinanceSummary(token),
+    fetchDepartmentBudgets(token, departmentId),
+  ]);
 
   const department = settle(departmentResult);
 
@@ -79,6 +91,8 @@ export default async function DepartmentDashboardPage({ params }) {
   const consultations = settle(consultationsResult);
   const pipelineSummary = settle(pipelineSummaryResult);
   const marketingSummary = settle(marketingSummaryResult);
+  const financeSummary = settle(financeSummaryResult);
+  const departmentBudgets = settle(departmentBudgetsResult);
 
   const head = department.value.head_worker_id
     ? (workers.value ?? []).find((worker) => worker.id === department.value.head_worker_id)
@@ -108,6 +122,9 @@ export default async function DepartmentDashboardPage({ params }) {
       pipelineSummaryError={pipelineSummary.error}
       marketingSummary={marketingSummary.value}
       marketingSummaryError={marketingSummary.error}
+      financeSummary={financeSummary.value}
+      financeSummaryError={financeSummary.error}
+      departmentBudgets={departmentBudgets.value ?? []}
     />
   );
 }

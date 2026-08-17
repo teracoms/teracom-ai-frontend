@@ -2,12 +2,12 @@ import { NextResponse } from 'next/server';
 
 import { getSessionToken } from '@/lib/api/auth';
 import { ApiError } from '@/lib/api/client';
-import { assignDepartmentFunction } from '@/lib/api/departments';
-import { parseDepartmentFunctionPayload } from '@/lib/api/validation';
+import { setProposalCostEstimate } from '@/lib/api/dealDocuments';
+import { parseProposalCostEstimatePayload } from '@/lib/api/validation';
 
-// Same-origin proxy for DepartmentFunctionControl →
-// PATCH /departments/{department_id}/function. Admin-gated backend-side; a
-// `function` of `null` clears the tag.
+// Same-origin proxy for DealDocumentPanel's internal-cost-estimate field
+// (kind="proposal") → PATCH /proposals/{id}/cost-estimate. Not a pricing
+// decision, so no admin gate backend-side — any org member may set it.
 export async function PATCH(request, { params }) {
   const token = getSessionToken();
 
@@ -22,17 +22,14 @@ export async function PATCH(request, { params }) {
     return NextResponse.json({ error: 'Invalid request body.' }, { status: 400 });
   }
 
-  const parsed = parseDepartmentFunctionPayload(payload);
+  const parsed = parseProposalCostEstimatePayload(payload);
 
   if (!parsed.valid) {
-    return NextResponse.json(
-      { error: 'function must be "sales", "customer_success", "marketing", "finance", or null.' },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: 'A numeric internal_cost_estimate is required.' }, { status: 400 });
   }
 
   try {
-    const data = await assignDepartmentFunction(token, params.departmentId, parsed.function);
+    const data = await setProposalCostEstimate(token, params.proposalId, parsed.internal_cost_estimate);
     return NextResponse.json(data);
   } catch (error) {
     if (error instanceof ApiError) {
@@ -40,6 +37,6 @@ export async function PATCH(request, { params }) {
       return NextResponse.json({ error: error.message }, { status });
     }
 
-    return NextResponse.json({ error: 'Unexpected error updating this department\'s function.' }, { status: 500 });
+    return NextResponse.json({ error: "Unexpected error updating this proposal's cost estimate." }, { status: 500 });
   }
 }

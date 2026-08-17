@@ -26,9 +26,9 @@ Human → Orchestrator → CTO → CFO → Head of Sales → Head of Marketing
 | Direct Department Head communication | **New in Package I** — `POST /department-heads/consult`, restricted to current department heads, reusing Package F's `execute_consultation()` unchanged. |
 | Human approval for new worker creation | Already enforced since Package 1 — `POST /workers/` is `require_role("admin")`-gated. Package I does not add a second, parallel approval workflow for this. |
 | Human approval for organisational restructuring | Already enforced — `POST /departments/`, `PATCH /workers/{id}/department`, `PATCH /departments/{id}/head` are all admin-gated (the last two, admin-gated since Package H/I respectively). |
-| Human approval for financial commitments | **Not applicable.** No such capability exists anywhere in this backend to gate — confirmed by Package 9's own report (zero billing/commerce backend). |
-| Human approval for contracts | **Not applicable**, same reason. |
-| Human approval for customer pricing decisions | **Not applicable**, same reason — Package 9's Billing & Licensing UX remains a scaffold over illustrative reference data, not a real pricing mechanism. |
+| Human approval for financial commitments | **Superseded — now enforced.** This row was accurate when written (2026-08-17, before Package J shipped hours later the same day) but is stale as a current statement; corrected here per `PROJECT_STATE.md`'s own rule that the code wins over a stale doc. `Proposal`/`Quote`/`Contract` (Package J) and `DepartmentBudget` (Package M) each require a submit → organisation-admin-decide gate before anything means anything — see ADR-014/ADR-017. |
+| Human approval for contracts | **Superseded — now enforced.** `Contract`'s own submit → organisation-admin-decide gate (Package J) — see ADR-014. |
+| Human approval for customer pricing decisions | **Superseded — now enforced.** `Quote`/`Contract.amount` is the customer-facing price, gated by the same admin-decide action (Package J) — see ADR-014. Package 9's Billing & Licensing UX remains a separate, still-unbuilt *commercial billing* scaffold (invoicing/subscriptions), unrelated to this per-deal pricing gate. |
 
 ## 4. CTO Orchestration integration (objectives #8, #10)
 

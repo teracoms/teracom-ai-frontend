@@ -3,11 +3,13 @@ import { fetchWorkerList } from '@/lib/api/workers';
 import { fetchCtoExecutions } from '@/lib/api/ctoOrchestration';
 import { fetchMarketingSummary } from '@/lib/api/marketing';
 import { fetchFederationSummary } from '@/lib/api/federation';
+import { fetchFinanceSummary } from '@/lib/api/finance';
 import { errorMessage, settle } from '@/lib/api/results';
 import CtoOrchestrationPanel from '@/components/portal/CtoOrchestrationPanel';
 import CtoExecutionHistory from '@/components/portal/CtoExecutionHistory';
 import MarketingSummaryWidget from '@/components/portal/MarketingSummaryWidget';
 import FederationSummaryWidget from '@/components/portal/FederationSummaryWidget';
+import FinanceSummaryWidget from '@/components/portal/FinanceSummaryWidget';
 import EmptyState from '@/components/portal/EmptyState';
 
 export const metadata = {
@@ -32,14 +34,21 @@ export default async function CtoOrchestrationPage() {
   }
 
   // Per-section resilience (ADR-008): the worker list, execution history,
-  // marketing summary, and federation summary are independent of each other.
-  const [workerListSettled, executionsSettled, marketingSummarySettled, federationSummarySettled] =
-    await Promise.allSettled([
-      fetchWorkerList(token),
-      fetchCtoExecutions(token),
-      fetchMarketingSummary(token),
-      fetchFederationSummary(token),
-    ]);
+  // marketing summary, federation summary, and finance summary are
+  // independent of each other.
+  const [
+    workerListSettled,
+    executionsSettled,
+    marketingSummarySettled,
+    federationSummarySettled,
+    financeSummarySettled,
+  ] = await Promise.allSettled([
+    fetchWorkerList(token),
+    fetchCtoExecutions(token),
+    fetchMarketingSummary(token),
+    fetchFederationSummary(token),
+    fetchFinanceSummary(token),
+  ]);
 
   const workerListResult = settle(workerListSettled);
   const activeWorkers = (workerListResult.value ?? []).filter((worker) => worker.status === 'active');
@@ -47,6 +56,7 @@ export default async function CtoOrchestrationPage() {
   const executionsResult = settle(executionsSettled);
   const marketingSummaryResult = settle(marketingSummarySettled);
   const federationSummaryResult = settle(federationSummarySettled);
+  const financeSummaryResult = settle(financeSummarySettled);
 
   return (
     <main>
@@ -119,6 +129,18 @@ export default async function CtoOrchestrationPage() {
             </p>
           ) : (
             <FederationSummaryWidget summary={federationSummaryResult.value} />
+          )}
+        </div>
+      </section>
+
+      <section className="section">
+        <div className="container">
+          {financeSummaryResult.error ? (
+            <p className="form-error" role="alert">
+              {errorMessage(financeSummaryResult.error)}
+            </p>
+          ) : (
+            <FinanceSummaryWidget summary={financeSummaryResult.value} />
           )}
         </div>
       </section>

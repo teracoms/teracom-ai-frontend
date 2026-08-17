@@ -27,6 +27,7 @@ const LINKS = [
   { href: '/portal/marketing', label: 'Marketing' },
   { href: '/portal/media-centre', label: 'Media Centre' },
   { href: '/portal/federation', label: 'Federation' },
+  { href: '/portal/finance', label: 'Finance' },
 ];
 
 const ADMIN_LINK = { href: '/portal/admin', label: 'Admin' };
