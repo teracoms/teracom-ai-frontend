@@ -1,6 +1,6 @@
 # Worker Catalogue
 
-**Status:** Roster of 15 worker types approved by the project owner, 2026-08-15 (9 original + Marketing Manager Worker and Content Production Worker added 2026-08-15) plus 2026-08-17 (CFO, Head of Sales, Head of Operations, Head of Customer Success Workers added — the recommended Executive/Department Head roster's remaining four; CTO Worker and Marketing Manager Worker already covered "CTO" and "Head of Marketing"). This is the commercial/functional catalogue definition — for the technical mechanism a "worker" runs on, see [[backend-status]] §Domain model. For how workers map to editions/seats, see [[product-editions]]. For the Department Head structural layer these six roles are recommended for, see [[department-head-layer]] (Phase 0 Package I) — none of the six is auto-created or bootstrapped; an admin creates and assigns each one manually, exactly like any other worker/department in this catalogue.
+**Status:** Roster of 17 worker types approved by the project owner, 2026-08-15 (9 original + Marketing Manager Worker and Content Production Worker added 2026-08-15), 2026-08-17 (CFO, Head of Sales, Head of Operations, Head of Customer Success Workers added — the recommended Executive/Department Head roster's remaining four; CTO Worker and Marketing Manager Worker already covered "CTO" and "Head of Marketing"), and same-day (Sales Manager Worker, Customer Success Manager Worker added — Phase 0 Package J's operational, "doer" counterparts to the advisory-only Head of Sales/Head of Customer Success Department Head personas). This is the commercial/functional catalogue definition — for the technical mechanism a "worker" runs on, see [[backend-status]] §Domain model. For how workers map to editions/seats, see [[product-editions]]. For the Department Head structural layer six of these roles are recommended for, see [[department-head-layer]] (Phase 0 Package I) — none of the six is auto-created or bootstrapped; an admin creates and assigns each one manually, exactly like any other worker/department in this catalogue.
 
 ---
 
@@ -10,7 +10,7 @@ In `teracom-ai-backend`, a Worker is a row in the `workers` table: `name, role, 
 
 This means the catalogue below is a **commercial/product catalogue of worker personas**, not yet 11 rows seeded in any database — no worker type below is currently instantiated in the backend. Standing up the catalogue (seed data, default `instructions` templates, default knowledge assignments) is unbuilt work, not yet sequenced in [[roadmap]] — the roadmap so far only covers the generic worker CRUD screens (Package 3), which manage whatever workers a customer creates, not a specific catalogue seeding mechanism.
 
-## The 15 approved worker types
+## The 17 approved worker types
 
 | Worker | One-line purpose | Detail | Recommended Department Head role? |
 |---|---|---|---|
@@ -29,8 +29,12 @@ This means the catalogue below is a **commercial/product catalogue of worker per
 | **Head of Sales Worker** | Pipeline review, deal structuring, negotiation preparation | [[head-of-sales-worker]] | Head of Sales |
 | **Head of Operations Worker** | Cross-functional process, resourcing, recurring operational execution | [[head-of-operations-worker]] | Head of Operations |
 | **Head of Customer Success Worker** | Retention, onboarding, account health | [[head-of-customer-success-worker]] | Head of Customer Success |
+| **Sales Manager Worker** | Operational: prospect intake, lead qualification, proposal drafting | [[sales-manager-worker]] | — |
+| **Customer Success Manager Worker** | Operational: customer health tracking, onboarding checklist execution | [[customer-success-manager-worker]] | — |
 
 The four rightmost-marked rows plus CTO Worker and Marketing Manager Worker are the six roles [[department-head-layer]] (Phase 0 Package I) recommends for the target executive hierarchy (Human → Orchestrator → CTO → CFO → Head of Sales → Head of Marketing → Head of Operations → Head of Customer Success → Specialist Workers). "Recommended" is doing real work in that sentence: none of the six is auto-created, seeded, or bootstrapped by any endpoint — an admin creates each department and worker and assigns headship manually, one action at a time, exactly like every other worker/department in this catalogue. A customer is free to use any worker as a department head, or none at all; these six are simply the documented, recommended starting point.
+
+**Sales Manager Worker and Customer Success Manager Worker are deliberately not on this Department Head list.** They are Phase 0 Package J's operational, "doer" personas — the ones that actually run prospect intake, lead progression, proposal drafting, and onboarding-checklist execution — distinct from Head of Sales/Head of Customer Success, which Package I built as advisory-only executives that explicitly decline any operational role. A customer's actual Sales department might reasonably be headed by a Head of Sales Worker while staffed with one or more Sales Manager Workers doing the day-to-day work; nothing in this catalogue or the backend prevents also designating a Sales Manager Worker as a department head, but it is not the recommended pairing.
 
 Each linked document follows the same shape (per [[worker-operating-standards]]): purpose, scope boundaries (what this worker does *not* do), inputs it should read before acting, outputs/artifacts it produces, and how it should use this knowledge base.
 

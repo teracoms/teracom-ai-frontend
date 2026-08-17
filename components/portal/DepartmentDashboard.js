@@ -2,6 +2,8 @@ import Link from 'next/link';
 
 import EmptyState from '@/components/portal/EmptyState';
 import DepartmentHeadConsultationPanel from '@/components/portal/DepartmentHeadConsultationPanel';
+import PipelineSummaryWidget from '@/components/portal/PipelineSummaryWidget';
+import CustomerHealthWidget from '@/components/portal/CustomerHealthWidget';
 
 /**
  * The Department Head dashboard's presentational body (Phase 0 Package I).
@@ -16,6 +18,8 @@ export default function DepartmentDashboard({
   otherHeads,
   headWorkerId,
   consultations,
+  pipelineSummary,
+  pipelineSummaryError,
 }) {
   return (
     <main>
@@ -37,6 +41,22 @@ export default function DepartmentDashboard({
           </div>
         </div>
       </section>
+
+      {(department.function === 'sales' || department.function === 'customer_success') && (
+        <section className="section">
+          <div className="container">
+            {pipelineSummaryError ? (
+              <p className="form-error" role="alert">
+                Unable to load pipeline data.
+              </p>
+            ) : department.function === 'sales' ? (
+              <PipelineSummaryWidget summary={pipelineSummary} />
+            ) : (
+              <CustomerHealthWidget summary={pipelineSummary} />
+            )}
+          </div>
+        </section>
+      )}
 
       <section className="section">
         <div className="container">

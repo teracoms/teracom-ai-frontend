@@ -4,6 +4,7 @@ import { getSessionToken } from '@/lib/api/auth';
 import { ApiError } from '@/lib/api/client';
 import { fetchDepartment, fetchDepartments, fetchDepartmentWorkers } from '@/lib/api/departments';
 import { fetchDepartmentHeadConsultations } from '@/lib/api/departmentHeads';
+import { fetchPipelineSummary } from '@/lib/api/crm';
 import { settle, errorMessage } from '@/lib/api/results';
 import DepartmentDashboard from '@/components/portal/DepartmentDashboard';
 
@@ -37,12 +38,13 @@ export default async function DepartmentDashboardPage({ params }) {
     );
   }
 
-  const [departmentResult, workersResult, allDepartmentsResult, consultationsResult] =
+  const [departmentResult, workersResult, allDepartmentsResult, consultationsResult, pipelineSummaryResult] =
     await Promise.allSettled([
       fetchDepartment(token, departmentId),
       fetchDepartmentWorkers(token, departmentId),
       fetchDepartments(token),
       fetchDepartmentHeadConsultations(token),
+      fetchPipelineSummary(token),
     ]);
 
   const department = settle(departmentResult);
@@ -73,6 +75,7 @@ export default async function DepartmentDashboardPage({ params }) {
   const workers = settle(workersResult);
   const allDepartments = settle(allDepartmentsResult);
   const consultations = settle(consultationsResult);
+  const pipelineSummary = settle(pipelineSummaryResult);
 
   const head = department.value.head_worker_id
     ? (workers.value ?? []).find((worker) => worker.id === department.value.head_worker_id)
@@ -98,6 +101,8 @@ export default async function DepartmentDashboardPage({ params }) {
       otherHeads={otherHeads}
       headWorkerId={head?.id ?? null}
       consultations={relevantConsultations}
+      pipelineSummary={pipelineSummary.value}
+      pipelineSummaryError={pipelineSummary.error}
     />
   );
 }

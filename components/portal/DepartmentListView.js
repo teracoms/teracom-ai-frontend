@@ -3,6 +3,7 @@ import Link from 'next/link';
 import EmptyState from '@/components/portal/EmptyState';
 import AssignWorkerDepartmentControl from '@/components/portal/AssignWorkerDepartmentControl';
 import AssignDepartmentHeadControl from '@/components/portal/AssignDepartmentHeadControl';
+import DepartmentFunctionControl from '@/components/portal/DepartmentFunctionControl';
 
 /**
  * Admin-only management surface for Phase 0 Package H: lists every
@@ -34,6 +35,7 @@ export default function DepartmentListView({ departments, workers }) {
                   {department.description && <p className="activity-meta">{department.description}</p>}
                 </div>
                 <AssignDepartmentHeadControl department={department} workers={workers} />
+                <DepartmentFunctionControl department={department} />
                 <Link className="btn btn-secondary btn-small" href={`/portal/departments/${department.id}`}>
                   Dashboard
                 </Link>

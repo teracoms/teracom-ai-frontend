@@ -22,6 +22,8 @@ const LINKS = [
   { href: '/portal/marketplace', label: 'Marketplace' },
   { href: '/portal/cto', label: 'CTO' },
   { href: '/portal/departments', label: 'Departments' },
+  { href: '/portal/sales', label: 'Sales' },
+  { href: '/portal/customer-success', label: 'Customer Success' },
 ];
 
 const ADMIN_LINK = { href: '/portal/admin', label: 'Admin' };
