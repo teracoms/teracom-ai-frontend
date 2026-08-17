@@ -2,6 +2,7 @@ import { getSessionToken } from '@/lib/api/auth';
 import { fetchOrganisationSummary } from '@/lib/api/dashboard';
 import { isForbidden, errorMessage } from '@/lib/api/results';
 import OrganisationSummaryCard from '@/components/portal/OrganisationSummaryCard';
+import FederationEnabledToggle from '@/components/portal/FederationEnabledToggle';
 
 export const metadata = {
   title: 'Organisation | Teracom AI Portal',
@@ -54,8 +55,9 @@ export default async function AdminOrganisationPage() {
             <span className="eyebrow">Organisation</span>
             <h1>Your organisation.</h1>
             <p className="lead">
-              A read-only profile — teracom-ai-backend records only a name and slug per
-              organisation today, no plan, seats or billing fields yet.
+              A read-only profile — teracom-ai-backend records only a name, slug, and (as of
+              Phase 0 Package L) a federation-consultation setting per organisation today, no
+              plan, seats or billing fields yet.
             </p>
           </div>
         </div>
@@ -72,6 +74,22 @@ export default async function AdminOrganisationPage() {
           )}
         </div>
       </section>
+
+      {!restricted && !loadError && organisation && (
+        <section className="section alt">
+          <div className="container">
+            <div className="section-heading left">
+              <span className="eyebrow">Governance</span>
+              <h2>Federation consultation.</h2>
+              <p>
+                Phase 0 Package L, objective #6 — turn Federation consultation off for this
+                organisation entirely, regardless of licence tier.
+              </p>
+            </div>
+            <FederationEnabledToggle organisation={organisation} />
+          </div>
+        </section>
+      )}
     </main>
   );
 }

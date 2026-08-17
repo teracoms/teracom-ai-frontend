@@ -2,10 +2,12 @@ import { getSessionToken } from '@/lib/api/auth';
 import { fetchWorkerList } from '@/lib/api/workers';
 import { fetchCtoExecutions } from '@/lib/api/ctoOrchestration';
 import { fetchMarketingSummary } from '@/lib/api/marketing';
+import { fetchFederationSummary } from '@/lib/api/federation';
 import { errorMessage, settle } from '@/lib/api/results';
 import CtoOrchestrationPanel from '@/components/portal/CtoOrchestrationPanel';
 import CtoExecutionHistory from '@/components/portal/CtoExecutionHistory';
 import MarketingSummaryWidget from '@/components/portal/MarketingSummaryWidget';
+import FederationSummaryWidget from '@/components/portal/FederationSummaryWidget';
 import EmptyState from '@/components/portal/EmptyState';
 
 export const metadata = {
@@ -30,18 +32,21 @@ export default async function CtoOrchestrationPage() {
   }
 
   // Per-section resilience (ADR-008): the worker list, execution history,
-  // and marketing summary are independent of each other.
-  const [workerListSettled, executionsSettled, marketingSummarySettled] = await Promise.allSettled([
-    fetchWorkerList(token),
-    fetchCtoExecutions(token),
-    fetchMarketingSummary(token),
-  ]);
+  // marketing summary, and federation summary are independent of each other.
+  const [workerListSettled, executionsSettled, marketingSummarySettled, federationSummarySettled] =
+    await Promise.allSettled([
+      fetchWorkerList(token),
+      fetchCtoExecutions(token),
+      fetchMarketingSummary(token),
+      fetchFederationSummary(token),
+    ]);
 
   const workerListResult = settle(workerListSettled);
   const activeWorkers = (workerListResult.value ?? []).filter((worker) => worker.status === 'active');
 
   const executionsResult = settle(executionsSettled);
   const marketingSummaryResult = settle(marketingSummarySettled);
+  const federationSummaryResult = settle(federationSummarySettled);
 
   return (
     <main>
@@ -102,6 +107,18 @@ export default async function CtoOrchestrationPage() {
             </p>
           ) : (
             <MarketingSummaryWidget summary={marketingSummaryResult.value} />
+          )}
+        </div>
+      </section>
+
+      <section className="section alt">
+        <div className="container">
+          {federationSummaryResult.error ? (
+            <p className="form-error" role="alert">
+              {errorMessage(federationSummaryResult.error)}
+            </p>
+          ) : (
+            <FederationSummaryWidget summary={federationSummaryResult.value} />
           )}
         </div>
       </section>
