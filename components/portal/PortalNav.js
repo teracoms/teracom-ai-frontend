@@ -29,6 +29,7 @@ const LINKS = [
   { href: '/portal/federation', label: 'Federation' },
   { href: '/portal/finance', label: 'Finance' },
   { href: '/portal/operations', label: 'Operations' },
+  { href: '/portal/support', label: 'Support' },
 ];
 
 const ADMIN_LINK = { href: '/portal/admin', label: 'Admin' };

@@ -6,10 +6,14 @@ import { fetchContact } from '@/lib/api/crm';
 import { fetchProposals, fetchQuotes, fetchContracts } from '@/lib/api/dealDocuments';
 import { fetchOnboardingTasks } from '@/lib/api/onboardingTasks';
 import { fetchWorkerList } from '@/lib/api/workers';
+import { fetchPortalAccountForContact } from '@/lib/api/portalContactAccounts';
+import { fetchSupportRequests } from '@/lib/api/supportRequests';
 import { settle, errorMessage } from '@/lib/api/results';
 import ContactDetail from '@/components/portal/ContactDetail';
 import DealDocumentPanel from '@/components/portal/DealDocumentPanel';
 import OnboardingChecklist from '@/components/portal/OnboardingChecklist';
+import PortalAccountPanel from '@/components/portal/PortalAccountPanel';
+import SupportRequestPanel from '@/components/portal/SupportRequestPanel';
 
 export const metadata = {
   title: 'Contact | Teracom AI Portal',
@@ -39,15 +43,25 @@ export default async function ContactDetailPage({ params }) {
     );
   }
 
-  const [contactResult, proposalsResult, quotesResult, contractsResult, tasksResult, workersResult] =
-    await Promise.allSettled([
-      fetchContact(token, contactId),
-      fetchProposals(token, contactId),
-      fetchQuotes(token, contactId),
-      fetchContracts(token, contactId),
-      fetchOnboardingTasks(token, contactId),
-      fetchWorkerList(token),
-    ]);
+  const [
+    contactResult,
+    proposalsResult,
+    quotesResult,
+    contractsResult,
+    tasksResult,
+    workersResult,
+    portalAccountResult,
+    supportRequestsResult,
+  ] = await Promise.allSettled([
+    fetchContact(token, contactId),
+    fetchProposals(token, contactId),
+    fetchQuotes(token, contactId),
+    fetchContracts(token, contactId),
+    fetchOnboardingTasks(token, contactId),
+    fetchWorkerList(token),
+    fetchPortalAccountForContact(token, contactId),
+    fetchSupportRequests(token, { crm_contact_id: contactId }),
+  ]);
 
   const contact = settle(contactResult);
 
@@ -80,6 +94,8 @@ export default async function ContactDetailPage({ params }) {
   const tasks = settle(tasksResult);
   const workers = settle(workersResult);
   const activeWorkers = (workers.value ?? []).filter((worker) => worker.status === 'active');
+  const portalAccount = settle(portalAccountResult);
+  const supportRequests = settle(supportRequestsResult);
 
   return (
     <main>
@@ -152,6 +168,34 @@ export default async function ContactDetailPage({ params }) {
           </div>
         </section>
       )}
+
+      <section className="section alt">
+        <div className="container">
+          {portalAccount.error ? (
+            <p className="form-error" role="alert">
+              {errorMessage(portalAccount.error)}
+            </p>
+          ) : (
+            <PortalAccountPanel contactId={contactId} portalAccount={portalAccount.value} />
+          )}
+        </div>
+      </section>
+
+      <section className="section">
+        <div className="container">
+          <div className="section-heading left">
+            <span className="eyebrow">Support</span>
+            <h2>Support requests.</h2>
+          </div>
+          {supportRequests.error ? (
+            <p className="form-error" role="alert">
+              {errorMessage(supportRequests.error)}
+            </p>
+          ) : (
+            <SupportRequestPanel requests={supportRequests.value ?? []} />
+          )}
+        </div>
+      </section>
     </main>
   );
 }

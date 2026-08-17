@@ -25,10 +25,21 @@ export default function CustomerHealthWidget({ summary }) {
           <p className="activity-title">Churned</p>
           <p className="activity-meta">{summary.health_counts.churned}</p>
         </li>
+        <li>
+          <p className="activity-title">Customer Portal accounts</p>
+          <p className="activity-meta">{summary.portal_accounts_count}</p>
+        </li>
+        <li>
+          <p className="activity-title">Open support requests</p>
+          <p className="activity-meta">{summary.open_support_requests_count}</p>
+        </li>
       </ul>
       <p>
         <Link className="btn btn-secondary btn-small" href="/portal/customer-success">
           Open Customer Success Workspace
+        </Link>{' '}
+        <Link className="btn btn-secondary btn-small" href="/portal/support">
+          Open Support Inbox
         </Link>
       </p>
     </div>

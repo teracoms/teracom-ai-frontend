@@ -10,6 +10,8 @@ The Customer Success Manager Worker persona is the **operational, "doer" counter
 
 **Typical uses:** marking a new customer's health status, seeding a default onboarding checklist for a newly-closed account, marking onboarding steps complete, reviewing which customers are at risk.
 
+**Phase 0 Package O extends this persona's existing scope with real data for the first time:** the Customer Portal gives customers their own self-service view (proposals/quotes/contracts, onboarding progress, projects, support/incident requests, and a communications timeline), and this worker's holder is the natural staff-side counterpart — monitoring the org-wide support inbox (`/portal/support`) and a contact's own portal-access panel and support requests on `ContactDetailPage`, replying to customer messages, and progressing request status. This is not a new persona and does not change this worker's own escalation boundary (§3): responding to a support request or updating its status is operational execution, not a financial, contractual, or pricing decision.
+
 **Explicitly not this worker's job:** setting customer pricing or approving contract/renewal terms — same explicit boundary [[head-of-customer-success-worker]] already states. This worker manages retention and onboarding execution; it does not set or approve the commercial terms underneath a customer relationship.
 
 ## 2. As a contributor role operating on this repository
