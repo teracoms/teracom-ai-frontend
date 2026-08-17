@@ -8,6 +8,9 @@ import { fetchPipelineSummary } from '@/lib/api/crm';
 import { fetchMarketingSummary } from '@/lib/api/marketing';
 import { fetchFinanceSummary } from '@/lib/api/finance';
 import { fetchDepartmentBudgets } from '@/lib/api/departmentBudgets';
+import { fetchOperationsSummary } from '@/lib/api/operations';
+import { fetchProjects } from '@/lib/api/projects';
+import { fetchTasks } from '@/lib/api/tasks';
 import { settle, errorMessage } from '@/lib/api/results';
 import DepartmentDashboard from '@/components/portal/DepartmentDashboard';
 
@@ -50,6 +53,9 @@ export default async function DepartmentDashboardPage({ params }) {
     marketingSummaryResult,
     financeSummaryResult,
     departmentBudgetsResult,
+    operationsSummaryResult,
+    departmentProjectsResult,
+    allTasksResult,
   ] = await Promise.allSettled([
     fetchDepartment(token, departmentId),
     fetchDepartmentWorkers(token, departmentId),
@@ -59,6 +65,9 @@ export default async function DepartmentDashboardPage({ params }) {
     fetchMarketingSummary(token),
     fetchFinanceSummary(token),
     fetchDepartmentBudgets(token, departmentId),
+    fetchOperationsSummary(token),
+    fetchProjects(token, departmentId),
+    fetchTasks(token),
   ]);
 
   const department = settle(departmentResult);
@@ -93,6 +102,11 @@ export default async function DepartmentDashboardPage({ params }) {
   const marketingSummary = settle(marketingSummaryResult);
   const financeSummary = settle(financeSummaryResult);
   const departmentBudgets = settle(departmentBudgetsResult);
+  const operationsSummary = settle(operationsSummaryResult);
+  const departmentProjects = settle(departmentProjectsResult);
+  const allTasks = settle(allTasksResult);
+  const departmentProjectIds = new Set((departmentProjects.value ?? []).map((project) => project.id));
+  const departmentTasks = (allTasks.value ?? []).filter((task) => departmentProjectIds.has(task.project_id));
 
   const head = department.value.head_worker_id
     ? (workers.value ?? []).find((worker) => worker.id === department.value.head_worker_id)
@@ -125,6 +139,10 @@ export default async function DepartmentDashboardPage({ params }) {
       financeSummary={financeSummary.value}
       financeSummaryError={financeSummary.error}
       departmentBudgets={departmentBudgets.value ?? []}
+      operationsSummary={operationsSummary.value}
+      operationsSummaryError={operationsSummary.error}
+      departmentProjects={departmentProjects.value ?? []}
+      departmentTasks={departmentTasks}
     />
   );
 }

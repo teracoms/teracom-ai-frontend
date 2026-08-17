@@ -8,6 +8,8 @@
 
 The Project Manager Worker persona helps a customer's team with planning, sequencing, and cross-team coordination for their own projects — a chat-based advisory persona like every other catalogue worker.
 
+**Phase 0 Package N gives this persona's product-facing side real mechanics for the first time:** the `Project`/`Task` data model, the Operations & Project Delivery workspace (`/portal/operations`), and the Operations department dashboard branch this worker's holder now operates through — creating projects, breaking them into tasks, and tracking status/due dates/priority across an organisation. This is the same retrofit treatment [[marketing-manager-worker]] received in Package K (real mechanics grafted onto an existing persona, not a second advisory-only persona introduced first) rather than the new-operational-doer treatment Package J/M used elsewhere — a natural fit here since this persona's product-facing definition ("planning, sequencing, cross-team coordination") already described exactly this work. See `PHASE_0_PACKAGE_N_OPERATIONS_AND_PROJECT_DELIVERY_IMPLEMENTATION_REPORT.md` (ADR-018) for the confirmed design decision. This retrofit does not change §2 below — this persona's role as this repository's own governance-documentation maintainer is unaffected.
+
 ## 2. As a contributor role operating on this repository — the primary owner/maintainer of this knowledge base's governance layer
 
 This is the role responsible for keeping `docs/governance/*` accurate and for coordinating the other 8 worker roles' work against it. Onboarding sequence:

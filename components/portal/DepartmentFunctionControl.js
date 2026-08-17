@@ -56,6 +56,7 @@ export default function DepartmentFunctionControl({ department }) {
           <option value="customer_success">Customer Success</option>
           <option value="marketing">Marketing</option>
           <option value="finance">Finance</option>
+          <option value="operations">Operations</option>
         </select>
       </label>
       {error && (

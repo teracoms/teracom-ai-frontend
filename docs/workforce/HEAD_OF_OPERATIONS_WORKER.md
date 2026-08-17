@@ -12,6 +12,8 @@ The Head of Operations Worker persona helps a customer's team with day-to-day op
 
 **Explicitly not this worker's job:** technical infrastructure changes (IT Infrastructure Worker), product roadmap sequencing (Project Manager Worker), or committing the organisation to any restructuring — Package I's governance model requires human approval for organisational restructuring specifically.
 
+**Phase 0 Package N gives this role's holder real data to reference for the first time:** when designated a department head of an `"operations"`-function department, its department memory now includes real project/task data via that department's dashboard (`OperationsSummaryWidget`/`ProjectPanel`) — the same "real mechanics for the first time" moment Phase 0 Package M gave CFO Worker. This is a retrofit of *what this role can reference*, not a change to its own advisory-only scope above: the actual project/task records are created and progressed by [[operations-manager-worker]], a new operational persona (this persona was already split from its operational counterpart, structurally identical to CFO Worker before Phase 0 Package M).
+
 ## 2. As a contributor role operating on this repository
 
 This role's direct relevance to this project is process/coordination hygiene rather than code:

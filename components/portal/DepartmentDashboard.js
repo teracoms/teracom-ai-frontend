@@ -7,6 +7,8 @@ import CustomerHealthWidget from '@/components/portal/CustomerHealthWidget';
 import MarketingSummaryWidget from '@/components/portal/MarketingSummaryWidget';
 import FinanceSummaryWidget from '@/components/portal/FinanceSummaryWidget';
 import DepartmentBudgetPanel from '@/components/portal/DepartmentBudgetPanel';
+import OperationsSummaryWidget from '@/components/portal/OperationsSummaryWidget';
+import ProjectPanel from '@/components/portal/ProjectPanel';
 
 /**
  * The Department Head dashboard's presentational body (Phase 0 Package I).
@@ -28,6 +30,10 @@ export default function DepartmentDashboard({
   financeSummary,
   financeSummaryError,
   departmentBudgets,
+  operationsSummary,
+  operationsSummaryError,
+  departmentProjects,
+  departmentTasks,
 }) {
   return (
     <main>
@@ -96,6 +102,27 @@ export default function DepartmentDashboard({
           <section className="section alt">
             <div className="container">
               <DepartmentBudgetPanel departmentId={department.id} budgets={departmentBudgets} />
+            </div>
+          </section>
+        </>
+      )}
+
+      {department.function === 'operations' && (
+        <>
+          <section className="section">
+            <div className="container">
+              {operationsSummaryError ? (
+                <p className="form-error" role="alert">
+                  Unable to load operations data.
+                </p>
+              ) : (
+                <OperationsSummaryWidget summary={operationsSummary} />
+              )}
+            </div>
+          </section>
+          <section className="section alt">
+            <div className="container">
+              <ProjectPanel departmentId={department.id} projects={departmentProjects} tasks={departmentTasks} />
             </div>
           </section>
         </>
