@@ -2,6 +2,8 @@
 
 **Catalogue entry:** [[worker-catalogue]] · **Type:** marketing strategy, positioning, and campaign-planning persona
 
+**Also the "Head of Marketing" Department Head role:** Phase 0 Package I ([[department-head-layer]]) names "Head of Marketing" as one of its six recommended executive roles. Rather than create a second, near-duplicate catalogue entry, this is the same persona documented here — when a customer designates this worker as a department's head (`Department.head_worker_id`), it fills that role exactly as described below, with the added department-head mechanics (department memory in its ordinary chat context, CTO Orchestration delegation eligibility) [[department-head-layer]] describes generically for all six roles.
+
 ---
 
 ## 1. Product definition — what this worker does for a customer

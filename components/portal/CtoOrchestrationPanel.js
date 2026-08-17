@@ -199,7 +199,10 @@ export default function CtoOrchestrationPanel({ workers, onExecutionComplete }) 
           <ol className="cto-roadmap">
             {plan.roadmap.map((phase) => (
               <li key={phase.phase}>
-                <strong>{phase.title}</strong>
+                <strong>
+                  {phase.title}
+                  {phase.is_department_head ? ' — Department Head' : ''}
+                </strong>
                 <p>{phase.summary}</p>
               </li>
             ))}
@@ -223,6 +226,7 @@ export default function CtoOrchestrationPanel({ workers, onExecutionComplete }) 
               <li key={step.step_number}>
                 <strong>
                   Step {step.step_number} — {step.worker_name}
+                  {step.is_department_head ? ' (Department Head)' : ''}
                 </strong>
                 <p className="cto-subtask">{step.subtask}</p>
                 <p>{step.response}</p>

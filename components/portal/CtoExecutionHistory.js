@@ -26,7 +26,10 @@ export default function CtoExecutionHistory({ executions }) {
           <p className="activity-title">{execution.objective}</p>
           <p className="activity-meta">
             {execution.steps.length} hop{execution.steps.length === 1 ? '' : 's'} ·{' '}
-            {execution.steps.map((step) => step.worker_name).join(' → ')} · {execution.created_at}
+            {execution.steps
+              .map((step) => (step.is_department_head ? `${step.worker_name} (Dept. Head)` : step.worker_name))
+              .join(' → ')}{' '}
+            · {execution.created_at}
           </p>
         </li>
       ))}

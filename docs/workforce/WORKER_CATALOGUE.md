@@ -1,6 +1,6 @@
 # Worker Catalogue
 
-**Status:** Roster of 11 worker types approved by the project owner, 2026-08-15 (9 original + Marketing Manager Worker and Content Production Worker added 2026-08-15). This is the commercial/functional catalogue definition — for the technical mechanism a "worker" runs on, see [[backend-status]] §Domain model. For how workers map to editions/seats, see [[product-editions]].
+**Status:** Roster of 15 worker types approved by the project owner, 2026-08-15 (9 original + Marketing Manager Worker and Content Production Worker added 2026-08-15) plus 2026-08-17 (CFO, Head of Sales, Head of Operations, Head of Customer Success Workers added — the recommended Executive/Department Head roster's remaining four; CTO Worker and Marketing Manager Worker already covered "CTO" and "Head of Marketing"). This is the commercial/functional catalogue definition — for the technical mechanism a "worker" runs on, see [[backend-status]] §Domain model. For how workers map to editions/seats, see [[product-editions]]. For the Department Head structural layer these six roles are recommended for, see [[department-head-layer]] (Phase 0 Package I) — none of the six is auto-created or bootstrapped; an admin creates and assigns each one manually, exactly like any other worker/department in this catalogue.
 
 ---
 
@@ -10,21 +10,27 @@ In `teracom-ai-backend`, a Worker is a row in the `workers` table: `name, role, 
 
 This means the catalogue below is a **commercial/product catalogue of worker personas**, not yet 11 rows seeded in any database — no worker type below is currently instantiated in the backend. Standing up the catalogue (seed data, default `instructions` templates, default knowledge assignments) is unbuilt work, not yet sequenced in [[roadmap]] — the roadmap so far only covers the generic worker CRUD screens (Package 3), which manage whatever workers a customer creates, not a specific catalogue seeding mechanism.
 
-## The 11 approved worker types
+## The 15 approved worker types
 
-| Worker | One-line purpose | Detail |
-|---|---|---|
-| **CTO Worker** | Strategic/technical leadership persona — architecture judgment calls, technology direction | [[cto-worker]] |
-| **Software Developer Worker** | General-purpose backend/application development | [[software-developer-worker]] |
-| **Web Developer Worker** | Frontend/web-specific development, distinct from general software development | [[web-developer-worker]] |
-| **QA Worker** | Testing, verification, quality gates | [[qa-worker]] |
-| **Cybersecurity Specialist Worker** | Security review, threat modelling, hardening | [[cybersecurity-worker]] |
-| **IT Infrastructure Worker** | Servers, environments, deployment infrastructure | [[it-infrastructure-worker]] |
-| **Network Engineering Worker** | Networking, connectivity, network security posture | [[network-engineering-worker]] |
-| **Licensing & Compliance Worker** | Licensing model administration, regulatory/compliance tracking | [[licensing-compliance-worker]] |
-| **Project Manager Worker** | Planning, sequencing, cross-worker coordination | [[project-manager-worker]] |
-| **Marketing Manager Worker** | Marketing strategy, positioning, campaign/GTM sequencing | [[marketing-manager-worker]] |
-| **Content Production Worker** | Copywriting, technical/content writing, execution layer beneath marketing strategy | [[content-production-worker]] |
+| Worker | One-line purpose | Detail | Recommended Department Head role? |
+|---|---|---|---|
+| **CTO Worker** | Strategic/technical leadership persona — architecture judgment calls, technology direction | [[cto-worker]] | CTO |
+| **Software Developer Worker** | General-purpose backend/application development | [[software-developer-worker]] | — |
+| **Web Developer Worker** | Frontend/web-specific development, distinct from general software development | [[web-developer-worker]] | — |
+| **QA Worker** | Testing, verification, quality gates | [[qa-worker]] | — |
+| **Cybersecurity Specialist Worker** | Security review, threat modelling, hardening | [[cybersecurity-worker]] | — |
+| **IT Infrastructure Worker** | Servers, environments, deployment infrastructure | [[it-infrastructure-worker]] | — |
+| **Network Engineering Worker** | Networking, connectivity, network security posture | [[network-engineering-worker]] | — |
+| **Licensing & Compliance Worker** | Licensing model administration, regulatory/compliance tracking | [[licensing-compliance-worker]] | — |
+| **Project Manager Worker** | Planning, sequencing, cross-worker coordination | [[project-manager-worker]] | — |
+| **Marketing Manager Worker** | Marketing strategy, positioning, campaign/GTM sequencing | [[marketing-manager-worker]] | Head of Marketing |
+| **Content Production Worker** | Copywriting, technical/content writing, execution layer beneath marketing strategy | [[content-production-worker]] | — |
+| **CFO Worker** | Financial planning, budget/cost trade-offs, commercial-risk framing | [[cfo-worker]] | CFO |
+| **Head of Sales Worker** | Pipeline review, deal structuring, negotiation preparation | [[head-of-sales-worker]] | Head of Sales |
+| **Head of Operations Worker** | Cross-functional process, resourcing, recurring operational execution | [[head-of-operations-worker]] | Head of Operations |
+| **Head of Customer Success Worker** | Retention, onboarding, account health | [[head-of-customer-success-worker]] | Head of Customer Success |
+
+The four rightmost-marked rows plus CTO Worker and Marketing Manager Worker are the six roles [[department-head-layer]] (Phase 0 Package I) recommends for the target executive hierarchy (Human → Orchestrator → CTO → CFO → Head of Sales → Head of Marketing → Head of Operations → Head of Customer Success → Specialist Workers). "Recommended" is doing real work in that sentence: none of the six is auto-created, seeded, or bootstrapped by any endpoint — an admin creates each department and worker and assigns headship manually, one action at a time, exactly like every other worker/department in this catalogue. A customer is free to use any worker as a department head, or none at all; these six are simply the documented, recommended starting point.
 
 Each linked document follows the same shape (per [[worker-operating-standards]]): purpose, scope boundaries (what this worker does *not* do), inputs it should read before acting, outputs/artifacts it produces, and how it should use this knowledge base.
 
