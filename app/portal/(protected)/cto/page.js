@@ -5,6 +5,7 @@ import { fetchMarketingSummary } from '@/lib/api/marketing';
 import { fetchFederationSummary } from '@/lib/api/federation';
 import { fetchFinanceSummary } from '@/lib/api/finance';
 import { fetchOperationsSummary } from '@/lib/api/operations';
+import { fetchPlatformHealthSummary } from '@/lib/api/platformHealth';
 import { errorMessage, settle } from '@/lib/api/results';
 import CtoOrchestrationPanel from '@/components/portal/CtoOrchestrationPanel';
 import CtoExecutionHistory from '@/components/portal/CtoExecutionHistory';
@@ -12,6 +13,7 @@ import MarketingSummaryWidget from '@/components/portal/MarketingSummaryWidget';
 import FederationSummaryWidget from '@/components/portal/FederationSummaryWidget';
 import FinanceSummaryWidget from '@/components/portal/FinanceSummaryWidget';
 import OperationsSummaryWidget from '@/components/portal/OperationsSummaryWidget';
+import PlatformHealthSummaryWidget from '@/components/portal/PlatformHealthSummaryWidget';
 import EmptyState from '@/components/portal/EmptyState';
 
 export const metadata = {
@@ -36,8 +38,9 @@ export default async function CtoOrchestrationPage() {
   }
 
   // Per-section resilience (ADR-008): the worker list, execution history,
-  // marketing summary, federation summary, finance summary, and
-  // operations summary are independent of each other.
+  // marketing summary, federation summary, finance summary,
+  // operations summary, and platform health summary are independent
+  // of each other.
   const [
     workerListSettled,
     executionsSettled,
@@ -45,6 +48,7 @@ export default async function CtoOrchestrationPage() {
     federationSummarySettled,
     financeSummarySettled,
     operationsSummarySettled,
+    platformHealthSummarySettled,
   ] = await Promise.allSettled([
     fetchWorkerList(token),
     fetchCtoExecutions(token),
@@ -52,6 +56,7 @@ export default async function CtoOrchestrationPage() {
     fetchFederationSummary(token),
     fetchFinanceSummary(token),
     fetchOperationsSummary(token),
+    fetchPlatformHealthSummary(token),
   ]);
 
   const workerListResult = settle(workerListSettled);
@@ -62,6 +67,7 @@ export default async function CtoOrchestrationPage() {
   const federationSummaryResult = settle(federationSummarySettled);
   const financeSummaryResult = settle(financeSummarySettled);
   const operationsSummaryResult = settle(operationsSummarySettled);
+  const platformHealthSummaryResult = settle(platformHealthSummarySettled);
 
   return (
     <main>
@@ -158,6 +164,18 @@ export default async function CtoOrchestrationPage() {
             </p>
           ) : (
             <OperationsSummaryWidget summary={operationsSummaryResult.value} />
+          )}
+        </div>
+      </section>
+
+      <section className="section">
+        <div className="container">
+          {platformHealthSummaryResult.error ? (
+            <p className="form-error" role="alert">
+              {errorMessage(platformHealthSummaryResult.error)}
+            </p>
+          ) : (
+            <PlatformHealthSummaryWidget summary={platformHealthSummaryResult.value} />
           )}
         </div>
       </section>

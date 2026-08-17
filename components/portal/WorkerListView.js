@@ -54,7 +54,10 @@ export default function WorkerListView({ workers, canCreate }) {
           <Link className="btn btn-primary" href="/portal/workers/new">
             Create Worker
           </Link>
-        )}
+        )}{' '}
+        <Link className="btn btn-secondary" href="/portal/workers/requests">
+          Propose a Worker
+        </Link>
       </div>
 
       {workers.length === 0 ? (

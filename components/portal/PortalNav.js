@@ -30,6 +30,7 @@ const LINKS = [
   { href: '/portal/finance', label: 'Finance' },
   { href: '/portal/operations', label: 'Operations' },
   { href: '/portal/support', label: 'Support' },
+  { href: '/portal/platform-health', label: 'Platform Health' },
 ];
 
 const ADMIN_LINK = { href: '/portal/admin', label: 'Admin' };

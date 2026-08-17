@@ -24,7 +24,7 @@ Human → Orchestrator → CTO → CFO → Head of Sales → Head of Marketing
 | Human-triggered execution | Already enforced since Package G — every CTO chain, consultation, and (now) department-head consultation requires an explicit human-originated API call. No change needed. |
 | Bounded autonomous delegation | Already enforced since Package G — `MAX_HOPS_HARD_CAP` on CTO chains; department-head consultation is a fixed two-call exchange (Package F's mechanism), never a chain. |
 | Direct Department Head communication | **New in Package I** — `POST /department-heads/consult`, restricted to current department heads, reusing Package F's `execute_consultation()` unchanged. |
-| Human approval for new worker creation | Already enforced since Package 1 — `POST /workers/` is `require_role("admin")`-gated. Package I does not add a second, parallel approval workflow for this. |
+| Human approval for new worker creation | Already enforced since Package 1 — `POST /workers/` is `require_role("admin")`-gated, and remains available unchanged. Package I does not add a second, parallel approval workflow for this. **Extended, not superseded, by Package PQR:** `WorkerCreationRequest` (submit → organisation-admin-decide) is a second, optional path for a non-admin to propose a worker — see ADR-020. |
 | Human approval for organisational restructuring | Already enforced — `POST /departments/`, `PATCH /workers/{id}/department`, `PATCH /departments/{id}/head` are all admin-gated (the last two, admin-gated since Package H/I respectively). |
 | Human approval for financial commitments | **Superseded — now enforced.** This row was accurate when written (2026-08-17, before Package J shipped hours later the same day) but is stale as a current statement; corrected here per `PROJECT_STATE.md`'s own rule that the code wins over a stale doc. `Proposal`/`Quote`/`Contract` (Package J) and `DepartmentBudget` (Package M) each require a submit → organisation-admin-decide gate before anything means anything — see ADR-014/ADR-017. |
 | Human approval for contracts | **Superseded — now enforced.** `Contract`'s own submit → organisation-admin-decide gate (Package J) — see ADR-014. |
@@ -33,6 +33,8 @@ Human → Orchestrator → CTO → CFO → Head of Sales → Head of Marketing
 ## 4. CTO Orchestration integration (objectives #8, #10)
 
 `_pick_worker_for_subtask()` now also scores each department's own `name`/`description` against a subtask (not the head's individual `role`/`purpose`), routing to that department's head when it scores at least as well as the best individual-worker match. With no department heads designated (every organisation before this package), behaviour is unchanged. Every plan/roadmap/execution step now carries an `is_department_head` flag, surfaced in the CTO dashboard — the concrete form "executive summaries returned to the Orchestrator" (objective #7) takes: attribution on the existing synthesis, not a second synthesis layer.
+
+**Extended by Package PQR:** `_pick_worker_for_subtask()` also now consults `department.function` (Package J onward) as a static keyword-boost signal, unioned into the department's own scored words — closing the gap where a department tagged e.g. `function="sales"` but with a sparse or generic `name`/`description` would never keyword-match a sales-flavoured subtask. A department with no `function` tag is unaffected — see ADR-020.
 
 ## 5. Department memory ownership (objective #6)
 
