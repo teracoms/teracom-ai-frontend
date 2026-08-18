@@ -6,8 +6,33 @@ import { WORKER_PACK_SIZES } from '@/lib/licensing/referenceLicence';
 // docs/governance/BILLING_AND_LICENSING_UX.md's exact 3 named steps.
 // `currentWorkerCount`/`workerAllocation` are passed in from the page —
 // currentWorkerCount is real, live data (GET /worker-list/); workerAllocation
-// is the reference licence's illustrative tier ceiling.
+// is the reference licence's illustrative tier ceiling. Submission itself is
+// real, though (Phase 0 Package Q): unlike RenewalWizard/OwnershipTransferWizard,
+// this wizard's payload (pack_size/quantity) needs no data from the
+// illustrative reference licence, so it was safe to wire to the real
+// POST /licensing/requests (request_type="worker_pack") — see
+// app/api/portal/licensing/requests/route.js and
+// services/entitlement_provisioning_service.py on the backend.
 export default function WorkerPackWizard({ currentWorkerCount, workerAllocation }) {
+  async function submitWorkerPackRequest(data) {
+    const response = await fetch('/api/portal/licensing/requests', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        request_type: 'worker_pack',
+        pack_size: data.packSize ?? WORKER_PACK_SIZES[0],
+        quantity: 1,
+      }),
+    });
+    const body = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      throw new Error(body.error || 'Unable to submit this request.');
+    }
+
+    return body;
+  }
+
   const steps = [
     {
       label: 'Select Pack Size',
@@ -64,5 +89,11 @@ export default function WorkerPackWizard({ currentWorkerCount, workerAllocation 
     },
   ];
 
-  return <WizardShell steps={steps} submitLabel="Submit Approval Request" />;
+  return (
+    <WizardShell
+      steps={steps}
+      onSubmit={submitWorkerPackRequest}
+      submitLabel="Submit Approval Request"
+    />
+  );
 }

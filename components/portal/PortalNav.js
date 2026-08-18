@@ -14,6 +14,7 @@ import { useAuth } from '@/components/portal/AuthProvider';
 // here as each later package ships.
 const LINKS = [
   { href: '/portal', label: 'Overview' },
+  { href: '/portal/onboarding', label: 'Onboarding' },
   { href: '/portal/dashboard', label: 'Dashboard' },
   { href: '/portal/workers', label: 'Workers' },
   { href: '/portal/knowledge', label: 'Knowledge' },

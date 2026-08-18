@@ -9,18 +9,25 @@ import { useState } from 'react';
  * a natural fit here regardless of NL feasibility, since a human-approval
  * step is mandatory either way"), not single dense forms.
  *
- * There is nowhere real to submit to: teracom-ai-backend has no
- * /licensing/* endpoint of any kind (see lib/licensing/referenceLicence.js).
- * `onSubmit` therefore only receives the collected step data for the
- * caller's own use (e.g. rendering a summary) — it does not, and cannot,
- * persist anything server-side or make the submission visible anywhere
- * else in the app. The final screen says this plainly rather than showing
- * a fake "success" state that implies a real workflow was triggered.
+ * `onSubmit` is optional and, when provided, is awaited — Phase 0 Package Q
+ * gave WorkerPackWizard a real `POST /licensing/requests` to submit to (via
+ * `app/api/portal/licensing/requests`), so its `onSubmit` actually persists
+ * a real, staff-visible LicenceRequest and this shell shows the real
+ * success/error outcome. RenewalWizard and OwnershipTransferWizard still
+ * omit `onSubmit` — they depend on lib/licensing/referenceLicence.js's
+ * illustrative data for fields a real submission would need (tier,
+ * hosting_model, an actual existing_licence_id), which this package did not
+ * replace (see this package's implementation report). For those two, the
+ * original "recorded on this screen only" messaging is preserved below as
+ * the no-`onSubmit` fallback, rather than showing a fake "success" state
+ * for a request that wouldn't actually match the customer's real licence.
  */
 export default function WizardShell({ steps, onSubmit, submitLabel = 'Submit Request' }) {
   const [stepIndex, setStepIndex] = useState(0);
   const [data, setData] = useState({});
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState(null);
 
   const step = steps[stepIndex];
   const isLast = stepIndex === steps.length - 1;
@@ -29,10 +36,23 @@ export default function WizardShell({ steps, onSubmit, submitLabel = 'Submit Req
     setData((current) => ({ ...current, ...patch }));
   }
 
-  function handleNext() {
+  async function handleNext() {
     if (isLast) {
-      onSubmit?.(data);
-      setSubmitted(true);
+      if (!onSubmit) {
+        setSubmitted(true);
+        return;
+      }
+
+      setSubmitError(null);
+      setSubmitting(true);
+      try {
+        await onSubmit(data);
+        setSubmitted(true);
+      } catch (error) {
+        setSubmitError(error instanceof Error ? error.message : 'Unable to submit this request.');
+      } finally {
+        setSubmitting(false);
+      }
       return;
     }
     setStepIndex((current) => current + 1);
@@ -46,10 +66,9 @@ export default function WizardShell({ steps, onSubmit, submitLabel = 'Submit Req
     return (
       <div className="wizard-shell">
         <p className="form-note-banner" role="status">
-          Your request has been recorded on this screen only. teracom-ai-backend has no endpoint
-          yet to submit, route, or store a licensing request — in production this would go to
-          Teracom for the human-approval review LICENSING_MODEL_V1.md §9 requires. Reload this
-          page to start again.
+          {onSubmit
+            ? 'Your request has been submitted and now requires Teracom staff approval before it takes effect (LICENSING_MODEL_V1.md §9). You can track its status from Requests & History.'
+            : 'Your request has been recorded on this screen only. teracom-ai-backend has no endpoint yet to submit, route, or store a licensing request — in production this would go to Teracom for the human-approval review LICENSING_MODEL_V1.md §9 requires. Reload this page to start again.'}
         </p>
       </div>
     );
@@ -70,14 +89,20 @@ export default function WizardShell({ steps, onSubmit, submitLabel = 'Submit Req
 
       <div className="wizard-step-body">{step.render({ data, updateData })}</div>
 
+      {submitError && (
+        <p className="form-error" role="alert">
+          {submitError}
+        </p>
+      )}
+
       <div className="wizard-actions">
         {stepIndex > 0 && (
-          <button type="button" className="btn btn-secondary" onClick={handleBack}>
+          <button type="button" className="btn btn-secondary" onClick={handleBack} disabled={submitting}>
             Back
           </button>
         )}
-        <button type="button" className="btn btn-primary" onClick={handleNext}>
-          {isLast ? submitLabel : 'Continue'}
+        <button type="button" className="btn btn-primary" onClick={handleNext} disabled={submitting}>
+          {isLast ? (submitting ? 'Submitting...' : submitLabel) : 'Continue'}
         </button>
       </div>
     </div>

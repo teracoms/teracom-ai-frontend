@@ -5,6 +5,7 @@ import { getSessionToken } from '@/lib/api/auth';
 import { fetchMarketplacePackDetail } from '@/lib/api/marketplace';
 import { ApiError } from '@/lib/api/client';
 import { errorMessage, isForbidden } from '@/lib/api/results';
+import WorkerPackProvisionAction from '@/components/portal/WorkerPackProvisionAction';
 
 export async function generateMetadata({ params }) {
   return { title: `${params.slug} | Marketplace | Teracom AI Portal` };
@@ -123,6 +124,16 @@ export default async function MarketplacePackDetailPage({ params, searchParams }
               </article>
             ))}
           </div>
+
+          <div className="section-heading left">
+            <span className="eyebrow">Provisioning</span>
+            <h2>Provision every persona in this pack at once.</h2>
+            <p>
+              Creates a real worker for each template above, in one step — subject to your
+              organisation&apos;s current worker-limit entitlement.
+            </p>
+          </div>
+          <WorkerPackProvisionAction workerPackSlug={pack.slug} />
 
           <p>
             <Link className="btn btn-secondary" href="/portal/marketplace">
