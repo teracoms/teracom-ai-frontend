@@ -1,6 +1,69 @@
 import { NextResponse } from 'next/server';
 
-import { SESSION_COOKIE_NAME, PORTAL_CONTACT_SESSION_COOKIE_NAME } from '@/lib/api/constants';
+import {
+  SESSION_COOKIE_NAME,
+  REFRESH_COOKIE_NAME,
+  PORTAL_CONTACT_SESSION_COOKIE_NAME,
+  PORTAL_CONTACT_REFRESH_COOKIE_NAME,
+} from '@/lib/api/constants';
+import { BACKEND_API_URL } from '@/lib/config';
+import { decodeExpiry } from '@/lib/api/edgeJwt';
+
+// "Package SEC1" — access tokens shrank from 60 to 15 minutes once a
+// real, revocable refresh token existed to carry the long-lived
+// session instead (see backend auth/security.py's own comment). This
+// keeps the "stay signed in for a long session" behaviour users
+// already had, now via a real, revocable refresh instead of just a
+// long-lived access token: near/at expiry, silently exchange the
+// refresh cookie for a new access token before the request reaches
+// the protected route, so a valid refresh token never surfaces as a
+// forced re-login. decodeExpiry (lib/api/edgeJwt.js) is only ever
+// used here to decide *whether* to refresh — the backend remains the
+// sole authority on validity, exactly as lib/api/jwt.js's own
+// docstring states for its own (Node-only) equivalent.
+const REFRESH_WHEN_WITHIN_SECONDS = 180;
+const FALLBACK_MAX_AGE_SECONDS = 15 * 60; // matches lib/api/auth.js's own fallback
+const MIN_MAX_AGE_SECONDS = 60;
+
+// Mirrors lib/api/auth.js#setSessionCookie()'s own maxAge derivation —
+// duplicated rather than imported, since that module pulls in
+// next/headers' cookies() (unavailable/inappropriate in middleware)
+// alongside the bit of logic actually needed here.
+function maxAgeForToken(token) {
+  const exp = decodeExpiry(token);
+  return exp
+    ? Math.max(exp - Math.floor(Date.now() / 1000), MIN_MAX_AGE_SECONDS)
+    : FALLBACK_MAX_AGE_SECONDS;
+}
+
+async function silentlyRefresh(accessToken, refreshToken, refreshPath) {
+  const exp = decodeExpiry(accessToken);
+  const nowSeconds = Math.floor(Date.now() / 1000);
+
+  if (exp !== null && exp - nowSeconds > REFRESH_WHEN_WITHIN_SECONDS) {
+    return null; // still comfortably valid — no network call needed
+  }
+
+  if (!refreshToken) return null;
+
+  try {
+    const response = await fetch(`${BACKEND_API_URL}${refreshPath}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ refresh_token: refreshToken }),
+      cache: 'no-store',
+    });
+
+    if (!response.ok) return null;
+
+    const data = await response.json();
+    return typeof data?.access_token === 'string' ? data.access_token : null;
+  } catch {
+    // Backend unreachable — fall through with whatever token we had;
+    // the existing presence-only check below still governs.
+    return null;
+  }
+}
 
 // First-line, cheap guard: redirect requests with no session cookie away from
 // the authenticated app before any rendering happens. This does NOT verify
@@ -31,7 +94,7 @@ const PUBLIC_CUSTOMER_PORTAL_PATHS = new Set([
   '/customer-portal/reset-password',
 ]);
 
-export function middleware(request) {
+export async function middleware(request) {
   const { pathname } = request.nextUrl;
 
   if (pathname.startsWith('/customer-portal')) {
@@ -39,17 +102,34 @@ export function middleware(request) {
       return NextResponse.next();
     }
 
-    const hasPortalContactSession = Boolean(
-      request.cookies.get(PORTAL_CONTACT_SESSION_COOKIE_NAME)?.value
-    );
+    const sessionToken = request.cookies.get(PORTAL_CONTACT_SESSION_COOKIE_NAME)?.value;
 
-    if (!hasPortalContactSession) {
+    if (!sessionToken) {
       const loginUrl = new URL('/customer-portal/login', request.url);
       loginUrl.searchParams.set('next', pathname);
       return NextResponse.redirect(loginUrl);
     }
 
-    return NextResponse.next();
+    const response = NextResponse.next();
+
+    const refreshToken = request.cookies.get(PORTAL_CONTACT_REFRESH_COOKIE_NAME)?.value;
+    const refreshedAccessToken = await silentlyRefresh(
+      sessionToken,
+      refreshToken,
+      '/portal-contact/refresh'
+    );
+
+    if (refreshedAccessToken) {
+      response.cookies.set(PORTAL_CONTACT_SESSION_COOKIE_NAME, refreshedAccessToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        path: '/',
+        maxAge: maxAgeForToken(refreshedAccessToken),
+      });
+    }
+
+    return response;
   }
 
   // "Platform Review Wave 1" added three more unauthenticated /portal
@@ -60,15 +140,30 @@ export function middleware(request) {
     return NextResponse.next();
   }
 
-  const hasSession = Boolean(request.cookies.get(SESSION_COOKIE_NAME)?.value);
+  const sessionToken = request.cookies.get(SESSION_COOKIE_NAME)?.value;
 
-  if (!hasSession) {
+  if (!sessionToken) {
     const loginUrl = new URL('/portal/login', request.url);
     loginUrl.searchParams.set('next', pathname);
     return NextResponse.redirect(loginUrl);
   }
 
-  return NextResponse.next();
+  const response = NextResponse.next();
+
+  const refreshToken = request.cookies.get(REFRESH_COOKIE_NAME)?.value;
+  const refreshedAccessToken = await silentlyRefresh(sessionToken, refreshToken, '/auth/refresh');
+
+  if (refreshedAccessToken) {
+    response.cookies.set(SESSION_COOKIE_NAME, refreshedAccessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: maxAgeForToken(refreshedAccessToken),
+    });
+  }
+
+  return response;
 }
 
 export const config = {

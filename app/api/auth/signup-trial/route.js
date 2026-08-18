@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-import { signupTrial, fetchCurrentUser, setSessionCookie } from '@/lib/api/auth';
+import { signupTrial, fetchCurrentUser, setSessionCookie, setRefreshCookie } from '@/lib/api/auth';
 import { ApiError } from '@/lib/api/client';
 import { parseTrialSignupPayload } from '@/lib/api/validation';
 
@@ -27,7 +27,11 @@ export async function POST(request) {
   }
 
   try {
-    const { access_token: accessToken, trial_ends_at: trialEndsAt } = await signupTrial({
+    const {
+      access_token: accessToken,
+      refresh_token: refreshToken,
+      trial_ends_at: trialEndsAt,
+    } = await signupTrial({
       organisation_name: parsed.organisationName,
       admin_first_name: parsed.adminFirstName,
       admin_last_name: parsed.adminLastName,
@@ -38,6 +42,7 @@ export async function POST(request) {
     const user = await fetchCurrentUser(accessToken);
 
     setSessionCookie(accessToken);
+    setRefreshCookie(refreshToken);
 
     return NextResponse.json({ user, trial_ends_at: trialEndsAt });
   } catch (error) {

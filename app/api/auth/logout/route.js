@@ -1,13 +1,16 @@
 import { NextResponse } from 'next/server';
 
-import { clearSessionCookie } from '@/lib/api/auth';
+import { getRefreshToken, revokeSession, clearSessionCookie } from '@/lib/api/auth';
 
-// teracom-ai-backend has no token-revocation endpoint (§B.5.3 of
-// FRONTEND_ARCHITECTURE_V1.md) — logout only clears the local session cookie.
-// The JWT itself remains technically valid until its natural (60-minute)
-// expiry. Acceptable for V1 given the short token lifetime; flagged as a
-// backend follow-up in AUTHENTICATION_IMPLEMENTATION_REPORT.md.
+// "Package SEC1" — a real backend revocation call now precedes the
+// cookie clear. POST /auth/logout revokes the refresh token and bumps
+// User.tokens_invalid_before, so the access token this browser was
+// just holding stops working immediately, not just once it naturally
+// expires — see auth/dependencies.py#get_current_user()'s iat check.
+// revokeSession() is best-effort (see its own docstring); cookies are
+// always cleared regardless of whether the backend call succeeded.
 export async function POST() {
+  await revokeSession(getRefreshToken());
   clearSessionCookie();
   return NextResponse.json({ ok: true });
 }

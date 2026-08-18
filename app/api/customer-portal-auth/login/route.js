@@ -4,6 +4,7 @@ import {
   loginWithPortalContactCredentials,
   fetchCurrentPortalContact,
   setPortalContactSessionCookie,
+  setPortalContactRefreshCookie,
 } from '@/lib/api/portalContactAuth';
 import { ApiError } from '@/lib/api/client';
 import { parseLoginCredentials } from '@/lib/api/validation';
@@ -24,7 +25,7 @@ export async function POST(request) {
   }
 
   try {
-    const { access_token: accessToken } = await loginWithPortalContactCredentials(
+    const { access_token: accessToken, refresh_token: refreshToken } = await loginWithPortalContactCredentials(
       credentials.email,
       credentials.password
     );
@@ -32,6 +33,7 @@ export async function POST(request) {
     const portalContact = await fetchCurrentPortalContact(accessToken);
 
     setPortalContactSessionCookie(accessToken);
+    setPortalContactRefreshCookie(refreshToken);
 
     return NextResponse.json({ portalContact });
   } catch (error) {

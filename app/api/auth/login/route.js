@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-import { loginWithCredentials, fetchCurrentUser, setSessionCookie } from '@/lib/api/auth';
+import { loginWithCredentials, fetchCurrentUser, setSessionCookie, setRefreshCookie } from '@/lib/api/auth';
 import { ApiError } from '@/lib/api/client';
 import { parseLoginCredentials } from '@/lib/api/validation';
 
@@ -20,7 +20,7 @@ export async function POST(request) {
   }
 
   try {
-    const { access_token: accessToken } = await loginWithCredentials(
+    const { access_token: accessToken, refresh_token: refreshToken } = await loginWithCredentials(
       credentials.email,
       credentials.password
     );
@@ -28,6 +28,7 @@ export async function POST(request) {
     const user = await fetchCurrentUser(accessToken);
 
     setSessionCookie(accessToken);
+    setRefreshCookie(refreshToken);
 
     return NextResponse.json({ user });
   } catch (error) {

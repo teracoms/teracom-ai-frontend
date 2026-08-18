@@ -59,10 +59,16 @@ journalctl --user -u teracom-backend.service --since "2026-08-19 06:00"
 Run these after any start/restart, or as a periodic external check:
 
 ```bash
-# Backend — /docs (FastAPI's built-in Swagger UI) is unauthenticated and always present;
-# do NOT use GET /health/ for this — it requires a logged-in user (get_current_user),
-# so it will always 401 for an external monitor with no credentials.
-curl -sf -o /dev/null -w "backend: %{http_code}\n" http://127.0.0.1:8000/docs
+# Backend — use the bare "/" route, not /docs. "Package SEC1" now
+# disables /docs, /redoc, and /openapi.json entirely when
+# ENVIRONMENT=production (see config.py/main.py) — a real deployment
+# should set that, which would make the old /docs-based check below
+# always fail even though the service is healthy. "/" is a genuine,
+# permanently-unauthenticated liveness route regardless of ENVIRONMENT.
+# Do NOT use GET /health/ for this either — it requires a logged-in
+# user (get_current_user), so it will always 401 for an external
+# monitor with no credentials.
+curl -sf -o /dev/null -w "backend: %{http_code}\n" http://127.0.0.1:8000/
 # Expect: backend: 200
 
 # Frontend — the marketing homepage and the portal login page are both unauthenticated
@@ -125,5 +131,17 @@ systemctl --user enable --now teracom-backend.service teracom-frontend.service
 - **User-level units, not system-level** — a consequence of no root access this session, not a deliberate architectural choice. If sudo access is obtained, migrate: copy both unit files to `/etc/systemd/system/`, change `WantedBy=default.target` to `WantedBy=multi-user.target` in each, `sudo systemctl daemon-reload`, `sudo systemctl enable --now teracom-backend teracom-frontend`. This removes the dependency on `loginctl enable-linger` entirely.
 - **Single uvicorn worker, deliberately.** `auth/rate_limit.py`'s own docstring states its in-process rate limiter is "not shared across multiple worker processes" and names a Redis-backed limiter as the prerequisite for multi-worker deployment. Running `--workers >1` today would silently make login/signup/password-reset rate limiting inconsistent across workers. Do not add `--workers` to the backend unit's `ExecStart` until that limiter is replaced.
 - **Frontend binds `0.0.0.0`, backend binds `127.0.0.1` only** — intentional: the backend has no reason to be reachable from outside this host (the only consumer is the co-located Next.js server, via `BACKEND_API_URL=http://localhost:8000`), so it's loopback-only as a hardening default. If a future architecture needs the backend reachable from a separate frontend host, change `--host 127.0.0.1` to the appropriate interface and add a firewall rule — don't just open it to `0.0.0.0`.
-- **No reverse proxy / TLS in front of either service** — both are served in plaintext on their raw ports today. A production deployment reachable over the public internet should sit both behind a reverse proxy (nginx/Caddy) terminating TLS; out of scope for this package (no such proxy existed before it, and none was requested).
+- **No reverse proxy / TLS in front of either service, and this remains true today.** "Package SEC1" prepared real, deployable nginx config and a certbot runbook (`docs/operations/REVERSE_PROXY_AND_TLS.md`) but could not enable them live in this environment — see that document's own "Blockers" section for exactly why (no root access, no public domain/DNS pointing at this host). Both services are still served in plaintext on their raw ports. **Do not expose this host to the public internet until that document's blockers are cleared and its config is actually deployed.**
+- **CORS is now enforced** (`Package SEC1`) — the backend rejects cross-origin browser requests from any origin not listed in `ALLOWED_CORS_ORIGINS` (empty/none by default). This has no effect on the app itself (the BFF pattern means the browser never calls the backend directly), so nothing to change here unless a future feature genuinely needs browser-side cross-origin access.
+- **`/docs`/`/redoc`/`/openapi.json` are gated behind `ENVIRONMENT`** (`Package SEC1`) — still enabled by default (`ENVIRONMENT=development`, this host's current setting). **Set `ENVIRONMENT=production` in the backend's `.env` before any real public launch** — see §8 below for the full secrets/environment checklist that should happen at that same time.
+
+## 8. Secrets management
+
+- **File permissions**: both `.env` files are now `600` (owner read/write only) — previously `644` (group *and* world readable) on a multi-user host, fixed by "Package SEC1". Re-check this (`ls -la backend/.env frontend/.env`) after any file is recreated (e.g. `cp .env.example .env`), since a fresh copy inherits the umask, not the original's permissions.
+- **No secrets manager exists** — every credential (`JWT_SECRET_KEY`, `DATABASE_URL`, `LICENSING_SIGNING_PRIVATE_KEY_B64`, `STRIPE_SECRET_KEY`, `ZOHO_*`, `ADMIN_IMPORT_TOKEN`) lives in a plaintext `.env` file on disk. Acceptable for a single-operator dev/staging host; not acceptable for a real production deployment with more than one person's access — migrating to a real secrets manager (Vault, AWS Secrets Manager, etc.) is tracked as a known gap, not solved by this package.
+- **`JWT_SECRET_KEY` rotation procedure** (new — no rotation procedure existed before this package):
+  1. Generate a new key: `python -c "import secrets; print(secrets.token_urlsafe(64))"`.
+  2. **Understand the blast radius first**: rotating this key immediately invalidates *every* currently-issued access token *and* every stored refresh token, across all three identity planes (`User`, `StaffUser`, `PortalContact`) — every signed-in session everywhere is forced to log in again the moment the new key takes effect. There is no graceful dual-key transition today (verifying old-key tokens alongside new-key tokens) — this is a real, disruptive operational consequence, not a cosmetic one. Only rotate this key during a planned maintenance window, or in genuine response to a suspected key compromise where forcing every session to re-authenticate is the intended outcome.
+  3. Update `JWT_SECRET_KEY` in `backend/.env`, then `systemctl --user restart teracom-backend.service`.
+  4. There is no rotation procedure yet for `LICENSING_SIGNING_PRIVATE_KEY_B64`/`_PUBLIC_KEY_B64` — rotating those affects every *already-issued licence file*, a substantially bigger operation gated on the still-open questions in `docs/commercial/LICENSING_MODEL_V1.md` §19 (signing-key custody/rotation), not something to attempt ad hoc.
 - **No log rotation policy configured beyond journald's own default retention** — acceptable for now; revisit if disk usage from logs becomes a real concern (`journalctl --disk-usage`).
