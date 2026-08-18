@@ -13,7 +13,7 @@ export default function CtoExecutionHistory({ executions }) {
   if (!executions || executions.length === 0) {
     return (
       <EmptyState
-        title="No CTO task executions yet"
+        title="No Orchestration executions yet"
         description="When you run a chain from the panel above, its full delegation trail and executive synthesis will be recorded here."
       />
     );

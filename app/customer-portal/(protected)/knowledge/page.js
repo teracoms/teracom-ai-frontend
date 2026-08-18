@@ -4,7 +4,7 @@ import { errorMessage } from '@/lib/api/results';
 import PortalKnowledgeList from '@/components/customer-portal/PortalKnowledgeList';
 
 export const metadata = {
-  title: 'Knowledge | Customer Portal',
+  title: 'Knowledge | Teracom AI Customer Portal',
 };
 
 export default async function CustomerPortalKnowledgePage() {

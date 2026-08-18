@@ -4,7 +4,7 @@ import { errorMessage } from '@/lib/api/results';
 import PortalProjectsView from '@/components/customer-portal/PortalProjectsView';
 
 export const metadata = {
-  title: 'Projects | Customer Portal',
+  title: 'Projects | Teracom AI Customer Portal',
 };
 
 export default async function CustomerPortalProjectsPage() {

@@ -14,7 +14,7 @@ function resolveNextPath(searchParams) {
   if (typeof next === 'string' && next.startsWith('/')) {
     return next;
   }
-  return '/portal';
+  return '/portal/dashboard';
 }
 
 export default async function LoginPage({ searchParams }) {

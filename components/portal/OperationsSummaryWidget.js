@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { CpuIcon } from '@/components/portal/icons';
 
 /**
  * Phase 0 Package N — Operations & Project Delivery Platform. Reused
@@ -12,7 +13,10 @@ export default function OperationsSummaryWidget({ summary }) {
   return (
     <div>
       <div className="section-heading left">
-        <span className="eyebrow">Operations</span>
+        <div className="eyebrow-icon-row">
+          <span className="stat-tile-icon"><CpuIcon /></span>
+          <span className="eyebrow">Operations</span>
+        </div>
         <h2>Projects &amp; tasks.</h2>
       </div>
       <ul className="activity-list">

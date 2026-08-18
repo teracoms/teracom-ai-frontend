@@ -112,9 +112,9 @@ export default function CtoOrchestrationPanel({ workers, onExecutionComplete }) 
 
   return (
     <div className="cto-panel">
-      <p className="eyebrow">Autonomous CTO</p>
+      <p className="eyebrow">Orchestration</p>
       <p>
-        Submit a high-level objective. The CTO worker below may decompose it and delegate across
+        Submit a high-level objective. The lead worker below may decompose it and delegate across
         your workers in a bounded chain (no approval between individual hops) — you choose whether
         to review the proposed plan first, or review the finished result afterward.
       </p>

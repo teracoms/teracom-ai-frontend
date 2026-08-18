@@ -8,7 +8,7 @@ import { settle, errorMessage } from '@/lib/api/results';
 import PortalDealsView from '@/components/customer-portal/PortalDealsView';
 
 export const metadata = {
-  title: 'Proposals & Contracts | Customer Portal',
+  title: 'Proposals & Contracts | Teracom AI Customer Portal',
 };
 
 export default async function CustomerPortalDealsPage() {

@@ -80,7 +80,7 @@ export default async function ConnectorsPage() {
           ) : connectors.length === 0 ? (
             <EmptyState
               title="No connectors are registered"
-              description="teracom-ai-backend has no connector status to report right now."
+              description="Teracom AI has no connector status to report right now."
             />
           ) : (
             <div className="product-grid">

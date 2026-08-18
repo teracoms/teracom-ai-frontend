@@ -1,82 +1,17 @@
-import Link from 'next/link';
+import { redirect } from 'next/navigation';
 
-import AccountSummary from '@/components/portal/AccountSummary';
-
-export const metadata = {
-  title: 'Portal | Teracom AI',
-};
-
+// "Platform Review Wave 1" replaced this page's own job (a menu of links
+// to every section) with `PortalNav.js`'s grouped dropdown navigation,
+// which is why it was dropped from the nav — but the bare `/portal` URL
+// (still linked from the public marketing site's Header/Footer) kept
+// landing signed-in users on this now-redundant page, which then drifted
+// out of date every time a new section shipped (see
+// TERACOM_REVIEW_BACKLOG.md WBL-002 — this page's own copy still claimed
+// "Billing is being rolled out" long after Billing shipped, and its
+// feature grid never grew past the original six Package-2-era sections).
+// "Platform Review Wave 3" removes the duplicate landing surface
+// entirely rather than trying to keep two Overview pages in sync forever
+// — Dashboard is now the one canonical landing page.
 export default function PortalHome() {
-  return (
-    <main>
-      <section className="hero hero-product">
-        <div className="container">
-          <div className="hero-copy">
-            <span className="eyebrow">Teracom AI Portal</span>
-            <h1>Welcome to your workspace.</h1>
-            <p className="lead">
-              You&apos;re signed in. Dashboard, Workers, Knowledge, Chat, Memory and Administration
-              are ready below — Billing is being rolled out in an upcoming release.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <section className="section">
-        <div className="container">
-          <AccountSummary />
-        </div>
-      </section>
-
-      <section className="section section-spacious alt">
-        <div className="container feature-grid">
-          <article>
-            <h3>Dashboard</h3>
-            <p>Organisation-wide workers, knowledge, memory and chat activity at a glance.</p>
-            <Link className="btn btn-secondary card-action" href="/portal/dashboard">
-              Open Dashboard
-            </Link>
-          </article>
-          <article>
-            <h3>Workers</h3>
-            <p>Create and manage AI worker agents and their assigned knowledge.</p>
-            <Link className="btn btn-secondary card-action" href="/portal/workers">
-              Open Workers
-            </Link>
-          </article>
-          <article>
-            <h3>Knowledge</h3>
-            <p>Upload, browse and search documents indexed for your workers.</p>
-            <Link className="btn btn-secondary card-action" href="/portal/knowledge">
-              Open Knowledge
-            </Link>
-          </article>
-          <article>
-            <h3>Chat</h3>
-            <p>Converse with a worker using your organisation&apos;s knowledge and memory.</p>
-            <Link className="btn btn-secondary card-action" href="/portal/chat">
-              Open Chat
-            </Link>
-          </article>
-          <article>
-            <h3>Memory</h3>
-            <p>
-              Review facts your workers have remembered, plus department and organisation-wide
-              memory and long-term summaries.
-            </p>
-            <Link className="btn btn-secondary card-action" href="/portal/memory">
-              Open Memory
-            </Link>
-          </article>
-          <article>
-            <h3>Administration</h3>
-            <p>Manage organisation users, review your organisation profile, and audit knowledge permissions.</p>
-            <Link className="btn btn-secondary card-action" href="/portal/admin">
-              Open Administration
-            </Link>
-          </article>
-        </div>
-      </section>
-    </main>
-  );
+  redirect('/portal/dashboard');
 }

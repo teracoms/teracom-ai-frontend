@@ -7,6 +7,7 @@ import FinanceSummaryWidget from '@/components/portal/FinanceSummaryWidget';
 import DepartmentBudgetPanel from '@/components/portal/DepartmentBudgetPanel';
 import LicensingSummaryCard from '@/components/portal/LicensingSummaryCard';
 import EmptyState from '@/components/portal/EmptyState';
+import { BillingIcon } from '@/components/portal/icons';
 
 export const metadata = {
   title: 'Finance | Teracom AI Portal',
@@ -94,7 +95,10 @@ export default async function FinancePage() {
       <section className="section">
         <div className="container">
           <div className="section-heading left">
-            <span className="eyebrow">Licensing</span>
+            <div className="eyebrow-icon-row">
+              <span className="stat-tile-icon"><BillingIcon /></span>
+              <span className="eyebrow">Licensing</span>
+            </div>
             <h2>Current licence &amp; entitlement.</h2>
           </div>
           {summaryResult.error ? (

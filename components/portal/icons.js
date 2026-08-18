@@ -96,6 +96,53 @@ export function CpuIcon(props) {
   );
 }
 
+export function BillingIcon(props) {
+  return (
+    <svg {...BASE_PROPS} {...props}>
+      <rect x="3" y="5" width="18" height="14" rx="2" />
+      <path d="M3 10h18" />
+      <path d="M7 14.5h4" />
+    </svg>
+  );
+}
+
+export function PermissionIcon(props) {
+  return (
+    <svg {...BASE_PROPS} {...props}>
+      <circle cx="8" cy="8" r="4" />
+      <path d="M11 11 20 20M15.5 15.5 18 13M18.5 18.5 21 16" />
+    </svg>
+  );
+}
+
+export function MegaphoneIcon(props) {
+  return (
+    <svg {...BASE_PROPS} {...props}>
+      <path d="M3 11v2a2 2 0 0 0 2 2h1l2 5h2l-1.5-5H10l8 4V6l-8 4H6a2 2 0 0 0-2 2z" />
+      <path d="M18 9v6" />
+    </svg>
+  );
+}
+
+export function FunnelIcon(props) {
+  return (
+    <svg {...BASE_PROPS} {...props}>
+      <path d="M4 4h16l-6 8v6l-4 2v-8z" />
+    </svg>
+  );
+}
+
+export function PulseIcon(props) {
+  return (
+    <svg {...BASE_PROPS} {...props}>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M7 12h2.5l1.5-4 2 8 1.5-4H17" />
+    </svg>
+  );
+}
+
+const OK_STATUSES = new Set(['operational', 'active']);
+
 export function StatusDot({ status }) {
-  return <span className={status === 'operational' ? 'status-dot ok' : 'status-dot bad'} aria-hidden="true" />;
+  return <span className={OK_STATUSES.has(status) ? 'status-dot ok' : 'status-dot bad'} aria-hidden="true" />;
 }

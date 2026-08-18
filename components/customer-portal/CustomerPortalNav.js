@@ -27,6 +27,9 @@ export default function CustomerPortalNav() {
   return (
     <nav className="portal-nav">
       <div className="container portal-nav-inner">
+        <Link href="/customer-portal" className="portal-nav-brand">
+          Teracom AI
+        </Link>
         {LINKS.map((link) => (
           <Link
             key={link.href}

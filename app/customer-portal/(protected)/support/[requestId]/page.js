@@ -10,7 +10,7 @@ import { settle, errorMessage } from '@/lib/api/results';
 import PortalSupportRequestThread from '@/components/customer-portal/PortalSupportRequestThread';
 
 export const metadata = {
-  title: 'Support Request | Customer Portal',
+  title: 'Support Request | Teracom AI Customer Portal',
 };
 
 export default async function CustomerPortalSupportRequestPage({ params }) {

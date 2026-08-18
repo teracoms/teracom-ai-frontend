@@ -74,7 +74,7 @@ export default async function CtoOrchestrationPage() {
       <section className="hero hero-product">
         <div className="container">
           <div className="hero-copy">
-            <span className="eyebrow">Teracom AI Workforce</span>
+            <span className="eyebrow">Orchestration</span>
             <h1>Orchestration.</h1>
             <p className="lead">
               Submit a high-level objective and let a lead worker decompose it, delegate across

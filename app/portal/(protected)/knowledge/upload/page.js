@@ -5,6 +5,7 @@ import { settle, errorMessage } from '@/lib/api/results';
 import UploadKnowledgeForm from '@/components/portal/UploadKnowledgeForm';
 import StatTile from '@/components/portal/StatTile';
 import EmptyState from '@/components/portal/EmptyState';
+import { KnowledgeIcon } from '@/components/portal/icons';
 
 export const metadata = {
   title: 'Upload Document | Teracom AI Portal',
@@ -79,7 +80,7 @@ export default async function UploadKnowledgePage() {
                 {errorMessage(metrics.error)}
               </p>
             ) : (
-              <StatTile label="Documents uploaded" value={metrics.value.uploaded_documents} />
+              <StatTile label="Documents uploaded" value={metrics.value.uploaded_documents} icon={<KnowledgeIcon />} />
             )}
 
             {history.error ? (

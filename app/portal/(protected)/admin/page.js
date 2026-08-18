@@ -4,6 +4,7 @@ import { getSessionToken } from '@/lib/api/auth';
 import { fetchUsers, fetchPermissions } from '@/lib/api/admin';
 import { settle, errorMessage } from '@/lib/api/results';
 import StatTile from '@/components/portal/StatTile';
+import { OrganisationIcon, PermissionIcon } from '@/components/portal/icons';
 
 export const metadata = {
   title: 'Administration | Teracom AI Portal',
@@ -59,14 +60,14 @@ export default async function AdminPage() {
                 {errorMessage(users.error)}
               </p>
             ) : (
-              <StatTile label="Total Users" value={users.value.length} />
+              <StatTile label="Total Users" value={users.value.length} icon={<OrganisationIcon />} />
             )}
             {permissions.error ? (
               <p className="form-error" role="alert">
                 {errorMessage(permissions.error)}
               </p>
             ) : (
-              <StatTile label="Permission Grants" value={permissions.value.length} />
+              <StatTile label="Permission Grants" value={permissions.value.length} icon={<PermissionIcon />} />
             )}
           </div>
         </div>

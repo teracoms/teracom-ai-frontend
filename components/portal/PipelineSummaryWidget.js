@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { FunnelIcon } from '@/components/portal/icons';
 
 /**
  * Phase 0 Package J — executive visibility of the sales pipeline
@@ -9,7 +10,10 @@ export default function PipelineSummaryWidget({ summary }) {
   return (
     <div>
       <div className="section-heading left">
-        <span className="eyebrow">Sales Pipeline</span>
+        <div className="eyebrow-icon-row">
+          <span className="stat-tile-icon"><FunnelIcon /></span>
+          <span className="eyebrow">Sales Pipeline</span>
+        </div>
         <h2>Stage funnel &amp; pending approvals.</h2>
       </div>
       <ul className="activity-list">

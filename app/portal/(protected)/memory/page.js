@@ -9,6 +9,7 @@ import { settle, errorMessage } from '@/lib/api/results';
 import StatTile from '@/components/portal/StatTile';
 import MemoryOverviewView from '@/components/portal/MemoryOverviewView';
 import EmptyState from '@/components/portal/EmptyState';
+import { MemoryIcon } from '@/components/portal/icons';
 
 export const metadata = {
   title: 'Memory | Teracom AI Portal',
@@ -99,7 +100,7 @@ export default async function MemoryPage() {
               {errorMessage(summary.error)}
             </p>
           ) : (
-            <StatTile label="Total Memories" value={summary.value.total_memories} />
+            <StatTile label="Total Memories" value={summary.value.total_memories} icon={<MemoryIcon />} />
           )}
         </div>
       </section>

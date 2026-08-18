@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { OrchestrationIcon } from '@/components/portal/icons';
 
 /**
  * Phase 0 Package L — executive/CTO visibility of federation activity
@@ -13,7 +14,10 @@ export default function FederationSummaryWidget({ summary }) {
   return (
     <div>
       <div className="section-heading left">
-        <span className="eyebrow">Federation</span>
+        <div className="eyebrow-icon-row">
+          <span className="stat-tile-icon"><OrchestrationIcon /></span>
+          <span className="eyebrow">Federation</span>
+        </div>
         <h2>External AI consultation activity.</h2>
       </div>
       <ul className="activity-list">

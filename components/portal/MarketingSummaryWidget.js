@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { MegaphoneIcon } from '@/components/portal/icons';
 
 /**
  * Phase 0 Package K — executive/CTO visibility of campaign status,
@@ -11,7 +12,10 @@ export default function MarketingSummaryWidget({ summary }) {
   return (
     <div>
       <div className="section-heading left">
-        <span className="eyebrow">Marketing</span>
+        <div className="eyebrow-icon-row">
+          <span className="stat-tile-icon"><MegaphoneIcon /></span>
+          <span className="eyebrow">Marketing</span>
+        </div>
         <h2>Campaign &amp; production pipeline.</h2>
       </div>
       <ul className="activity-list">

@@ -11,6 +11,7 @@ import { settle, errorMessage } from '@/lib/api/results';
 import StatTile from '@/components/portal/StatTile';
 import KnowledgeListView from '@/components/portal/KnowledgeListView';
 import KnowledgeSearch from '@/components/portal/KnowledgeSearch';
+import { KnowledgeIcon, WorkersIcon } from '@/components/portal/icons';
 
 export const metadata = {
   title: 'Knowledge | Teracom AI Portal',
@@ -85,21 +86,21 @@ export default async function KnowledgePage() {
                 {errorMessage(summary.error)}
               </p>
             ) : (
-              <StatTile label="Total Documents" value={summary.value.total_documents} />
+              <StatTile label="Total Documents" value={summary.value.total_documents} icon={<KnowledgeIcon />} />
             )}
             {growth.error ? (
               <p className="form-error" role="alert">
                 {errorMessage(growth.error)}
               </p>
             ) : (
-              <StatTile label="Knowledge Growth" value={growth.value.total_knowledge} />
+              <StatTile label="Knowledge Growth" value={growth.value.total_knowledge} icon={<KnowledgeIcon />} />
             )}
             {assignments.error ? (
               <p className="form-error" role="alert">
                 {errorMessage(assignments.error)}
               </p>
             ) : (
-              <StatTile label="Worker Assignments" value={assignments.value.total_assignments} />
+              <StatTile label="Worker Assignments" value={assignments.value.total_assignments} icon={<WorkersIcon />} />
             )}
           </div>
         </div>

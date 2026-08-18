@@ -5,7 +5,7 @@ import { getPortalContactSession } from '@/lib/api/portalContactAuth';
 import PortalContactLoginForm from '@/components/customer-portal/PortalContactLoginForm';
 
 export const metadata = {
-  title: 'Sign In | Customer Portal',
+  title: 'Sign In | Teracom AI Customer Portal',
 };
 
 function resolveNextPath(searchParams) {
@@ -35,9 +35,12 @@ export default async function CustomerPortalLoginPage({ searchParams }) {
       <section className="hero hero-product">
         <div className="container">
           <div className="hero-copy">
-            <span className="eyebrow">Customer Portal</span>
+            <span className="eyebrow">Teracom AI Customer Portal</span>
             <h1>Sign in to your account.</h1>
-            <p className="lead">View your proposals, projects, and support requests.</p>
+            <p className="lead">
+              View your proposals, projects, and support requests — your dedicated view into the
+              work Teracom AI is delivering for your organisation.
+            </p>
           </div>
         </div>
       </section>

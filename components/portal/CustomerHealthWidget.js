@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { OrganisationIcon } from '@/components/portal/icons';
 
 /**
  * Phase 0 Package J — executive visibility of customer health
@@ -9,7 +10,10 @@ export default function CustomerHealthWidget({ summary }) {
   return (
     <div>
       <div className="section-heading left">
-        <span className="eyebrow">Customer Health</span>
+        <div className="eyebrow-icon-row">
+          <span className="stat-tile-icon"><OrganisationIcon /></span>
+          <span className="eyebrow">Customer Health</span>
+        </div>
         <h2>{summary.stage_counts.customer} customer{summary.stage_counts.customer === 1 ? '' : 's'}.</h2>
       </div>
       <ul className="activity-list">

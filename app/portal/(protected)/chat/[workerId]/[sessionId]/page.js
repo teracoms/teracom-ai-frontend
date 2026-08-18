@@ -6,6 +6,7 @@ import { settle, errorMessage } from '@/lib/api/results';
 import { ApiError } from '@/lib/api/client';
 import ChatThread from '@/components/portal/ChatThread';
 import StatTile from '@/components/portal/StatTile';
+import { ChatIcon } from '@/components/portal/icons';
 
 export const metadata = {
   title: 'Session | Teracom AI Portal',
@@ -100,7 +101,7 @@ export default async function SessionDetailPage({ params }) {
               {errorMessage(summary.error)}
             </p>
           ) : (
-            <StatTile label="Messages" value={summary.value.message_count} />
+            <StatTile label="Messages" value={summary.value.message_count} icon={<ChatIcon />} />
           )}
         </div>
       </section>

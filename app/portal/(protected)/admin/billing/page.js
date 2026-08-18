@@ -2,6 +2,7 @@ import Link from 'next/link';
 
 import { getReferenceLicence, withPreviewState } from '@/lib/licensing/referenceLicence';
 import StatTile from '@/components/portal/StatTile';
+import { BillingIcon, CpuIcon, ClockIcon } from '@/components/portal/icons';
 
 export const metadata = {
   title: 'Billing & Licensing | Teracom AI Portal',
@@ -101,10 +102,10 @@ export default function BillingOverviewPage({ searchParams }) {
           )}
 
           <div className="stat-grid">
-            <StatTile label="Tier" value={licence.tier} />
-            <StatTile label="Hosting Model" value={licence.hostingModel} />
-            <StatTile label="Licence Status" value={licence.status} />
-            <StatTile label="Expiry Date" value={licence.expiryDate} />
+            <StatTile label="Tier" value={licence.tier} icon={<BillingIcon />} />
+            <StatTile label="Hosting Model" value={licence.hostingModel} icon={<CpuIcon />} />
+            <StatTile label="Licence Status" value={licence.status} icon={<BillingIcon />} />
+            <StatTile label="Expiry Date" value={licence.expiryDate} icon={<ClockIcon />} />
           </div>
         </div>
       </section>

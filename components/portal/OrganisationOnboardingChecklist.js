@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { useAuth } from '@/components/portal/AuthProvider';
+import EmptyState from '@/components/portal/EmptyState';
 
 /**
  * Phase 0 Package Q — the organisation-level welcome checklist, seeded by
@@ -43,12 +44,14 @@ export default function OrganisationOnboardingChecklist({ tasks }) {
 
   if (!tasks || tasks.length === 0) {
     return (
-      <p className="activity-meta">
-        No onboarding checklist yet — this is seeded automatically once your organisation&apos;s
-        first licence request is approved.
-      </p>
+      <EmptyState
+        title="No onboarding checklist yet"
+        description="This is seeded automatically once your organisation's first licence request is approved."
+      />
     );
   }
+
+  const completedCount = tasks.filter((task) => task.status !== 'pending').length;
 
   return (
     <div>
@@ -57,6 +60,10 @@ export default function OrganisationOnboardingChecklist({ tasks }) {
           {error}
         </p>
       )}
+
+      <p className="activity-meta">
+        {completedCount} of {tasks.length} step{tasks.length === 1 ? '' : 's'} complete
+      </p>
 
       <ul className="activity-list">
         {tasks.map((task) => (

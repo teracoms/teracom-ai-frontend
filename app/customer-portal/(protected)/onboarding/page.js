@@ -4,7 +4,7 @@ import { errorMessage } from '@/lib/api/results';
 import PortalOnboardingView from '@/components/customer-portal/PortalOnboardingView';
 
 export const metadata = {
-  title: 'Onboarding | Customer Portal',
+  title: 'Onboarding | Teracom AI Customer Portal',
 };
 
 export default async function CustomerPortalOnboardingPage() {

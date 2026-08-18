@@ -9,6 +9,7 @@ import { settle, errorMessage, isForbidden } from '@/lib/api/results';
 import StatTile from '@/components/portal/StatTile';
 import ActivitySection from '@/components/portal/ActivitySection';
 import OrganisationSummaryCard from '@/components/portal/OrganisationSummaryCard';
+import DashboardQuickLinks from '@/components/portal/DashboardQuickLinks';
 import { WorkersIcon, KnowledgeIcon, MemoryIcon, ChatIcon } from '@/components/portal/icons';
 
 export const metadata = {
@@ -85,6 +86,16 @@ export default async function DashboardPage() {
         </div>
       </section>
 
+      <section className="section">
+        <div className="container">
+          <div className="section-heading left">
+            <span className="eyebrow">Explore your workspace</span>
+            <h2>Everything available to your organisation.</h2>
+          </div>
+          <DashboardQuickLinks />
+        </div>
+      </section>
+
       <section className="section alt">
         <div className="container dashboard-columns">
           <div>
@@ -109,8 +120,8 @@ export default async function DashboardPage() {
               </p>
             ) : (
               <div className="stat-grid stat-grid-2">
-                <StatTile label="Chat Sessions" value={chatAnalytics.value.sessions} />
-                <StatTile label="Chat Messages" value={chatAnalytics.value.messages} />
+                <StatTile label="Chat Sessions" value={chatAnalytics.value.sessions} icon={<ChatIcon />} />
+                <StatTile label="Chat Messages" value={chatAnalytics.value.messages} icon={<ChatIcon />} />
               </div>
             )}
           </div>

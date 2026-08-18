@@ -4,7 +4,7 @@ import { errorMessage } from '@/lib/api/results';
 import PortalDashboardWidget from '@/components/customer-portal/PortalDashboardWidget';
 
 export const metadata = {
-  title: 'Dashboard | Customer Portal',
+  title: 'Dashboard | Teracom AI Customer Portal',
 };
 
 export default async function CustomerPortalDashboardPage() {

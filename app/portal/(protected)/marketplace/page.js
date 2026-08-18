@@ -107,7 +107,7 @@ export default async function MarketplacePage() {
             </p>
           ) : packs.length === 0 ? (
             <EmptyState
-              title="No packs published yet."
+              title="No packs published yet"
               description="Check back soon — Teracom's curation team is preparing the first Worker Packs."
             />
           ) : (
@@ -117,6 +117,21 @@ export default async function MarketplacePage() {
               ))}
             </div>
           )}
+        </div>
+      </section>
+
+      <section className="section alt">
+        <div className="container">
+          <p className="form-note">
+            Every pack here runs on Teracom AI — part of the Teracom AI product family, specialist
+            platforms built for different parts of the business.
+          </p>
+          <div className="mini-services">
+            <span>SecurityOS — available now</span>
+            <span>FinanceOS — coming soon</span>
+            <span>OperationsOS — coming soon</span>
+            <span>ElectricalOS — coming soon</span>
+          </div>
         </div>
       </section>
     </main>

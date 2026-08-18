@@ -95,6 +95,12 @@ export default function PortalNav() {
   const [openGroup, setOpenGroup] = useState(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const navRef = useRef(null);
+  // Keyed by group label — lets Escape/close return focus to the exact
+  // trigger button that opened a dropdown (TERACOM_REVIEW_BACKLOG.md
+  // WBL-008), and lets the dropdown's own keydown handler find that
+  // group's menu items for arrow-key navigation.
+  const triggerRefs = useRef({});
+  const dropdownRefs = useRef({});
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -123,8 +129,62 @@ export default function PortalNav() {
     setMobileOpen(false);
   }, [pathname]);
 
+  // Moves focus into the newly-opened dropdown's first menu item —
+  // WAI-ARIA menu-button pattern (WBL-008). Runs after openGroup changes,
+  // not on click itself, since the dropdown's `open` class (and therefore
+  // its focusability) only applies once React has re-rendered.
+  useEffect(() => {
+    if (!openGroup) return;
+    const firstLink = dropdownRefs.current[openGroup]?.querySelector('[role="menuitem"]');
+    firstLink?.focus();
+  }, [openGroup]);
+
   function groupLinks(group) {
     return isAdmin && group.adminLinks ? [...group.links, ...group.adminLinks] : group.links;
+  }
+
+  function closeMenus() {
+    setOpenGroup(null);
+    setMobileOpen(false);
+  }
+
+  function closeAndRefocusTrigger(groupLabel) {
+    setOpenGroup(null);
+    triggerRefs.current[groupLabel]?.focus();
+  }
+
+  function handleTriggerKeyDown(event, groupLabel) {
+    if (event.key === 'ArrowDown' || event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      setOpenGroup(groupLabel);
+    }
+  }
+
+  // Arrow-key/Home/End navigation between a dropdown's own menuitem
+  // links, and Escape that returns focus to the button that opened it —
+  // the two pieces of the standard menu-button pattern this dropdown was
+  // missing entirely before (WBL-008).
+  function handleDropdownKeyDown(event, groupLabel) {
+    const items = Array.from(dropdownRefs.current[groupLabel]?.querySelectorAll('[role="menuitem"]') ?? []);
+    if (items.length === 0) return;
+    const currentIndex = items.indexOf(document.activeElement);
+
+    if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      items[(currentIndex + 1) % items.length].focus();
+    } else if (event.key === 'ArrowUp') {
+      event.preventDefault();
+      items[(currentIndex - 1 + items.length) % items.length].focus();
+    } else if (event.key === 'Home') {
+      event.preventDefault();
+      items[0].focus();
+    } else if (event.key === 'End') {
+      event.preventDefault();
+      items[items.length - 1].focus();
+    } else if (event.key === 'Escape') {
+      event.preventDefault();
+      closeAndRefocusTrigger(groupLabel);
+    }
   }
 
   return (
@@ -150,6 +210,7 @@ export default function PortalNav() {
               key={link.href}
               href={link.href}
               className={isActive(pathname, link.href) ? 'portal-nav-link active' : 'portal-nav-link'}
+              onClick={closeMenus}
             >
               {link.label}
             </Link>
@@ -160,14 +221,21 @@ export default function PortalNav() {
             const active = groupIsActive(pathname, links);
             const open = openGroup === group.label;
 
+            const dropdownId = `portal-nav-dropdown-${group.label}`;
+
             return (
               <div className="portal-nav-group" key={group.label}>
                 <button
                   type="button"
+                  ref={(node) => {
+                    triggerRefs.current[group.label] = node;
+                  }}
                   className={active ? 'portal-nav-link portal-nav-group-toggle active' : 'portal-nav-link portal-nav-group-toggle'}
                   aria-expanded={open}
                   aria-haspopup="true"
+                  aria-controls={dropdownId}
                   onClick={() => setOpenGroup((current) => (current === group.label ? null : group.label))}
+                  onKeyDown={(event) => handleTriggerKeyDown(event, group.label)}
                 >
                   {group.label}
                   <span className="portal-nav-caret" aria-hidden="true">
@@ -175,13 +243,22 @@ export default function PortalNav() {
                   </span>
                 </button>
 
-                <div className={open ? 'portal-nav-dropdown open' : 'portal-nav-dropdown'} role="menu">
+                <div
+                  id={dropdownId}
+                  ref={(node) => {
+                    dropdownRefs.current[group.label] = node;
+                  }}
+                  className={open ? 'portal-nav-dropdown open' : 'portal-nav-dropdown'}
+                  role="menu"
+                  onKeyDown={(event) => handleDropdownKeyDown(event, group.label)}
+                >
                   {links.map((link) => (
                     <Link
                       key={link.href}
                       href={link.href}
                       role="menuitem"
                       className={isActive(pathname, link.href) ? 'portal-nav-dropdown-link active' : 'portal-nav-dropdown-link'}
+                      onClick={closeMenus}
                     >
                       {link.label}
                     </Link>

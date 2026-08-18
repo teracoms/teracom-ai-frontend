@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { PulseIcon } from '@/components/portal/icons';
 
 /**
  * Phase 0 Package PQR — objectives #12/#13/#15. Reused on
@@ -13,7 +14,10 @@ export default function PlatformHealthSummaryWidget({ summary }) {
   return (
     <div>
       <div className="section-heading left">
-        <span className="eyebrow">Platform Health</span>
+        <div className="eyebrow-icon-row">
+          <span className="stat-tile-icon"><PulseIcon /></span>
+          <span className="eyebrow">Platform Health</span>
+        </div>
         <h2>
           Status: <span className="badge">{status}</span>
         </h2>

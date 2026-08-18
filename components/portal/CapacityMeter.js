@@ -10,12 +10,19 @@
  * bar, since that figure has no fixed platform default (LICENSING_MODEL_V1.md
  * §2/§5).
  */
-export default function CapacityMeter({ label, used, allocation, allocationLabel }) {
+// `icon` is optional, matching StatTile.js's own additive pattern (see
+// TERACOM_REVIEW_BACKLOG.md WBL-011) — ties this meter into the same
+// visual language the stat-tile grid already uses, without changing its
+// bar/label layout.
+export default function CapacityMeter({ label, used, allocation, allocationLabel, icon }) {
   if (allocationLabel) {
     return (
       <div className="capacity-meter">
         <div className="capacity-meter-header">
-          <span>{label}</span>
+          <span className="capacity-meter-label">
+            {icon && <span className="stat-tile-icon">{icon}</span>}
+            {label}
+          </span>
           <span>{used} in use</span>
         </div>
         <p className="form-note">{allocationLabel}</p>
@@ -28,7 +35,10 @@ export default function CapacityMeter({ label, used, allocation, allocationLabel
   return (
     <div className="capacity-meter">
       <div className="capacity-meter-header">
-        <span>{label}</span>
+        <span className="capacity-meter-label">
+          {icon && <span className="stat-tile-icon">{icon}</span>}
+          {label}
+        </span>
         <span>
           {used} / {allocation}
         </span>

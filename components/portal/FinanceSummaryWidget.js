@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { BillingIcon } from '@/components/portal/icons';
 
 /**
  * Phase 0 Package M — executive/CTO financial dashboards (objectives
@@ -14,7 +15,10 @@ export default function FinanceSummaryWidget({ summary }) {
   return (
     <div>
       <div className="section-heading left">
-        <span className="eyebrow">Finance</span>
+        <div className="eyebrow-icon-row">
+          <span className="stat-tile-icon"><BillingIcon /></span>
+          <span className="eyebrow">Finance</span>
+        </div>
         <h2>Budgets, costs &amp; licensing.</h2>
       </div>
       <ul className="activity-list">

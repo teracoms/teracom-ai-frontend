@@ -13,6 +13,7 @@ import { settle, errorMessage } from '@/lib/api/results';
 import { ApiError } from '@/lib/api/client';
 import StatTile from '@/components/portal/StatTile';
 import EmptyState from '@/components/portal/EmptyState';
+import { KnowledgeIcon, MemoryIcon, ChatIcon } from '@/components/portal/icons';
 import EditWorkerForm from '@/components/portal/EditWorkerForm';
 import WorkerKnowledgeAssignment from '@/components/portal/WorkerKnowledgeAssignment';
 
@@ -111,14 +112,15 @@ export default async function WorkerDetailPage({ params }) {
       <section className="section">
         <div className="container">
           <div className="stat-grid">
-            <StatTile label="Knowledge assigned" value={summary.value.knowledge_count} />
-            <StatTile label="Memories" value={summary.value.memory_count} />
+            <StatTile label="Knowledge assigned" value={summary.value.knowledge_count} icon={<KnowledgeIcon />} />
+            <StatTile label="Memories" value={summary.value.memory_count} icon={<MemoryIcon />} />
             {!activity.error && (
               <>
-                <StatTile label="Chat sessions" value={activity.value.chat_sessions} />
+                <StatTile label="Chat sessions" value={activity.value.chat_sessions} icon={<ChatIcon />} />
                 <StatTile
                   label="Knowledge assignments"
                   value={activity.value.knowledge_assignments}
+                  icon={<KnowledgeIcon />}
                 />
               </>
             )}

@@ -1,4 +1,5 @@
 import { getSessionToken } from '@/lib/api/auth';
+import { decodeJwtPayload } from '@/lib/api/jwt';
 import { fetchUsers } from '@/lib/api/admin';
 import { errorMessage } from '@/lib/api/results';
 import UserListView from '@/components/portal/UserListView';
@@ -23,6 +24,16 @@ export default async function AdminUsersPage() {
         </section>
       </main>
     );
+  }
+
+  // Belt-and-braces beyond the parent admin layout's role gate — see
+  // admin/billing/usage/page.js's own identical comment and
+  // TERACOM_REVIEW_BACKLOG.md WBL-013: the parent layout stops the
+  // *rendered output* for a non-admin, but Next.js still executes this
+  // child Server Component's own data fetch regardless. This was the
+  // last of the original Package 7 admin pages missing this check.
+  if (decodeJwtPayload(token)?.role !== 'admin') {
+    return null;
   }
 
   let users = [];

@@ -4,7 +4,7 @@ import { errorMessage } from '@/lib/api/results';
 import PortalCommunicationsTimeline from '@/components/customer-portal/PortalCommunicationsTimeline';
 
 export const metadata = {
-  title: 'Communications | Customer Portal',
+  title: 'Communications | Teracom AI Customer Portal',
 };
 
 export default async function CustomerPortalCommunicationsPage() {

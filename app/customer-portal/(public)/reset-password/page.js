@@ -3,7 +3,7 @@ import Link from 'next/link';
 import PortalContactResetPasswordForm from '@/components/customer-portal/PortalContactResetPasswordForm';
 
 export const metadata = {
-  title: 'Reset Password | Customer Portal',
+  title: 'Reset Password | Teracom AI Customer Portal',
 };
 
 export default function CustomerPortalResetPasswordPage({ searchParams }) {

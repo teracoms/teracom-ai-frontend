@@ -6,6 +6,7 @@ import { fetchOrganisationSummary } from '@/lib/api/dashboard';
 import { settle, errorMessage } from '@/lib/api/results';
 import { getReferenceLicence, TIER_ALLOCATIONS } from '@/lib/licensing/referenceLicence';
 import CapacityMeter from '@/components/portal/CapacityMeter';
+import { WorkersIcon, OrganisationIcon } from '@/components/portal/icons';
 
 export const metadata = {
   title: 'Usage & Capacity | Teracom AI Portal',
@@ -92,6 +93,7 @@ export default async function BillingUsagePage() {
                 label="Workers"
                 used={workers.value.length}
                 allocation={allocation.workers}
+                icon={<WorkersIcon />}
               />
             )}
 
@@ -104,6 +106,7 @@ export default async function BillingUsagePage() {
                 label="Users"
                 used={users.value.length}
                 allocationLabel={licence.userAllocationLabel}
+                icon={<OrganisationIcon />}
               />
             )}
 
@@ -116,6 +119,7 @@ export default async function BillingUsagePage() {
                 label="Organisations"
                 used={organisation.value ? 1 : 0}
                 allocation={allocation.organisations}
+                icon={<OrganisationIcon />}
               />
             )}
           </div>
