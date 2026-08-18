@@ -8,12 +8,14 @@ import { fetchOnboardingTasks } from '@/lib/api/onboardingTasks';
 import { fetchWorkerList } from '@/lib/api/workers';
 import { fetchPortalAccountForContact } from '@/lib/api/portalContactAccounts';
 import { fetchSupportRequests } from '@/lib/api/supportRequests';
+import { fetchContactCommunications } from '@/lib/api/communications';
 import { settle, errorMessage } from '@/lib/api/results';
 import ContactDetail from '@/components/portal/ContactDetail';
 import DealDocumentPanel from '@/components/portal/DealDocumentPanel';
 import OnboardingChecklist from '@/components/portal/OnboardingChecklist';
 import PortalAccountPanel from '@/components/portal/PortalAccountPanel';
 import SupportRequestPanel from '@/components/portal/SupportRequestPanel';
+import CommunicationsPanel from '@/components/portal/CommunicationsPanel';
 
 export const metadata = {
   title: 'Contact | Teracom AI Portal',
@@ -52,6 +54,7 @@ export default async function ContactDetailPage({ params }) {
     workersResult,
     portalAccountResult,
     supportRequestsResult,
+    communicationsResult,
   ] = await Promise.allSettled([
     fetchContact(token, contactId),
     fetchProposals(token, contactId),
@@ -61,6 +64,7 @@ export default async function ContactDetailPage({ params }) {
     fetchWorkerList(token),
     fetchPortalAccountForContact(token, contactId),
     fetchSupportRequests(token, { crm_contact_id: contactId }),
+    fetchContactCommunications(token, contactId),
   ]);
 
   const contact = settle(contactResult);
@@ -96,6 +100,7 @@ export default async function ContactDetailPage({ params }) {
   const activeWorkers = (workers.value ?? []).filter((worker) => worker.status === 'active');
   const portalAccount = settle(portalAccountResult);
   const supportRequests = settle(supportRequestsResult);
+  const communications = settle(communicationsResult);
 
   return (
     <main>
@@ -193,6 +198,25 @@ export default async function ContactDetailPage({ params }) {
             </p>
           ) : (
             <SupportRequestPanel requests={supportRequests.value ?? []} />
+          )}
+        </div>
+      </section>
+
+      <section className="section alt">
+        <div className="container">
+          <div className="section-heading left">
+            <span className="eyebrow">Communications</span>
+            <h2>Emails sent to this contact.</h2>
+          </div>
+          {communications.error ? (
+            <p className="form-error" role="alert">
+              {errorMessage(communications.error)}
+            </p>
+          ) : (
+            <CommunicationsPanel
+              entries={communications.value ?? []}
+              emptyDescription="Nothing has been sent directly to this contact yet."
+            />
           )}
         </div>
       </section>

@@ -73,6 +73,7 @@ const GROUPS = [
     // than showing every member a "requires admin access" wall.
     adminLinks: [
       { href: '/portal/admin/governance', label: 'Governance' },
+      { href: '/portal/admin/communications', label: 'Communications' },
       { href: '/portal/admin', label: 'Administration' },
     ],
   },
