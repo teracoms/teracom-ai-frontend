@@ -1,0 +1,17 @@
+[Unit]
+Description=Teracom AI Frontend (Next.js)
+After=network-online.target teracom-backend.service
+Wants=network-online.target teracom-backend.service
+StartLimitIntervalSec=60
+StartLimitBurst=5
+
+[Service]
+Type=simple
+WorkingDirectory=%h/teracom-ai/frontend
+Environment=NODE_ENV=production
+ExecStart=/usr/local/bin/npm run start
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target
