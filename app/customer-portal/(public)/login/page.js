@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
 import { getPortalContactSession } from '@/lib/api/portalContactAuth';
@@ -45,6 +46,9 @@ export default async function CustomerPortalLoginPage({ searchParams }) {
         <div className="container">
           <div className="auth-card">
             <PortalContactLoginForm nextPath={nextPath} />
+            <p className="form-note" style={{ marginTop: '16px' }}>
+              <Link href="/customer-portal/forgot-password">Forgot password?</Link>
+            </p>
           </div>
         </div>
       </section>

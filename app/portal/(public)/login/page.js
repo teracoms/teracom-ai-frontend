@@ -78,14 +78,14 @@ export default async function LoginPage({ searchParams }) {
             <article className="login-action-card">
               <h3>Request Demo</h3>
               <p>See Teracom AI Workforce in action, guided by our team.</p>
-              <Link className="btn btn-secondary card-action" href="/#contact">
+              <Link className="btn btn-secondary card-action" href="/?interest=Request+Demo#contact">
                 Request a demo
               </Link>
             </article>
             <article className="login-action-card">
               <h3>Contact Sales</h3>
               <p>Talk to us about tiers, hosting models and rollout for your organisation.</p>
-              <Link className="btn btn-secondary card-action" href="/#contact">
+              <Link className="btn btn-secondary card-action" href="/?interest=Talk+to+Sales#contact">
                 Contact sales
               </Link>
             </article>

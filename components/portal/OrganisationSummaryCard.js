@@ -6,6 +6,12 @@ function daysRemaining(trialEndsAt) {
   return Math.ceil(diffMs / (1000 * 60 * 60 * 24));
 }
 
+const TRIAL_BANNER_TEXT = {
+  active: (days) => `Trial — ${days} day${days === 1 ? '' : 's'} remaining.`,
+  grace: () => 'Your trial has ended and is now in a grace period. Contact Teracom to continue without interruption.',
+  locked: () => 'Your trial has ended and this workspace is now in Locked Mode. Contact Teracom to continue.',
+};
+
 /**
  * GET /organisations/ is admin-only backend-side (auth/roles.require_role
  * "admin") — a non-admin signed-in user will never be able to see this data,
@@ -13,10 +19,14 @@ function daysRemaining(trialEndsAt) {
  * `restricted` renders that as a plain informational note rather than an
  * error banner.
  *
- * The trial banner ("Platform Review Wave 1" trial experience foundation)
- * only renders when `organisation.status === "trial"` — every organisation
- * created before this package, and every one created via the pre-existing
- * /signup path, has `trial_ends_at: null` and shows nothing extra here.
+ * The trial banner ("Platform Review Wave 1" trial experience foundation,
+ * extended in "Customer Experience & Commercial Readiness Wave" with the
+ * real grace/locked states) only renders when `organisation.status ===
+ * "trial"` — every organisation created before Wave 1, and every one
+ * created via the pre-existing /signup path, has `trial_ends_at: null` and
+ * shows nothing extra here. `trial_status` ("active"/"grace"/"locked") is
+ * computed backend-side (services/trial_service.py) so the grace-period
+ * length doesn't need to be duplicated here.
  */
 export default function OrganisationSummaryCard({ organisation, restricted }) {
   if (restricted) {
@@ -38,7 +48,7 @@ export default function OrganisationSummaryCard({ organisation, restricted }) {
   }
 
   const isTrial = organisation.status === 'trial' && organisation.trial_ends_at;
-  const remaining = isTrial ? daysRemaining(organisation.trial_ends_at) : null;
+  const trialStatus = organisation.trial_status;
 
   return (
     <div className="org-summary-card">
@@ -56,12 +66,15 @@ export default function OrganisationSummaryCard({ organisation, restricted }) {
         </span>
       </p>
 
-      {isTrial && (
-        <p className={remaining > 0 ? 'form-note-banner trial-banner' : 'form-error trial-banner'} role="status">
+      {isTrial && trialStatus && (
+        <p
+          className={trialStatus === 'active' ? 'form-note-banner trial-banner' : 'form-error trial-banner'}
+          role="status"
+        >
           <ClockIcon width={16} height={16} />{' '}
-          {remaining > 0
-            ? `Trial — ${remaining} day${remaining === 1 ? '' : 's'} remaining.`
-            : 'Your trial has ended. Contact Teracom to continue.'}
+          {trialStatus === 'active'
+            ? TRIAL_BANNER_TEXT.active(daysRemaining(organisation.trial_ends_at))
+            : TRIAL_BANNER_TEXT[trialStatus]()}
         </p>
       )}
     </div>

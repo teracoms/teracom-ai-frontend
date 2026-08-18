@@ -21,11 +21,21 @@ const PUBLIC_PORTAL_PATHS = new Set([
   '/portal/start-trial',
 ]);
 
+// "Customer Experience & Commercial Readiness Wave" — the same fix
+// Platform Review Wave 1 needed for /portal/**, now needed here too:
+// these two new pages are public by definition (a signed-out
+// PortalContact is exactly who needs to reach a password reset flow).
+const PUBLIC_CUSTOMER_PORTAL_PATHS = new Set([
+  '/customer-portal/login',
+  '/customer-portal/forgot-password',
+  '/customer-portal/reset-password',
+]);
+
 export function middleware(request) {
   const { pathname } = request.nextUrl;
 
   if (pathname.startsWith('/customer-portal')) {
-    if (pathname === '/customer-portal/login') {
+    if (PUBLIC_CUSTOMER_PORTAL_PATHS.has(pathname)) {
       return NextResponse.next();
     }
 
