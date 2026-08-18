@@ -187,7 +187,7 @@ export default function CtoOrchestrationPanel({ workers, onExecutionComplete }) 
 
       {plan?.available === false && (
         <p className="form-note-banner" role="note">
-          Autonomous CTO Orchestration requires a Platinum licence tier.
+          Orchestration requires a Platinum licence tier.
         </p>
       )}
 

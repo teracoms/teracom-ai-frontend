@@ -14,6 +14,13 @@ import { SESSION_COOKIE_NAME, PORTAL_CONTACT_SESSION_COOKIE_NAME } from '@/lib/a
 // (/customer-portal) with its own cookie — handled as its own branch here
 // rather than generalising the /portal branch, since the two session planes
 // must never share a code path (mirrors the backend's own auth separation).
+const PUBLIC_PORTAL_PATHS = new Set([
+  '/portal/login',
+  '/portal/forgot-password',
+  '/portal/reset-password',
+  '/portal/start-trial',
+]);
+
 export function middleware(request) {
   const { pathname } = request.nextUrl;
 
@@ -35,7 +42,11 @@ export function middleware(request) {
     return NextResponse.next();
   }
 
-  if (pathname === '/portal/login') {
+  // "Platform Review Wave 1" added three more unauthenticated /portal
+  // pages alongside the pre-existing /portal/login — each is public by
+  // definition (a signed-out visitor is exactly who needs to reach a
+  // password reset flow or a self-service trial signup).
+  if (PUBLIC_PORTAL_PATHS.has(pathname)) {
     return NextResponse.next();
   }
 

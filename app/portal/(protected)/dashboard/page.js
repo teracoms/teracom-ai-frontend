@@ -9,6 +9,7 @@ import { settle, errorMessage, isForbidden } from '@/lib/api/results';
 import StatTile from '@/components/portal/StatTile';
 import ActivitySection from '@/components/portal/ActivitySection';
 import OrganisationSummaryCard from '@/components/portal/OrganisationSummaryCard';
+import { WorkersIcon, KnowledgeIcon, MemoryIcon, ChatIcon } from '@/components/portal/icons';
 
 export const metadata = {
   title: 'Dashboard | Teracom AI Portal',
@@ -75,10 +76,10 @@ export default async function DashboardPage() {
             </p>
           ) : (
             <div className="stat-grid">
-              <StatTile label="Workers" value={dashboard.value.workers} />
-              <StatTile label="Knowledge" value={dashboard.value.knowledge} />
-              <StatTile label="Memories" value={dashboard.value.memories} />
-              <StatTile label="Chat Sessions" value={dashboard.value.chat_sessions} />
+              <StatTile label="Workers" value={dashboard.value.workers} icon={<WorkersIcon />} />
+              <StatTile label="Knowledge" value={dashboard.value.knowledge} icon={<KnowledgeIcon />} />
+              <StatTile label="Memories" value={dashboard.value.memories} icon={<MemoryIcon />} />
+              <StatTile label="Chat Sessions" value={dashboard.value.chat_sessions} icon={<ChatIcon />} />
             </div>
           )}
         </div>

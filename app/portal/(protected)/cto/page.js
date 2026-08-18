@@ -17,7 +17,7 @@ import PlatformHealthSummaryWidget from '@/components/portal/PlatformHealthSumma
 import EmptyState from '@/components/portal/EmptyState';
 
 export const metadata = {
-  title: 'CTO | Teracom AI Portal',
+  title: 'Orchestration | Teracom AI Portal',
 };
 
 export default async function CtoOrchestrationPage() {
@@ -28,9 +28,9 @@ export default async function CtoOrchestrationPage() {
       <main>
         <section className="section">
           <div className="container">
-            <span className="eyebrow">CTO</span>
+            <span className="eyebrow">Orchestration</span>
             <h1>Your session has ended.</h1>
-            <p className="lead">Please sign in again to use Autonomous CTO Orchestration.</p>
+            <p className="lead">Please sign in again to use Orchestration.</p>
           </div>
         </section>
       </main>
@@ -74,8 +74,8 @@ export default async function CtoOrchestrationPage() {
       <section className="hero hero-product">
         <div className="container">
           <div className="hero-copy">
-            <span className="eyebrow">Autonomous CTO</span>
-            <h1>CTO Orchestration.</h1>
+            <span className="eyebrow">Teracom AI Workforce</span>
+            <h1>Orchestration.</h1>
             <p className="lead">
               Submit a high-level objective and let a lead worker decompose it, delegate across
               your workforce in a bounded chain, and synthesise the results — you decide whether
@@ -94,7 +94,7 @@ export default async function CtoOrchestrationPage() {
           ) : activeWorkers.length === 0 ? (
             <EmptyState
               title="No active workers yet"
-              description="Create at least one active worker before running a CTO task."
+              description="Create at least one active worker before running an Orchestration task."
             />
           ) : (
             <CtoOrchestrationPanel workers={activeWorkers} />
@@ -105,7 +105,7 @@ export default async function CtoOrchestrationPage() {
       <section className="section alt">
         <div className="container">
           <div className="section-heading left">
-            <span className="eyebrow">CTO Dashboard</span>
+            <span className="eyebrow">Orchestration</span>
             <h2>Delegation & Consultation History</h2>
             <p>Every chain execution your organisation has run, most recent first.</p>
           </div>

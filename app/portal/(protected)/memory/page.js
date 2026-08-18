@@ -112,7 +112,7 @@ export default async function MemoryPage() {
             <p>
               Phase 0 Package H adds two tiers above per-worker memory: department memory (any
               organisation member can view; an admin can add) and organisation memory
-              (admin-only). Both feed into CTO Orchestration&apos;s executive synthesis.
+              (admin-only). Both feed into Orchestration&apos;s executive synthesis.
             </p>
           </div>
 

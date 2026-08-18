@@ -1,11 +1,14 @@
 import { getSessionToken } from '@/lib/api/auth';
+import { decodeJwtPayload } from '@/lib/api/jwt';
 import { fetchPlatformHealthSummary } from '@/lib/api/platformHealth';
 import { fetchDeploymentRecords } from '@/lib/api/deploymentRecords';
 import { fetchPlatformIncidents } from '@/lib/api/platformIncidents';
+import { fetchSystemMetricsSummary } from '@/lib/api/systemMetrics';
 import { settle, errorMessage } from '@/lib/api/results';
 import PlatformHealthSummaryWidget from '@/components/portal/PlatformHealthSummaryWidget';
 import DeploymentRecordPanel from '@/components/portal/DeploymentRecordPanel';
 import PlatformIncidentPanel from '@/components/portal/PlatformIncidentPanel';
+import SystemMetricsPanel from '@/components/portal/SystemMetricsPanel';
 
 export const metadata = {
   title: 'Platform Health | Teracom AI Portal',
@@ -35,17 +38,26 @@ export default async function PlatformHealthPage() {
     );
   }
 
+  const isAdmin = decodeJwtPayload(token)?.role === 'admin';
+
   // Per-section resilience (ADR-008): the summary, deployment list,
-  // and incident list are independent of each other.
-  const [summarySettled, deploymentsSettled, incidentsSettled] = await Promise.allSettled([
+  // incident list, and (admin-only) system metrics are independent of
+  // each other. System metrics is only fetched for an admin at all —
+  // the backend already 403s a non-admin, but this avoids making a
+  // real fetch a non-admin's rendered page never shows anyway (the
+  // same Server-Component-still-fetches gap Package 9/Package H's own
+  // admin pages already had to account for).
+  const [summarySettled, deploymentsSettled, incidentsSettled, systemMetricsSettled] = await Promise.allSettled([
     fetchPlatformHealthSummary(token),
     fetchDeploymentRecords(token),
     fetchPlatformIncidents(token),
+    isAdmin ? fetchSystemMetricsSummary(token) : Promise.resolve(null),
   ]);
 
   const summaryResult = settle(summarySettled);
   const deploymentsResult = settle(deploymentsSettled);
   const incidentsResult = settle(incidentsSettled);
+  const systemMetricsResult = settle(systemMetricsSettled);
 
   return (
     <main>
@@ -62,7 +74,21 @@ export default async function PlatformHealthPage() {
         </div>
       </section>
 
-      <section className="section">
+      {isAdmin && (
+        <section className="section">
+          <div className="container">
+            {systemMetricsResult.error ? (
+              <p className="form-error" role="alert">
+                {errorMessage(systemMetricsResult.error)}
+              </p>
+            ) : systemMetricsResult.value ? (
+              <SystemMetricsPanel metrics={systemMetricsResult.value} />
+            ) : null}
+          </div>
+        </section>
+      )}
+
+      <section className="section alt">
         <div className="container">
           {summaryResult.error ? (
             <p className="form-error" role="alert">
@@ -74,7 +100,7 @@ export default async function PlatformHealthPage() {
         </div>
       </section>
 
-      <section className="section alt">
+      <section className="section">
         <div className="container">
           {deploymentsResult.error ? (
             <p className="form-error" role="alert">
@@ -86,7 +112,7 @@ export default async function PlatformHealthPage() {
         </div>
       </section>
 
-      <section className="section">
+      <section className="section alt">
         <div className="container">
           {incidentsResult.error ? (
             <p className="form-error" role="alert">
