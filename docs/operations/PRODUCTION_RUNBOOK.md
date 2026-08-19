@@ -145,3 +145,29 @@ systemctl --user enable --now teracom-backend.service teracom-frontend.service
   3. Update `JWT_SECRET_KEY` in `backend/.env`, then `systemctl --user restart teracom-backend.service`.
   4. There is no rotation procedure yet for `LICENSING_SIGNING_PRIVATE_KEY_B64`/`_PUBLIC_KEY_B64` — rotating those affects every *already-issued licence file*, a substantially bigger operation gated on the still-open questions in `docs/commercial/LICENSING_MODEL_V1.md` §19 (signing-key custody/rotation), not something to attempt ad hoc.
 - **No log rotation policy configured beyond journald's own default retention** — acceptable for now; revisit if disk usage from logs becomes a real concern (`journalctl --disk-usage`).
+
+## 9. SMTP / email delivery activation
+
+**Current state:** `services/email_provider.py`'s `SmtpEmailProvider` is real, tested (including a real wire-level SMTP handshake against a live local socket — `tests/test_email_provider.py`), and requires **zero further engineering** to go live. `SMTP_HOST` is empty in this environment's `.env`, so `get_email_provider()` correctly falls back to `LoggingEmailProvider` — every notification is logged, not sent. This is a configuration and credential step, not a code change, and it is the one step in this runbook that requires a real external account this session cannot provision on its own.
+
+**To activate real delivery**, set the following in `backend/.env` and restart the backend service (`systemctl --user restart teracom-backend.service`):
+
+```
+SMTP_HOST=<your mailbox or relay's hostname>
+SMTP_PORT=<usually 587 for STARTTLS>
+SMTP_USERNAME=<mailbox login, or blank for an unauthenticated relay>
+SMTP_PASSWORD=<mailbox password or app-password>
+SMTP_USE_TLS=true
+SMTP_FROM_EMAIL=<the address recipients will see mail arrive from>
+SMTP_FROM_NAME=Teracom AI
+SALES_NOTIFICATION_EMAIL=<a real inbox for Contact Sales / Demo Request leads>
+```
+
+**A real Microsoft 365 mailbox** is the documented first target (`smtp.office365.com:587`, SMTP AUTH, no code changes) — this requires a real M365 account with SMTP AUTH enabled for that mailbox (disabled by default in many tenants; a tenant admin must explicitly allow it for the account) and its real password or an app-specific password if MFA is enabled. **Any other SMTP-capable provider works identically** — a dedicated transactional service (SendGrid, Postmark, Amazon SES, etc.) needs only its own host/port/username/API-key-as-password values; `SmtpEmailProvider`'s code has no Microsoft-specific branch.
+
+**After setting real credentials, verify end to end**, not just that the process restarted cleanly:
+1. Trigger one real notification (e.g. sign up a trial organisation, or use "Contact Sales") and confirm it actually arrives in a real inbox — check the spam folder too.
+2. Check the admin Communications panel (`/portal/admin/communications`) for that send — it should show a real provider/status, not `"Logged (no provider configured)"`.
+3. If using a mailbox with existing organisational SPF/DKIM, confirm alignment holds for mail sent through this specific path (some relays rewrite the `From` header in ways that break DKIM signing) — don't assume it does because the domain has SPF/DKIM configured for other purposes.
+
+**This step could not be completed further in this session**: provisioning a real external mailbox or transactional-email account requires access this coding session doesn't have (a real email account, a real third-party service signup). Everything up to that point — the provider code, its wire-level correctness, and this activation runbook — is complete and tested.
