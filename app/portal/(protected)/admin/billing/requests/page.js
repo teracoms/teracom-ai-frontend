@@ -91,10 +91,12 @@ export default function BillingRequestsPage() {
             </ul>
           )}
 
-          <p className="form-note-banner" role="note">
-            This history is illustrative example data. teracom-ai-backend has no endpoint to
-            submit, route, approve, or record a licensing request today — see{' '}
-            BILLING_AND_LICENSING_IMPLEMENTATION_REPORT.md for the backend work this would need.
+          <p className="illustrative-data-banner" role="note">
+            <strong>Illustrative data</strong>
+            This approval history is illustrative example data, not a real API response. The real
+            licensing-request lifecycle (submit, review, approve/reject) already exists and works
+            in teracom-ai-backend — this specific page has not yet been wired to call it. See{' '}
+            BILLING_AND_LICENSING_IMPLEMENTATION_REPORT.md for the remaining frontend work.
           </p>
         </div>
       </section>

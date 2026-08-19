@@ -2,6 +2,23 @@
 
 import WizardShell from '@/components/portal/WizardShell';
 
+// Wave 2 Workstream 3 (Onboarding & Trust Surface Clarity) -- this
+// wizard has no real onSubmit (see WizardShell.js's own docstring);
+// every field is drawn from lib/licensing/referenceLicence.js's
+// illustrative data, and "submitting" only records locally on this
+// screen. Previously had no disclaimer of any kind anywhere in this
+// flow -- added here, not merely made more prominent.
+function IllustrativeDataBanner() {
+  return (
+    <p className="illustrative-data-banner" role="note">
+      <strong>Illustrative data</strong>
+      This wizard runs on illustrative example data, not your organisation&apos;s real licence.
+      Submitting records a request on this screen only — it does not reach teracom-ai-backend or
+      require staff approval, unlike the real Worker Pack request flow.
+    </p>
+  );
+}
+
 // docs/governance/BILLING_AND_LICENSING_UX.md's exact 4 named steps.
 export default function RenewalWizard({ licence }) {
   const steps = [
@@ -78,5 +95,10 @@ export default function RenewalWizard({ licence }) {
     },
   ];
 
-  return <WizardShell steps={steps} submitLabel="Submit Request" />;
+  return (
+    <>
+      <IllustrativeDataBanner />
+      <WizardShell steps={steps} submitLabel="Submit Request" />
+    </>
+  );
 }

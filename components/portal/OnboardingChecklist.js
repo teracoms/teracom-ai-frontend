@@ -58,7 +58,7 @@ export default function OnboardingChecklist({ contactId, tasks }) {
   return (
     <div>
       <div className="section-heading left">
-        <span className="eyebrow">Onboarding</span>
+        <span className="eyebrow">Customer Onboarding (CRM)</span>
         <h2>Onboarding checklist.</h2>
       </div>
 

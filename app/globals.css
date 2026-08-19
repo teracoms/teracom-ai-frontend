@@ -180,6 +180,14 @@
 .wizard-step-body dd{margin:0;color:#fff;font-weight:700}
 .wizard-actions{display:flex;gap:12px;margin-top:28px}
 .preview-banner{border:1px solid rgba(255,23,23,.35);background:rgba(255,23,23,.08);border-radius:16px;padding:14px 18px;font-size:13px;color:#ffb4b4;margin-bottom:32px}
+/* Wave 2 Workstream 3 (Onboarding & Trust Surface Clarity) -- a
+   deliberately more prominent illustrative-example-data warning than
+   .form-note-banner's neutral, low-contrast styling. Reuses this
+   site's existing red accent (same family as .preview-banner/.form-
+   error) rather than introducing a new colour -- no amber/yellow
+   exists anywhere in this palette. */
+.illustrative-data-banner{border:2px solid rgba(255,23,23,.5);background:rgba(255,23,23,.12);border-radius:16px;padding:16px 20px;font-size:13px;font-weight:600;color:#ffb4b4;margin-bottom:24px}
+.illustrative-data-banner strong{color:#fff;text-transform:uppercase;letter-spacing:.04em;font-size:12px;display:block;margin-bottom:4px}
 .locked-mode-screen{border:1px solid var(--line);border-radius:28px;background:rgba(255,255,255,.03);padding:48px;text-align:center}
 .locked-mode-screen h2{margin-top:0}
 .locked-mode-screen .locked-mode-actions{justify-content:center}

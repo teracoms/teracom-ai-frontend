@@ -24,7 +24,7 @@ export default async function OnboardingPage() {
       <main>
         <section className="section">
           <div className="container">
-            <span className="eyebrow">Onboarding</span>
+            <span className="eyebrow">Your Organisation&apos;s Onboarding</span>
             <h1>Your session has ended.</h1>
             <p className="lead">Please sign in again to view your onboarding checklist.</p>
           </div>
@@ -41,7 +41,7 @@ export default async function OnboardingPage() {
       <main>
         <section className="section">
           <div className="container">
-            <span className="eyebrow">Onboarding</span>
+            <span className="eyebrow">Your Organisation&apos;s Onboarding</span>
             <p className="form-error" role="alert">
               {errorMessage(error)}
             </p>
@@ -56,7 +56,7 @@ export default async function OnboardingPage() {
       <section className="hero hero-product">
         <div className="container">
           <div className="hero-copy">
-            <span className="eyebrow">Onboarding</span>
+            <span className="eyebrow">Your Organisation&apos;s Onboarding</span>
             <h1>Get your organisation set up.</h1>
             <p className="lead">
               A checklist for getting the most out of your licence, seeded automatically once your

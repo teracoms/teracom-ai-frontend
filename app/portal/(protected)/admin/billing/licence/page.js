@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 import { getReferenceLicence, TIER_ALLOCATIONS } from '@/lib/licensing/referenceLicence';
 
 export const metadata = {
@@ -60,10 +62,14 @@ export default function LicenceDetailsPage() {
 
       <section className="section alt">
         <div className="container">
-          <p className="form-note-banner" role="note">
-            This is illustrative example data, not a real, signed, or backend-verified licence
-            record — teracom-ai-backend has no licence data model today. See{' '}
-            BILLING_AND_LICENSING_IMPLEMENTATION_REPORT.md for the backend work this would need.
+          <p className="illustrative-data-banner" role="note">
+            <strong>Illustrative data</strong>
+            This page still renders illustrative example licence data, not a real API response.
+            teracom-ai-backend now has real <code>Licence</code>/<code>Entitlement</code>/<code>Plan</code> models
+            (live-verified elsewhere — see the real Licensing summary on{' '}
+            <Link href="/portal/finance">/portal/finance</Link>) — this specific page has not yet
+            been wired to call them. See BILLING_AND_LICENSING_IMPLEMENTATION_REPORT.md for the
+            remaining frontend work.
           </p>
         </div>
       </section>

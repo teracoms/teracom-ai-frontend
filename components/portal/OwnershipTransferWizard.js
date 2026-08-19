@@ -2,6 +2,22 @@
 
 import WizardShell from '@/components/portal/WizardShell';
 
+// Wave 2 Workstream 3 (Onboarding & Trust Surface Clarity) -- this
+// wizard has no real onSubmit (see WizardShell.js's own docstring);
+// "submitting" only records locally on this screen. Previously had no
+// disclaimer of any kind anywhere in this flow -- added here, not
+// merely made more prominent.
+function IllustrativeDataBanner() {
+  return (
+    <p className="illustrative-data-banner" role="note">
+      <strong>Partially illustrative</strong>
+      The current organisation name shown below is real. The rest of this wizard (transfer terms,
+      submission) runs on illustrative example data — submitting records a request on this screen
+      only, it does not reach teracom-ai-backend or require staff approval.
+    </p>
+  );
+}
+
 // docs/governance/BILLING_AND_LICENSING_UX.md's exact 5 named steps.
 // `organisation` (name/slug) is real, live data — see the page that renders
 // this — so "Current Ownership" reflects the real organisation, not
@@ -75,5 +91,10 @@ export default function OwnershipTransferWizard({ organisation }) {
     },
   ];
 
-  return <WizardShell steps={steps} submitLabel="Submit" />;
+  return (
+    <>
+      <IllustrativeDataBanner />
+      <WizardShell steps={steps} submitLabel="Submit" />
+    </>
+  );
 }

@@ -47,7 +47,7 @@ export default async function CustomerPortalOnboardingPage() {
         <div className="container">
           <div className="hero-copy">
             <span className="eyebrow">Customer Portal</span>
-            <h1>Onboarding.</h1>
+            <h1>Your Onboarding Progress.</h1>
           </div>
         </div>
       </section>

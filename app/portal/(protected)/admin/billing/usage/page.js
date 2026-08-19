@@ -128,11 +128,15 @@ export default async function BillingUsagePage() {
 
       <section className="section alt">
         <div className="container">
-          <p className="form-note-banner" role="note">
+          <p className="illustrative-data-banner" role="note">
+            <strong>Partially illustrative</strong>
             Worker, user, and organisation counts above are real, live data. The allocation
-            ceilings are illustrative — teracom-ai-backend has no plan/seat data model, so nothing
-            actually enforces these limits today (LICENSING_MODEL_V1.md §4: worker-limit
-            enforcement is a decided policy, not yet implemented).
+            ceilings shown are illustrative example values, not this page&apos;s own real{' '}
+            <code>Plan</code>/<code>Entitlement</code> data — teracom-ai-backend now has a real{' '}
+            <code>Plan</code> entity and real per-licence entitlement limits, but this specific
+            page has not yet been wired to call them. Worker-limit enforcement itself also remains
+            inconsistent — enforced only on the Marketplace pack-provisioning path, not on direct
+            admin worker creation.
           </p>
         </div>
       </section>
