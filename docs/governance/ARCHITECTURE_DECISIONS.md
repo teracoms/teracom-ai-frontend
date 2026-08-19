@@ -483,3 +483,17 @@ Package UX2 arrived requesting nearly the exact objective set already shipped in
 **Why:** matches this project's established preference for an additive, default-preserving signature change over a breaking one when only one of several call sites actually needs new behaviour (the same discipline already applied to `Knowledge.customer_visible`'s own additive, server-defaulted column pattern); and for choosing the smaller, correct fix (post-filtering) over the larger one (a Chroma schema/re-indexing migration) when the smaller fix fully closes the real gap without the larger one's cost and risk.
 
 **How to apply:** see `WAVE2_RAG_TO_CHAT_WIRING_IMPLEMENTATION_REPORT.md` for full implementation detail.
+
+## ADR-034 — Wave 2, Workstream 2 (Deployment & Health Readiness): a new root-level `/healthz` over extending the existing `/health/` router, and multi-worker deployment named as a blocker, not attempted
+
+**Status:** Approved ("Wave 2 approved... Begin Wave 2 implementation"), 2026-08-19. **Source:** `WAVE2_IMPLEMENTATION_PLAN.md` (`teracom-ai-docs`) §2, derived from `INTERNAL_PILOT_READINESS_ASSESSMENT.md`'s finding that both existing health endpoints require authentication.
+
+**`GET /healthz` was added directly in `main.py`, at the root path, not nested under the existing `/health` router.** The existing `api/health.py` router is prefixed `/health`, which would place a naively-added endpoint at `/health/healthz` — non-standard, and not the path a typical orchestrator or uptime monitor is configured to expect by convention. Registered as a standalone root-level route instead, alongside the pre-existing bare `GET /` liveness route it's deliberately distinct from: `/` confirms the process is up (a static response, no database check); `/healthz` confirms the process can actually reach the database (a real `SELECT 1`, returning 503 rather than an undifferentiated 500 on failure).
+
+**Multi-worker deployment was not enabled, and is named here explicitly as a known, standing blocker rather than silently left unaddressed.** `docs/operations/PRODUCTION_RUNBOOK.md` already documented (Package SEC1) that the in-process rate limiter is not shared across multiple worker processes, and enabling `--workers >1` today would silently make rate limiting inconsistent. This workstream's own scope — an unauthenticated readiness endpoint and explicit connection-pool sizing — does not touch that blocker at all; it is reaffirmed in the runbook, not worked around.
+
+**Connection pool sizing is now explicit (`DB_POOL_SIZE`/`DB_MAX_OVERFLOW`, defaulting to double SQLAlchemy's own implicit defaults), sized for the current single-process deployment specifically.** These values are a reasoned starting point for a real pilot's concurrent load, not a claim that this sizing is correct for a future multi-worker deployment — that remains a separate sizing exercise once the rate-limiter blocker above is cleared.
+
+**Why:** matches this project's preference for a health/readiness endpoint at the path real operational tooling actually expects, over a technically-simpler but non-conventional nested route; and for naming a real, already-known architectural blocker explicitly in the same workstream that touches adjacent deployment configuration, rather than letting silence imply it was addressed.
+
+**How to apply:** see `WAVE2_DEPLOYMENT_HEALTH_READINESS_IMPLEMENTATION_REPORT.md` for full implementation detail.
