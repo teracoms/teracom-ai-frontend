@@ -2,9 +2,11 @@ import { getSessionToken } from '@/lib/api/auth';
 import { decodeJwtPayload } from '@/lib/api/jwt';
 import { isAtLeastRole } from '@/lib/roles';
 import { fetchOrganisationSummary } from '@/lib/api/dashboard';
+import { fetchOrganisations } from '@/lib/api/organisations';
 import { isForbidden, errorMessage } from '@/lib/api/results';
 import OrganisationSummaryCard from '@/components/portal/OrganisationSummaryCard';
 import FederationEnabledToggle from '@/components/portal/FederationEnabledToggle';
+import CreateSubOrganisationForm from '@/components/portal/CreateSubOrganisationForm';
 
 export const metadata = {
   title: 'Organisation | Teracom AI Portal',
@@ -56,6 +58,17 @@ export default async function AdminOrganisationPage() {
 
   const restricted = isForbidden(loadError);
 
+  let subOrganisations = [];
+  if (!restricted && !loadError && organisation) {
+    try {
+      const all = await fetchOrganisations(token);
+      subOrganisations = all.filter((org) => org.parent_organisation_id === organisation.id);
+    } catch {
+      // Same-request GET /organisations/ already succeeded once above via
+      // fetchOrganisationSummary; a failure here just means an empty list.
+    }
+  }
+
   return (
     <main>
       <section className="hero hero-product">
@@ -64,9 +77,8 @@ export default async function AdminOrganisationPage() {
             <span className="eyebrow">Organisation</span>
             <h1>Your organisation.</h1>
             <p className="lead">
-              A read-only profile — teracom-ai-backend records only a name, slug, and (as of
-              Phase 0 Package L) a federation-consultation setting per organisation today, no
-              plan, seats or billing fields yet.
+              Your organisation&apos;s profile, its federation-consultation setting, and any
+              sub-organisation you&apos;ve created underneath it.
             </p>
           </div>
         </div>
@@ -96,6 +108,35 @@ export default async function AdminOrganisationPage() {
               </p>
             </div>
             <FederationEnabledToggle organisation={organisation} />
+          </div>
+        </section>
+      )}
+
+      {!restricted && !loadError && organisation && (
+        <section className="section">
+          <div className="container">
+            <div className="section-heading left">
+              <span className="eyebrow">Sub-organisations</span>
+              <h2>Manage multiple entities under one umbrella.</h2>
+              <p>For an enterprise customer running more than one named organisation.</p>
+            </div>
+            {subOrganisations.length === 0 ? (
+              <p className="activity-meta">No sub-organisations yet.</p>
+            ) : (
+              <ul className="activity-list">
+                {subOrganisations.map((org) => (
+                  <li key={org.id}>
+                    <div className="assignment-row">
+                      <span className="activity-title">{org.name}</span>
+                      <span className="activity-meta">{org.slug} · {org.status}</span>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+            <div style={{ marginTop: '28px' }}>
+              <CreateSubOrganisationForm />
+            </div>
           </div>
         </section>
       )}
