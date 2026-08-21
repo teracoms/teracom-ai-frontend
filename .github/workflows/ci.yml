@@ -1,0 +1,97 @@
+name: CI
+
+# Website_Application_Separation_Plan_V1.md §4.4 / §5 Phase 2 — the first
+# CI/CD pipeline anywhere in this project (no .github/workflows existed
+# before this). Deliberately built against this repo exactly as it is
+# today (still the single app serving both the marketing website and the
+# Teracom AI product, per Phase 1's route-group split) — proving the
+# pipeline shape now, before it's ever asked to also coordinate a second
+# repository (Phase 4) or a real deploy target (Phase 5).
+#
+# Every step below is self-contained: no GitHub repo secrets, no real
+# backend, no database. `next build` uses lib/config.js's own fallback
+# BACKEND_API_URL when unset (no page fetches it at build time — every
+# /portal and /customer-portal route renders dynamically, per-request,
+# not at build time), and the deployment-validation smoke test below
+# deliberately only exercises routes that render with no backend call at
+# all (the marketing homepage, robots.txt, sitemap.xml) — this pipeline
+# must be able to prove the app builds and boots on its own, without
+# requiring teracom-ai-backend to be running anywhere.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch: {}
+
+jobs:
+  ci:
+    name: Lint, test, build, and deployment validation
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Test
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+      # Deployment validation — not a real deploy (Phase 5's job, once a
+      # real target exists per Website_Application_Separation_Plan_V1.md
+      # §4.8). This starts the actual production build the same way
+      # `npm start` would on the real host, and proves it comes up and
+      # serves real traffic before anything is allowed to merge to main.
+      - name: Start production server
+        run: |
+          npm start &
+          disown
+
+      - name: Wait for server to become ready
+        run: |
+          for i in $(seq 1 30); do
+            if curl -s -o /dev/null "http://127.0.0.1:3000/robots.txt"; then
+              echo "Server is up after ${i}s"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "::error::Server did not become ready within 30s"
+          exit 1
+
+      - name: Smoke-test backend-independent routes
+        run: |
+          set -e
+          for path in "/" "/robots.txt" "/sitemap.xml"; do
+            code=$(curl -s -o /dev/null -w "%{http_code}" "http://127.0.0.1:3000${path}")
+            echo "GET ${path} -> ${code}"
+            if [ "${code}" != "200" ]; then
+              echo "::error::${path} returned ${code}, expected 200"
+              exit 1
+            fi
+          done
+
+      # `npm start` spawns `next start` as a child process — the PID `$!`
+      # captures is npm's own wrapper, not the actual server, so this
+      # kills by matching the real process instead of a tracked PID.
+      # Harmless either way in CI (each job runs in a throwaway VM that's
+      # destroyed after this job), but correct is still better than
+      # accidentally-correct.
+      - name: Stop production server
+        if: always()
+        run: pkill -f "next-server" || true
