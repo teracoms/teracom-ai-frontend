@@ -1,12 +1,12 @@
 name: CI
 
-# Website_Application_Separation_Plan_V1.md §4.4 / §5 Phase 2 — the first
-# CI/CD pipeline anywhere in this project (no .github/workflows existed
-# before this). Deliberately built against this repo exactly as it is
-# today (still the single app serving both the marketing website and the
-# Teracom AI product, per Phase 1's route-group split) — proving the
-# pipeline shape now, before it's ever asked to also coordinate a second
-# repository (Phase 4) or a real deploy target (Phase 5).
+# Website_Application_Separation_Plan_V1.md §4.4 / §5 Phase 2 (pipeline
+# introduced) / Phase 4 (updated for the post-split repo). Originally
+# written when this repo still served both the marketing website and the
+# Teracom AI product; the marketing site has since moved out to
+# teracom-solutions-website, which carries its own copy of this pipeline
+# built against its own routes (/, /robots.txt, /sitemap.xml). This copy
+# now targets only the routes that remain here.
 #
 # Every step below is self-contained: no GitHub repo secrets, no real
 # backend, no database. `next build` uses lib/config.js's own fallback
@@ -14,9 +14,18 @@ name: CI
 # /portal and /customer-portal route renders dynamically, per-request,
 # not at build time), and the deployment-validation smoke test below
 # deliberately only exercises routes that render with no backend call at
-# all (the marketing homepage, robots.txt, sitemap.xml) — this pipeline
-# must be able to prove the app builds and boots on its own, without
-# requiring teracom-ai-backend to be running anywhere.
+# all (the login pages) — this pipeline must be able to prove the app
+# builds and boots on its own, without requiring teracom-ai-backend to
+# be running anywhere.
+#
+# package.json depends on @teracoms/ui via a local `file:../teracom-ui`
+# path (see README.md), so this repo and teracoms/teracom-ui are checked
+# out as siblings under the same workspace below rather than this repo
+# alone — npm ci's install of that dependency resolves that relative
+# path the same way it does on a developer's machine. This assumes a
+# `teracoms/teracom-ui` remote exists; harmless if it doesn't yet, since
+# this whole workflow is inert until this repo itself has a remote to
+# run it against.
 
 on:
   push:
@@ -31,25 +40,38 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout teracom-ai-frontend
         uses: actions/checkout@v4
+        with:
+          path: teracom-ai-frontend
+
+      - name: Checkout @teracoms/ui (sibling, for the local file: dependency)
+        uses: actions/checkout@v4
+        with:
+          repository: teracoms/teracom-ui
+          path: teracom-ui
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version-file: '.nvmrc'
+          node-version-file: 'teracom-ai-frontend/.nvmrc'
           cache: 'npm'
+          cache-dependency-path: 'teracom-ai-frontend/package-lock.json'
 
       - name: Install dependencies
+        working-directory: teracom-ai-frontend
         run: npm ci
 
       - name: Lint
+        working-directory: teracom-ai-frontend
         run: npm run lint
 
       - name: Test
+        working-directory: teracom-ai-frontend
         run: npm test
 
       - name: Build
+        working-directory: teracom-ai-frontend
         run: npm run build
 
       # Deployment validation — not a real deploy (Phase 5's job, once a
@@ -58,6 +80,7 @@ jobs:
       # `npm start` would on the real host, and proves it comes up and
       # serves real traffic before anything is allowed to merge to main.
       - name: Start production server
+        working-directory: teracom-ai-frontend
         run: |
           npm start &
           disown
@@ -65,7 +88,7 @@ jobs:
       - name: Wait for server to become ready
         run: |
           for i in $(seq 1 30); do
-            if curl -s -o /dev/null "http://127.0.0.1:3000/robots.txt"; then
+            if curl -s -o /dev/null "http://127.0.0.1:3000/portal/login"; then
               echo "Server is up after ${i}s"
               exit 0
             fi
@@ -77,7 +100,7 @@ jobs:
       - name: Smoke-test backend-independent routes
         run: |
           set -e
-          for path in "/" "/robots.txt" "/sitemap.xml"; do
+          for path in "/portal/login" "/customer-portal/login"; do
             code=$(curl -s -o /dev/null -w "%{http_code}" "http://127.0.0.1:3000${path}")
             echo "GET ${path} -> ${code}"
             if [ "${code}" != "200" ]; then
