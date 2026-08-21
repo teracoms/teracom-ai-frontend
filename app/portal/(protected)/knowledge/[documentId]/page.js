@@ -107,6 +107,11 @@ export default async function DocumentDetailPage({ params }) {
               <span className="badge">{doc.source}</span>
             </p>
           </div>
+          <div className="hero-actions">
+            <Link className="btn btn-secondary" href="/portal/knowledge">
+              Back to Knowledge
+            </Link>
+          </div>
         </div>
       </section>
 

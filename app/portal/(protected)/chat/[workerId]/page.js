@@ -99,6 +99,11 @@ export default async function WorkerChatPage({ params }) {
               {summary.memory_count === 1 ? '' : 's'} assigned to this worker.
             </p>
           </div>
+          <div className="hero-actions">
+            <Link className="btn btn-secondary" href="/portal/chat">
+              Back to Chat
+            </Link>
+          </div>
         </div>
       </section>
 

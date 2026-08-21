@@ -82,6 +82,11 @@ export default async function DepartmentMemoryPage({ params }) {
             <h1>{department.value.name}</h1>
             {department.value.description && <p className="lead">{department.value.description}</p>}
           </div>
+          <div className="hero-actions">
+            <Link className="btn btn-secondary" href="/portal/memory">
+              Back to Memory
+            </Link>
+          </div>
         </div>
       </section>
 

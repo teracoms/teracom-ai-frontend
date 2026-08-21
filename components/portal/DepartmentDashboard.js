@@ -53,6 +53,11 @@ export default function DepartmentDashboard({
               )}
             </p>
           </div>
+          <div className="hero-actions">
+            <Link className="btn btn-secondary" href="/portal/departments">
+              Back to Departments
+            </Link>
+          </div>
         </div>
       </section>
 

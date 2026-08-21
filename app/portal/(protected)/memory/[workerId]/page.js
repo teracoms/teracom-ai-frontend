@@ -82,6 +82,11 @@ export default async function WorkerMemoryPage({ params }) {
               <span className="badge">{worker.status}</span> {worker.role}
             </p>
           </div>
+          <div className="hero-actions">
+            <Link className="btn btn-secondary" href="/portal/memory">
+              Back to Memory
+            </Link>
+          </div>
         </div>
       </section>
 

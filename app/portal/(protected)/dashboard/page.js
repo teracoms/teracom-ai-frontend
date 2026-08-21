@@ -1,4 +1,8 @@
+import Link from 'next/link';
+
 import { getSessionToken } from '@/lib/api/auth';
+import { decodeJwtPayload } from '@/lib/api/jwt';
+import { isAtLeastRole } from '@/lib/roles';
 import {
   fetchPortalDashboard,
   fetchRecentActivity,
@@ -53,6 +57,8 @@ export default async function DashboardPage() {
   const organisation = settle(organisationResult);
 
   const organisationRestricted = isForbidden(organisation.error);
+  const canCreateWorker = isAtLeastRole(decodeJwtPayload(token)?.role, 'admin');
+  const isBrandNewOrganisation = !dashboard.error && dashboard.value.workers === 0;
 
   return (
     <main>
@@ -71,6 +77,25 @@ export default async function DashboardPage() {
 
       <section className="section">
         <div className="container">
+          {isBrandNewOrganisation && (
+            <p className="form-note-banner" role="status">
+              <strong>Get your organisation started.</strong>{' '}
+              {canCreateWorker ? (
+                <>
+                  You don&apos;t have any AI workers yet —{' '}
+                  <Link href="/portal/workers/new">create your first worker</Link> to begin, or browse{' '}
+                  <Link href="/portal/marketplace">the Marketplace</Link> for a ready-made pack. See{' '}
+                  <Link href="/portal/training">Training</Link> for a full setup walkthrough.
+                </>
+              ) : (
+                <>
+                  Your organisation doesn&apos;t have any AI workers yet — ask an organisation admin to
+                  create the first one, or see <Link href="/portal/training">Training</Link> for what
+                  happens next.
+                </>
+              )}
+            </p>
+          )}
           {dashboard.error ? (
             <p className="form-error" role="alert">
               {errorMessage(dashboard.error)}

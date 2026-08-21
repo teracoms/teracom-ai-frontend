@@ -110,6 +110,11 @@ export default async function ContactDetailPage({ params }) {
             <span className="eyebrow">Contact</span>
             <h1>{contact.value.name}</h1>
           </div>
+          <div className="hero-actions">
+            <Link className="btn btn-secondary" href="/portal/sales">
+              Back to Sales
+            </Link>
+          </div>
         </div>
       </section>
 

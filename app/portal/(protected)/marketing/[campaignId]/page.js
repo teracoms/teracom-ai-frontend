@@ -84,6 +84,11 @@ export default async function CampaignDetailPage({ params }) {
             <span className="eyebrow">Campaign</span>
             <h1>{campaign.value.name}</h1>
           </div>
+          <div className="hero-actions">
+            <Link className="btn btn-secondary" href="/portal/marketing">
+              Back to Marketing
+            </Link>
+          </div>
         </div>
       </section>
 

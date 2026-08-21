@@ -107,6 +107,11 @@ export default async function WorkerDetailPage({ params }) {
               <span className="badge">{worker.status}</span> {worker.role}
             </p>
           </div>
+          <div className="hero-actions">
+            <Link className="btn btn-secondary" href="/portal/workers">
+              Back to Workers
+            </Link>
+          </div>
         </div>
       </section>
 

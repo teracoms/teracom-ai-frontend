@@ -82,6 +82,11 @@ export default async function OrganisationMemoryPage() {
               only. Requires the Memory Enrichment capability (Enterprise tier or above).
             </p>
           </div>
+          <div className="hero-actions">
+            <Link className="btn btn-secondary" href="/portal/memory">
+              Back to Memory
+            </Link>
+          </div>
         </div>
       </section>
 
