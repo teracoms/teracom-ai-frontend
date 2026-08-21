@@ -22,7 +22,7 @@ import TaskPanel from '@/components/portal/TaskPanel';
  * `tasks` by project_id client-side rather than a second network
  * round trip.
  */
-export default function ProjectPanel({ departmentId, departments, projects, tasks }) {
+export default function ProjectPanel({ departmentId, departments, projects, tasks, workers }) {
   const { user } = useAuth();
   const canWrite = isAtLeastRole(user?.role, 'employee');
   const [selectedDepartmentId, setSelectedDepartmentId] = useState(departmentId ?? '');
@@ -180,6 +180,7 @@ export default function ProjectPanel({ departmentId, departments, projects, task
                 <TaskPanel
                   projectId={project.id}
                   tasks={(tasks ?? []).filter((task) => task.project_id === project.id)}
+                  workers={workers}
                 />
               )}
             </li>

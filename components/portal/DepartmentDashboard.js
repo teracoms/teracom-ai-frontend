@@ -122,7 +122,12 @@ export default function DepartmentDashboard({
           </section>
           <section className="section alt">
             <div className="container">
-              <ProjectPanel departmentId={department.id} projects={departmentProjects} tasks={departmentTasks} />
+              <ProjectPanel
+                departmentId={department.id}
+                projects={departmentProjects}
+                tasks={departmentTasks}
+                workers={workers.filter((worker) => worker.status === 'active')}
+              />
             </div>
           </section>
         </>

@@ -77,7 +77,10 @@ export default async function TasksPage() {
             <span className="eyebrow">New</span>
             <h2>Add a task.</h2>
           </div>
-          <TaskCreateForm projects={projects.value ?? []} />
+          <TaskCreateForm
+            projects={projects.value ?? []}
+            workers={(workers.value ?? []).filter((worker) => worker.status === 'active')}
+          />
         </div>
       </section>
 

@@ -11,13 +11,15 @@ import { isAtLeastRole } from '@/lib/roles';
  * create form — that one is embedded in a single project's own page, so
  * project_id is implicit. The standalone Tasks page spans every project,
  * so this needs its own selector. Same POST /api/portal/tasks route
- * (already generic on project_id), gated at employee tier and above
- * (Read Only Tier Enforcement).
+ * (already generic on project_id and assignee_worker_id — neither
+ * needed a backend or proxy-route change, only this picker), gated at
+ * employee tier and above (Read Only Tier Enforcement).
  */
-export default function TaskCreateForm({ projects }) {
+export default function TaskCreateForm({ projects, workers }) {
   const { user } = useAuth();
   const [projectId, setProjectId] = useState(projects[0]?.id ?? '');
   const [title, setTitle] = useState('');
+  const [assigneeWorkerId, setAssigneeWorkerId] = useState('');
   const [dueDate, setDueDate] = useState('');
   const [priority, setPriority] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -38,6 +40,7 @@ export default function TaskCreateForm({ projects }) {
         body: JSON.stringify({
           project_id: projectId,
           title: title.trim(),
+          assignee_worker_id: assigneeWorkerId || undefined,
           due_date: dueDate || undefined,
           priority: priority || undefined,
         }),
@@ -49,6 +52,7 @@ export default function TaskCreateForm({ projects }) {
       }
 
       setTitle('');
+      setAssigneeWorkerId('');
       setDueDate('');
       setPriority('');
       router.refresh();
@@ -97,6 +101,19 @@ export default function TaskCreateForm({ projects }) {
           disabled={submitting}
           aria-label="Task title"
         />
+        <select
+          value={assigneeWorkerId}
+          onChange={(event) => setAssigneeWorkerId(event.target.value)}
+          disabled={submitting}
+          aria-label="Assignee"
+        >
+          <option value="">Unassigned</option>
+          {(workers ?? []).map((worker) => (
+            <option key={worker.id} value={worker.id}>
+              {worker.name}
+            </option>
+          ))}
+        </select>
         <input
           type="date"
           value={dueDate}

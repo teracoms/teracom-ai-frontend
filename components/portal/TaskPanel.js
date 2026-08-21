@@ -13,10 +13,12 @@ import { isAtLeastRole } from '@/lib/roles';
  * commitment), gated at employee tier and above (Read Only Tier
  * Enforcement).
  */
-export default function TaskPanel({ projectId, tasks }) {
+export default function TaskPanel({ projectId, tasks, workers }) {
   const { user } = useAuth();
   const canWrite = isAtLeastRole(user?.role, 'employee');
+  const workersById = new Map((workers ?? []).map((worker) => [worker.id, worker]));
   const [title, setTitle] = useState('');
+  const [assigneeWorkerId, setAssigneeWorkerId] = useState('');
   const [dueDate, setDueDate] = useState('');
   const [priority, setPriority] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -37,6 +39,7 @@ export default function TaskPanel({ projectId, tasks }) {
         body: JSON.stringify({
           project_id: projectId,
           title: title.trim(),
+          assignee_worker_id: assigneeWorkerId || undefined,
           due_date: dueDate || undefined,
           priority: priority || undefined,
         }),
@@ -48,6 +51,7 @@ export default function TaskPanel({ projectId, tasks }) {
       }
 
       setTitle('');
+      setAssigneeWorkerId('');
       setDueDate('');
       setPriority('');
       router.refresh();
@@ -97,6 +101,19 @@ export default function TaskPanel({ projectId, tasks }) {
           disabled={submitting}
           aria-label="Task title"
         />
+        <select
+          value={assigneeWorkerId}
+          onChange={(event) => setAssigneeWorkerId(event.target.value)}
+          disabled={submitting}
+          aria-label="Assignee"
+        >
+          <option value="">Unassigned</option>
+          {(workers ?? []).map((worker) => (
+            <option key={worker.id} value={worker.id}>
+              {worker.name}
+            </option>
+          ))}
+        </select>
         <input
           type="date"
           value={dueDate}
@@ -135,6 +152,10 @@ export default function TaskPanel({ projectId, tasks }) {
                     {task.title} <span className="badge">{task.status}</span>
                   </p>
                   <p className="activity-meta">
+                    {task.assignee_worker_id
+                      ? `Assigned to ${workersById.get(task.assignee_worker_id)?.name ?? 'a worker'}`
+                      : 'Unassigned'}
+                    {' · '}
                     {task.priority ? `${task.priority} priority` : 'No priority'}
                     {task.due_date ? ` · due ${task.due_date}` : ''}
                   </p>

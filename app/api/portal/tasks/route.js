@@ -5,8 +5,9 @@ import { ApiError } from '@/lib/api/client';
 import { createTask } from '@/lib/api/tasks';
 import { parseTaskPayload } from '@/lib/api/validation';
 
-// Same-origin proxy for TaskPanel → POST /tasks/. Ungated backend-side —
-// any org member may create a task.
+// Same-origin proxy for TaskPanel → POST /tasks/. Backend-gated at
+// employee tier and above (Read Only Tier Enforcement) — any org
+// member above read_only may create a task.
 export async function POST(request) {
   const token = getSessionToken();
 
