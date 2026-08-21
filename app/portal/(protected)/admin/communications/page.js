@@ -1,5 +1,6 @@
 import { getSessionToken } from '@/lib/api/auth';
 import { decodeJwtPayload } from '@/lib/api/jwt';
+import { isAtLeastRole } from '@/lib/roles';
 import { fetchOrganisationCommunications } from '@/lib/api/communications';
 import { errorMessage } from '@/lib/api/results';
 import CommunicationsPanel from '@/components/portal/CommunicationsPanel';
@@ -32,7 +33,7 @@ export default async function AdminCommunicationsPage() {
     );
   }
 
-  if (decodeJwtPayload(token)?.role !== 'admin') {
+  if (!isAtLeastRole(decodeJwtPayload(token)?.role, 'admin')) {
     return null;
   }
 

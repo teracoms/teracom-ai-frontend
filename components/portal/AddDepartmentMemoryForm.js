@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { useAuth } from '@/components/portal/AuthProvider';
+import { isAtLeastRole } from '@/lib/roles';
 
 /**
  * POST /api/portal/department-memory → POST /department-memory/store.
@@ -21,7 +22,7 @@ export default function AddDepartmentMemoryForm({ departmentId }) {
   const [error, setError] = useState(null);
   const router = useRouter();
 
-  if (user?.role !== 'admin') {
+  if (!isAtLeastRole(user?.role, 'admin')) {
     return null;
   }
 

@@ -1,5 +1,6 @@
 import { getSessionToken } from '@/lib/api/auth';
 import { decodeJwtPayload } from '@/lib/api/jwt';
+import { isAtLeastRole } from '@/lib/roles';
 import { fetchOrganisationSummary } from '@/lib/api/dashboard';
 import { isForbidden, errorMessage } from '@/lib/api/results';
 import OrganisationSummaryCard from '@/components/portal/OrganisationSummaryCard';
@@ -40,7 +41,7 @@ export default async function AdminOrganisationPage() {
   // Belt-and-braces beyond the parent admin layout's role gate — see
   // admin/billing/usage/page.js's own identical comment and
   // TERACOM_REVIEW_BACKLOG.md WBL-013.
-  if (decodeJwtPayload(token)?.role !== 'admin') {
+  if (!isAtLeastRole(decodeJwtPayload(token)?.role, 'admin')) {
     return null;
   }
 

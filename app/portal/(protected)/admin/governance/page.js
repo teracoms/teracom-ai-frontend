@@ -1,5 +1,6 @@
 import { getSessionToken } from '@/lib/api/auth';
 import { decodeJwtPayload } from '@/lib/api/jwt';
+import { isAtLeastRole } from '@/lib/roles';
 import { fetchGovernancePolicies } from '@/lib/api/governancePolicies';
 import { errorMessage } from '@/lib/api/results';
 import GovernancePolicyTable from '@/components/portal/GovernancePolicyTable';
@@ -30,7 +31,7 @@ export default async function AdminGovernancePage() {
     );
   }
 
-  if (decodeJwtPayload(token)?.role !== 'admin') {
+  if (!isAtLeastRole(decodeJwtPayload(token)?.role, 'admin')) {
     return null;
   }
 

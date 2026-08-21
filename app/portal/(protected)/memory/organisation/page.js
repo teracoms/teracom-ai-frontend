@@ -2,6 +2,7 @@ import Link from 'next/link';
 
 import { getSessionToken, fetchCurrentUser } from '@/lib/api/auth';
 import { decodeJwtPayload } from '@/lib/api/jwt';
+import { isAtLeastRole } from '@/lib/roles';
 import { fetchOrganisationMemories } from '@/lib/api/organisationMemory';
 import { fetchMemorySummaries } from '@/lib/api/memorySummaries';
 import { settle, errorMessage } from '@/lib/api/results';
@@ -39,7 +40,7 @@ export default async function OrganisationMemoryPage() {
     );
   }
 
-  if (decodeJwtPayload(token)?.role !== 'admin') {
+  if (!isAtLeastRole(decodeJwtPayload(token)?.role, 'admin')) {
     return (
       <main>
         <section className="section">

@@ -1,5 +1,6 @@
 import { getSessionToken } from '@/lib/api/auth';
 import { decodeJwtPayload } from '@/lib/api/jwt';
+import { isAtLeastRole } from '@/lib/roles';
 import { fetchDepartments } from '@/lib/api/departments';
 import { fetchWorkerList } from '@/lib/api/workers';
 import { settle, errorMessage } from '@/lib/api/results';
@@ -38,7 +39,7 @@ export default async function AdminDepartmentsPage() {
     );
   }
 
-  if (decodeJwtPayload(token)?.role !== 'admin') {
+  if (!isAtLeastRole(decodeJwtPayload(token)?.role, 'admin')) {
     return null;
   }
 

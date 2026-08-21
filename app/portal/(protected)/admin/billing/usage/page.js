@@ -1,5 +1,6 @@
 import { getSessionToken } from '@/lib/api/auth';
 import { decodeJwtPayload } from '@/lib/api/jwt';
+import { isAtLeastRole } from '@/lib/roles';
 import { fetchWorkerList } from '@/lib/api/workers';
 import { fetchUsers } from '@/lib/api/admin';
 import { fetchOrganisationSummary } from '@/lib/api/dashboard';
@@ -49,7 +50,7 @@ export default async function BillingUsagePage() {
   // means a non-admin reaching this page triggers none of the three real
   // backend calls below at all — the parent layout's restricted message is
   // what actually gets shown either way, so this content is never seen.
-  if (decodeJwtPayload(token)?.role !== 'admin') {
+  if (!isAtLeastRole(decodeJwtPayload(token)?.role, 'admin')) {
     return null;
   }
 

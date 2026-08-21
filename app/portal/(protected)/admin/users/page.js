@@ -1,5 +1,6 @@
 import { getSessionToken } from '@/lib/api/auth';
 import { decodeJwtPayload } from '@/lib/api/jwt';
+import { isAtLeastRole } from '@/lib/roles';
 import { fetchUsers } from '@/lib/api/admin';
 import { errorMessage } from '@/lib/api/results';
 import UserListView from '@/components/portal/UserListView';
@@ -32,7 +33,7 @@ export default async function AdminUsersPage() {
   // *rendered output* for a non-admin, but Next.js still executes this
   // child Server Component's own data fetch regardless. This was the
   // last of the original Package 7 admin pages missing this check.
-  if (decodeJwtPayload(token)?.role !== 'admin') {
+  if (!isAtLeastRole(decodeJwtPayload(token)?.role, 'admin')) {
     return null;
   }
 

@@ -1,5 +1,6 @@
 import { getSessionToken } from '@/lib/api/auth';
 import { decodeJwtPayload } from '@/lib/api/jwt';
+import { isAtLeastRole } from '@/lib/roles';
 import { fetchOrganisationSummary } from '@/lib/api/dashboard';
 import OwnershipTransferWizard from '@/components/portal/OwnershipTransferWizard';
 
@@ -29,7 +30,7 @@ export default async function OwnershipTransferPage() {
   // renders a different tree instead of `{children}` does not, by itself,
   // stop this page's own Server Component (and its real fetch below) from
   // executing for a non-admin request.
-  if (decodeJwtPayload(token)?.role !== 'admin') {
+  if (!isAtLeastRole(decodeJwtPayload(token)?.role, 'admin')) {
     return null;
   }
 

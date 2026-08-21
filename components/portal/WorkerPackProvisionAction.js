@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { useAuth } from '@/components/portal/AuthProvider';
+import { isAtLeastRole } from '@/lib/roles';
 
 /**
  * Phase 0 Package Q — the "turn a completed sale into a provisioned
@@ -20,7 +21,7 @@ export default function WorkerPackProvisionAction({ workerPackSlug }) {
   const [result, setResult] = useState(null);
   const router = useRouter();
 
-  if (user?.role !== 'admin') {
+  if (!isAtLeastRole(user?.role, 'admin')) {
     return null;
   }
 
