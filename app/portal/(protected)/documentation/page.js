@@ -22,7 +22,7 @@ const SECTIONS = [
       },
       {
         title: 'Departments',
-        body: 'Groups workers under a head. A department can carry a function tag ("sales" or "customer_success") that unlocks its own dashboard widgets. Assigning a head and creating departments is admin and above.',
+        body: 'Groups workers under a head. A department can carry a function tag ("sales", "customer_success", "marketing", "finance", or "operations") that unlocks its own dashboard widgets and boosts CTO orchestration routing toward that department. Assigning a head and creating departments is admin and above.',
       },
       {
         title: 'Digital Workforce',

@@ -118,6 +118,9 @@ export default async function DigitalWorkforcePage() {
             <p className="activity-title">
               {requests.error ? '—' : pendingRequests.length}
             </p>
+            {requests.error && (
+              <p className="activity-meta">{errorMessage(requests.error)}</p>
+            )}
             {pendingRequests.length > 0 && (
               <Link className="btn btn-secondary btn-small" href="/portal/workers/requests">
                 Review queue

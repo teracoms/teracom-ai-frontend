@@ -1,6 +1,8 @@
 import Link from 'next/link';
 
 import { getSessionToken } from '@/lib/api/auth';
+import { decodeJwtPayload } from '@/lib/api/jwt';
+import { isAtLeastRole } from '@/lib/roles';
 import { fetchDepartments } from '@/lib/api/departments';
 import { fetchWorkerList } from '@/lib/api/workers';
 import { settle, errorMessage } from '@/lib/api/results';
@@ -34,6 +36,8 @@ export default async function DepartmentsPage() {
     );
   }
 
+  const canManage = isAtLeastRole(decodeJwtPayload(token)?.role, 'admin');
+
   const [departmentsResult, workersResult] = await Promise.allSettled([
     fetchDepartments(token),
     fetchWorkerList(token),
@@ -62,6 +66,13 @@ export default async function DepartmentsPage() {
 
       <section className="section">
         <div className="container">
+          {canManage && (
+            <p style={{ marginBottom: '1rem' }}>
+              <Link className="btn btn-secondary btn-small" href="/portal/admin/departments">
+                Manage Departments
+              </Link>
+            </p>
+          )}
           {departments.error ? (
             <p className="form-error" role="alert">
               {errorMessage(departments.error)}
@@ -69,7 +80,11 @@ export default async function DepartmentsPage() {
           ) : departments.value.length === 0 ? (
             <EmptyState
               title="No departments yet"
-              description="An organisation admin creates departments from Admin → Departments."
+              description={
+                canManage
+                  ? 'Create your first department to get started.'
+                  : 'An organisation admin creates departments from Admin → Departments.'
+              }
             />
           ) : (
             <ul className="activity-list">

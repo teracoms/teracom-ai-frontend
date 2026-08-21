@@ -6,12 +6,9 @@ import { useRouter } from 'next/navigation';
 /**
  * Delete and reindex both go through the same-origin BFF proxy
  * (app/api/portal/knowledge/[documentId]/{,reindex}/route.js), never
- * straight to the backend. Neither action is role-gated backend-side
- * (api/documents.py's DELETE/reindex routes only require get_current_user,
- * no require_role check) — `canDelete` is a presentation-only convention
- * restricting the destructive action to admins in this UI, not a security
- * boundary the backend itself enforces. See
- * KNOWLEDGE_IMPLEMENTATION_REPORT.md §4.
+ * straight to the backend. Both actions require require_role("admin")
+ * backend-side (api/documents.py) — `canDelete` gates both buttons here so
+ * a non-admin never sees a control that would just 403.
  */
 export default function DocumentActions({ documentId, canDelete }) {
   const [reindexing, setReindexing] = useState(false);
@@ -77,14 +74,16 @@ export default function DocumentActions({ documentId, canDelete }) {
       )}
 
       <div className="document-actions">
-        <button
-          type="button"
-          className="btn btn-secondary"
-          onClick={handleReindex}
-          disabled={reindexing || deleting}
-        >
-          {reindexing ? 'Reindexing...' : 'Reindex'}
-        </button>
+        {canDelete && (
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={handleReindex}
+            disabled={reindexing || deleting}
+          >
+            {reindexing ? 'Reindexing...' : 'Reindex'}
+          </button>
+        )}
 
         {canDelete && (
           <button
