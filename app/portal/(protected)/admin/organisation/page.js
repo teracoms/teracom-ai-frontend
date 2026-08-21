@@ -103,8 +103,8 @@ export default async function AdminOrganisationPage() {
               <span className="eyebrow">Governance</span>
               <h2>Federation consultation.</h2>
               <p>
-                Phase 0 Package L, objective #6 — turn Federation consultation off for this
-                organisation entirely, regardless of licence tier.
+                Turn Federation consultation off for this organisation entirely, regardless of
+                your licence tier.
               </p>
             </div>
             <FederationEnabledToggle organisation={organisation} />

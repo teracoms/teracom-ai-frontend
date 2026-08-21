@@ -44,8 +44,8 @@ export default function NewWorkerPage() {
             <span className="eyebrow">Workers</span>
             <h1>Create a new AI worker.</h1>
             <p className="lead">
-              Its role, purpose and instructions become the system-prompt components
-              teracom-ai-backend uses for every chat session with this worker.
+              Its role, purpose and instructions become the system-prompt components used for
+              every chat session with this worker.
             </p>
           </div>
         </div>

@@ -3,9 +3,9 @@
 import { useState } from 'react';
 
 const NOT_SUPPORTED_MESSAGE =
-  "Saving isn't available yet — teracom-ai-backend only exposes create and list " +
-  'endpoints for workers (no update endpoint exists). This form is ready to wire up ' +
-  'once one ships; nothing you change here is sent anywhere.';
+  "Saving isn't available yet — only creating and listing workers is supported today " +
+  '(no update capability exists yet). This form is ready to wire up once one ships; ' +
+  'nothing you change here is sent anywhere.';
 
 /**
  * teracom-ai-backend has no PATCH/PUT (or DELETE) route for a single worker —

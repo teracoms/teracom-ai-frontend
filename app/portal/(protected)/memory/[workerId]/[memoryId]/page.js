@@ -111,8 +111,7 @@ export default async function MemoryDetailPage({ params }) {
       <section className="section alt">
         <div className="container">
           <p className="form-note-banner" role="note">
-            Memories can&apos;t be edited or deleted from this app — teracom-ai-backend has no
-            update or delete endpoint for a memory, only create and read.
+            Memories can&apos;t be edited or deleted from this app — only created and read.
           </p>
           <Link className="btn btn-secondary" href={`/portal/memory/${workerId}`}>
             Back to Worker Memory

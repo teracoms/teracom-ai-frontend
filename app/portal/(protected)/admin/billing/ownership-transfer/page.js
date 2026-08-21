@@ -50,8 +50,8 @@ export default async function OwnershipTransferPage() {
             <span className="eyebrow">Billing &amp; Licensing</span>
             <h1>Request an ownership transfer.</h1>
             <p className="lead">
-              A guided flow, per docs/governance/UX_VISION.md §5 — human approval is mandatory
-              here (LICENSING_MODEL_V1.md §11) regardless of natural-language feasibility.
+              A guided flow — human approval is mandatory here regardless of how the request is
+              phrased.
             </p>
           </div>
         </div>

@@ -52,8 +52,7 @@ export default function WorkerPackWizard({ currentWorkerCount, workerAllocation 
               </label>
             ))}
             <p className="form-note">
-              Two pack sizes are approved as add-ons to your tier&apos;s base allocation
-              (LICENSING_MODEL_V1.md §7).
+              Two pack sizes are approved as add-ons to your tier&apos;s base allocation.
             </p>
           </div>
         );
@@ -83,7 +82,7 @@ export default function WorkerPackWizard({ currentWorkerCount, workerAllocation 
         <p>
           Ready to submit a request for a +{data.packSize ?? WORKER_PACK_SIZES[0]}-worker pack.
           Like any entitlement change, this requires human approval and a re-issued licence file
-          before it takes effect (LICENSING_MODEL_V1.md §9/§15).
+          before it takes effect.
         </p>
       ),
     },

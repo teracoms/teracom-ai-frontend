@@ -55,8 +55,8 @@ export default async function WorkerPackPage() {
             <span className="eyebrow">Billing &amp; Licensing</span>
             <h1>Request additional workers.</h1>
             <p className="lead">
-              A guided flow, per docs/governance/UX_VISION.md §5 — an entitlement change needs
-              human approval regardless of how the request is phrased.
+              A guided flow — an entitlement change needs human approval regardless of how the
+              request is phrased.
             </p>
           </div>
         </div>

@@ -13,8 +13,8 @@ function IllustrativeDataBanner() {
     <p className="illustrative-data-banner" role="note">
       <strong>Illustrative data</strong>
       This wizard runs on illustrative example data, not your organisation&apos;s real licence.
-      Submitting records a request on this screen only — it does not reach teracom-ai-backend or
-      require staff approval, unlike the real Worker Pack request flow.
+      Submitting records a request on this screen only — it does not reach our systems or require
+      staff approval, unlike the real Worker Pack request flow.
     </p>
   );
 }
@@ -37,7 +37,7 @@ export default function RenewalWizard({ licence }) {
             <dd>{licence.expiryDate}</dd>
           </dl>
           <p className="form-note">
-            Renewal may be requested up to 90 days before expiry (LICENSING_MODEL_V1.md §12).
+            Renewal may be requested up to 90 days before expiry.
           </p>
         </div>
       ),
@@ -88,8 +88,7 @@ export default function RenewalWizard({ licence }) {
       render: ({ data }) => (
         <p>
           Ready to submit a renewal request for the {licence.tier} tier, {data.cadence ?? 'annual'}{' '}
-          cadence. This request requires human approval before a renewed licence is issued
-          (LICENSING_MODEL_V1.md §9).
+          cadence. This request requires human approval before a renewed licence is issued.
         </p>
       ),
     },

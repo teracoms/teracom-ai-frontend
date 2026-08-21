@@ -52,7 +52,7 @@ export default function BillingOverviewPage({ searchParams }) {
               <p className="lead">
                 Only licence management functions remain available in Locked Mode — chat, worker
                 management, knowledge, and administration are inaccessible until a valid licence
-                is uploaded and accepted (LICENSING_MODEL_V1.md §14).
+                is uploaded and accepted.
               </p>
               <div className="hero-actions locked-mode-actions">
                 <Link className="btn btn-primary" href="/portal/admin/billing/renewal">
@@ -96,8 +96,7 @@ export default function BillingOverviewPage({ searchParams }) {
             <p className="form-error" role="alert">
               Your licence expired and is now in a 30-day grace period —{' '}
               {licence.daysRemainingInGracePeriod} days remaining. Login, data export, uploading a
-              replacement licence, and requesting renewal all remain available
-              (LICENSING_MODEL_V1.md §13).
+              replacement licence, and requesting renewal all remain available.
             </p>
           )}
 

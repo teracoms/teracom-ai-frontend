@@ -50,8 +50,8 @@ export default async function UploadKnowledgePage() {
             <span className="eyebrow">Knowledge</span>
             <h1>Upload a document.</h1>
             <p className="lead">
-              teracom-ai-backend extracts the text, creates the knowledge record, assigns it to
-              the worker you choose, and indexes it for chat — all in one step.
+              We extract the text, create the knowledge record, assign it to the worker you
+              choose, and index it for chat — all in one step.
             </p>
           </div>
         </div>

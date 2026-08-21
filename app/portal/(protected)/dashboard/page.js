@@ -68,8 +68,7 @@ export default async function DashboardPage() {
             <span className="eyebrow">Dashboard</span>
             <h1>Organisation overview.</h1>
             <p className="lead">
-              Workers, knowledge, memory and chat activity for your organisation, sourced from
-              teracom-ai-backend&apos;s portal dashboard endpoint.
+              Workers, knowledge, memory and chat activity for your organisation, in one place.
             </p>
           </div>
         </div>

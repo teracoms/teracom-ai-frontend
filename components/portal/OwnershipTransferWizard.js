@@ -13,7 +13,7 @@ function IllustrativeDataBanner() {
       <strong>Partially illustrative</strong>
       The current organisation name shown below is real. The rest of this wizard (transfer terms,
       submission) runs on illustrative example data — submitting records a request on this screen
-      only, it does not reach teracom-ai-backend or require staff approval.
+      only, it does not reach our systems or require staff approval.
     </p>
   );
 }
@@ -83,9 +83,8 @@ export default function OwnershipTransferWizard({ organisation }) {
       render: () => (
         <p>
           Ready to submit this ownership transfer request. Ownership transfer always requires
-          human approval (LICENSING_MODEL_V1.md §11) — how a transfer affects the renewal clock or
-          hardware-bound licence fingerprint is not yet decided (§11), so this request would need
-          manual review either way.
+          human approval — how a transfer affects the renewal clock or hardware-bound licence
+          fingerprint is not yet decided, so this request would need manual review either way.
         </p>
       ),
     },

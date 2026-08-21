@@ -119,9 +119,9 @@ export default function CtoOrchestrationPanel({ workers, onExecutionComplete }) 
         to review the proposed plan first, or review the finished result afterward.
       </p>
       <p className="activity-meta">
-        Phase 0 Package H: the executive synthesis now draws on each involved worker&apos;s own
-        memory plus their department&apos;s memory; organisation-wide memory is included too when
-        you (the person running this chain) are an organisation admin.
+        The executive synthesis draws on each involved worker&apos;s own memory plus their
+        department&apos;s memory; organisation-wide memory is included too when you (the person
+        running this chain) are an organisation admin.
       </p>
 
       {error && (

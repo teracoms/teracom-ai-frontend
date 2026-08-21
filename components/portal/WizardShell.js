@@ -67,8 +67,8 @@ export default function WizardShell({ steps, onSubmit, submitLabel = 'Submit Req
       <div className="wizard-shell">
         <p className="form-note-banner" role="status">
           {onSubmit
-            ? 'Your request has been submitted and now requires Teracom staff approval before it takes effect (LICENSING_MODEL_V1.md §9). You can track its status from Requests & History.'
-            : 'Your request has been recorded on this screen only. teracom-ai-backend has no endpoint yet to submit, route, or store a licensing request — in production this would go to Teracom for the human-approval review LICENSING_MODEL_V1.md §9 requires. Reload this page to start again.'}
+            ? 'Your request has been submitted and now requires Teracom staff approval before it takes effect. You can track its status from Requests & History.'
+            : 'Your request has been recorded on this screen only — submission isn’t wired up yet. In production this would go to Teracom for the same human-approval review described above. Reload this page to start again.'}
         </p>
       </div>
     );

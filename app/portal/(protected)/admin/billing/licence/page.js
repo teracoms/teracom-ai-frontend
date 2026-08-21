@@ -65,11 +65,10 @@ export default function LicenceDetailsPage() {
           <p className="illustrative-data-banner" role="note">
             <strong>Illustrative data</strong>
             This page still renders illustrative example licence data, not a real API response.
-            teracom-ai-backend now has real <code>Licence</code>/<code>Entitlement</code>/<code>Plan</code> models
-            (live-verified elsewhere — see the real Licensing summary on{' '}
-            <Link href="/portal/finance">/portal/finance</Link>) — this specific page has not yet
-            been wired to call them. See BILLING_AND_LICENSING_IMPLEMENTATION_REPORT.md for the
-            remaining frontend work.
+            Real <code>Licence</code>/<code>Entitlement</code>/<code>Plan</code> data already
+            exists and is live-verified elsewhere — see the real Licensing summary on{' '}
+            <Link href="/portal/finance">/portal/finance</Link> — this specific page has not yet
+            been wired to call it.
           </p>
         </div>
       </section>

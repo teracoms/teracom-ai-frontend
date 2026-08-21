@@ -133,11 +133,10 @@ export default async function BillingUsagePage() {
             <strong>Partially illustrative</strong>
             Worker, user, and organisation counts above are real, live data. The allocation
             ceilings shown are illustrative example values, not this page&apos;s own real{' '}
-            <code>Plan</code>/<code>Entitlement</code> data — teracom-ai-backend now has a real{' '}
-            <code>Plan</code> entity and real per-licence entitlement limits, but this specific
-            page has not yet been wired to call them. Worker-limit enforcement itself also remains
-            inconsistent — enforced only on the Marketplace pack-provisioning path, not on direct
-            admin worker creation.
+            <code>Plan</code>/<code>Entitlement</code> data — real per-licence entitlement limits
+            already exist, but this specific page has not yet been wired to call them.
+            Worker-limit enforcement itself also remains inconsistent — enforced only on the
+            Marketplace pack-provisioning path, not on direct admin worker creation.
           </p>
         </div>
       </section>
