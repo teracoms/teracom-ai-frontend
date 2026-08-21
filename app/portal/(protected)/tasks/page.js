@@ -5,6 +5,7 @@ import { fetchWorkerList } from '@/lib/api/workers';
 import { settle, errorMessage } from '@/lib/api/results';
 import EmptyState from '@/components/portal/EmptyState';
 import TaskStatusControl from '@/components/portal/TaskStatusControl';
+import TaskCreateForm from '@/components/portal/TaskCreateForm';
 
 export const metadata = {
   title: 'Tasks | Teracom AI Portal',
@@ -15,8 +16,9 @@ export const metadata = {
  * were only ever visible embedded inside a single Project's own
  * ProjectPanel (components/portal/TaskPanel.js), with no page
  * showing a member's or the organisation's own tasks across every
- * project at once. Read-only overview + status control here;
- * creating a task still happens from its own project (unchanged).
+ * project at once. Creation is now possible here too via
+ * TaskCreateForm's own project selector (POST /tasks/ already
+ * required no changes — it was always generic on project_id).
  */
 export default async function TasksPage() {
   const token = getSessionToken();
@@ -63,9 +65,19 @@ export default async function TasksPage() {
             <h1>Every task, across every project.</h1>
             <p className="lead">
               Work assigned to a human or to a Worker — pending, in progress, and done — in one
-              place. To create a new task, open its own project.
+              place.
             </p>
           </div>
+        </div>
+      </section>
+
+      <section className="section alt">
+        <div className="container">
+          <div className="section-heading left">
+            <span className="eyebrow">New</span>
+            <h2>Add a task.</h2>
+          </div>
+          <TaskCreateForm projects={projects.value ?? []} />
         </div>
       </section>
 
