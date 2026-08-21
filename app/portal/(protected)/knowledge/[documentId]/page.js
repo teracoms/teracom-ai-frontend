@@ -3,12 +3,13 @@ import Link from 'next/link';
 import { getSessionToken } from '@/lib/api/auth';
 import { decodeJwtPayload } from '@/lib/api/jwt';
 import { isAtLeastRole } from '@/lib/roles';
-import { fetchDocument } from '@/lib/api/knowledge';
+import { fetchDocument, fetchKnowledgeMetadata } from '@/lib/api/knowledge';
 import { fetchWorkerList, fetchWorkerKnowledge } from '@/lib/api/workers';
 import { settle, errorMessage } from '@/lib/api/results';
 import { ApiError } from '@/lib/api/client';
 import KnowledgeAssignedWorkers from '@/components/portal/KnowledgeAssignedWorkers';
 import DocumentActions from '@/components/portal/DocumentActions';
+import KnowledgeMetadataForm from '@/components/portal/KnowledgeMetadataForm';
 
 export const metadata = {
   title: 'Document | Teracom AI Portal',
@@ -57,13 +58,15 @@ export default async function DocumentDetailPage({ params }) {
 
   const isAdmin = isAtLeastRole(decodeJwtPayload(token)?.role, 'admin');
 
-  const [documentResult, assignedResult] = await Promise.allSettled([
+  const [documentResult, assignedResult, metadataResult] = await Promise.allSettled([
     fetchDocument(token, documentId),
     fetchAssignedWorkers(token, documentId),
+    fetchKnowledgeMetadata(token, documentId),
   ]);
 
   const document = settle(documentResult);
   const assigned = settle(assignedResult);
+  const metadata = settle(metadataResult);
 
   // GET /documents/{id} is ownership-checked backend-side
   // (auth/organisation.get_owned_knowledge) — a document that doesn't exist
@@ -142,6 +145,28 @@ export default async function DocumentDetailPage({ params }) {
       </section>
 
       <section className="section">
+        <div className="container">
+          <div className="section-heading left">
+            <span className="eyebrow">Classification</span>
+            <h2>Document type, sensitivity, and tags.</h2>
+            <p>
+              Tags matter beyond labelling — a department&apos;s own{' '}
+              <code>knowledge_assignment</code> governance rule automatically grants every worker
+              in it access to knowledge tagged with one of its resolved tags. See{' '}
+              <Link href="/portal/admin/governance">Governance</Link>.
+            </p>
+          </div>
+          {metadata.error ? (
+            <p className="form-error" role="alert">
+              {errorMessage(metadata.error)}
+            </p>
+          ) : (
+            <KnowledgeMetadataForm documentId={documentId} metadata={metadata.value} canEdit={isAdmin} />
+          )}
+        </div>
+      </section>
+
+      <section className="section alt">
         <div className="container">
           <div className="section-heading left">
             <span className="eyebrow">Actions</span>

@@ -43,7 +43,7 @@ const SECTIONS = [
       },
       {
         title: 'Knowledge',
-        body: 'Upload documents for a worker, a department, or the whole organisation to draw on. A department\'s knowledge is automatically visible to every worker in it (knowledge inheritance).',
+        body: "Upload documents for a worker, a department, or the whole organisation to draw on. A department's knowledge is automatically visible to every worker in it (knowledge inheritance). From a document's own page, an admin can also set its type, sensitivity, and tags — tags feed the Governance knowledge_assignment rule (see Governance) for automatic access grants when a worker joins a department.",
       },
       {
         title: 'Memory',
@@ -106,7 +106,7 @@ const SECTIONS = [
       },
       {
         title: 'Governance',
-        body: 'Organisation- and department-level rules that cascade down automatically (for example, a knowledge-visibility rule set at department level applies to every worker in it without being set worker-by-worker).',
+        body: 'Organisation- and department-level rules that admins can set and override (admin and above), cascading down automatically — a department without its own override inherits the organisation default. Today only knowledge_assignment rules have a live effect (a worker joining a department automatically gets access to matching-tagged knowledge); other rule types are recorded and audited for future enforcement.',
       },
       {
         title: 'Billing',

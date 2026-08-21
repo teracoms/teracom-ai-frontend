@@ -75,6 +75,17 @@ const GUIDES = [
     ],
   },
   {
+    title: 'Configure governance rules',
+    steps: [
+      { text: 'Open Governance.', href: '/portal/admin/governance' },
+      'Set an organisation-wide default, or pick a department to give it its own override — both are audited, and a department without its own override inherits the organisation default automatically.',
+      {
+        text: 'For a rule you can see working immediately: tag a document from its own Knowledge page with (e.g.) "onboarding", set a department\'s knowledge_assignment rule (key default_knowledge_tags) to ["onboarding"], then assign a worker to that department — it automatically gets access to that document.',
+        href: '/portal/knowledge',
+      },
+    ],
+  },
+  {
     title: 'Get an executive overview',
     steps: [
       {

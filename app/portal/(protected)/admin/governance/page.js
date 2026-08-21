@@ -127,6 +127,15 @@ export default async function AdminGovernancePage({ searchParams }) {
               Set once at organisation level, automatically inherited by every department unless a
               department sets its own override.
             </p>
+            <p className="activity-meta">
+              Today, a <code>knowledge_assignment</code> / <code>default_knowledge_tags</code> rule
+              has a real, live effect: any worker assigned to a department is automatically granted
+              access to every knowledge document tagged with one of that department&apos;s resolved
+              tags. Other rule types (<code>governance</code>, <code>policy</code>,{' '}
+              <code>standards</code>) are recorded, inherited, overridden, and audited correctly, but
+              nothing elsewhere in the platform reads them back yet — set them to document a
+              decision, not to expect automatic enforcement.
+            </p>
           </div>
           {rules.error ? (
             <p className="form-error" role="alert">
