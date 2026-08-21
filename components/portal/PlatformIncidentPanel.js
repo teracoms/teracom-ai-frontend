@@ -3,12 +3,18 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
+import { useAuth } from '@/components/portal/AuthProvider';
+import { isAtLeastRole } from '@/lib/roles';
+
 /**
  * Production Operations Platform (Phase 0 Package PQR, objective
- * #14) — ungated, mirrors ProjectPanel/TaskPanel's shape (operational
- * execution tracking, not a financial or contractual commitment).
+ * #14) — mirrors ProjectPanel/TaskPanel's shape (operational
+ * execution tracking, not a financial or contractual commitment),
+ * gated at employee tier and above (Read Only Tier Enforcement).
  */
 export default function PlatformIncidentPanel({ incidents }) {
+  const { user } = useAuth();
+  const canWrite = isAtLeastRole(user?.role, 'employee');
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [severity, setSeverity] = useState('medium');
@@ -80,6 +86,9 @@ export default function PlatformIncidentPanel({ incidents }) {
         </p>
       )}
 
+      {!canWrite ? (
+        <p className="form-note">You have read-only access and can&apos;t report an incident.</p>
+      ) : (
       <form className="contact-form" onSubmit={handleSubmit} noValidate>
         <input
           type="text"
@@ -106,6 +115,7 @@ export default function PlatformIncidentPanel({ incidents }) {
           {submitting ? 'Reporting...' : 'Report Incident'}
         </button>
       </form>
+      )}
 
       {(!incidents || incidents.length === 0) ? (
         <p className="activity-meta">No platform incidents yet.</p>
@@ -121,15 +131,17 @@ export default function PlatformIncidentPanel({ incidents }) {
                   </p>
                   <p className="activity-meta">{incident.description}</p>
                 </div>
-                <select
-                  value={incident.status}
-                  onChange={(event) => handleStatusChange(incident.id, event.target.value)}
-                  aria-label={`Status for ${incident.title}`}
-                >
-                  <option value="open">Open</option>
-                  <option value="monitoring">Monitoring</option>
-                  <option value="resolved">Resolved</option>
-                </select>
+                {canWrite && (
+                  <select
+                    value={incident.status}
+                    onChange={(event) => handleStatusChange(incident.id, event.target.value)}
+                    aria-label={`Status for ${incident.title}`}
+                  >
+                    <option value="open">Open</option>
+                    <option value="monitoring">Monitoring</option>
+                    <option value="resolved">Resolved</option>
+                  </select>
+                )}
               </div>
             </li>
           ))}

@@ -3,14 +3,19 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
+import { useAuth } from '@/components/portal/AuthProvider';
+import { isAtLeastRole } from '@/lib/roles';
+
 /**
  * Phase 0 Package N (Operations & Project Delivery Platform) — a
- * single project's task list, create form, and status-change controls.
- * Ungated: any org member may create a task or change its status
+ * single project's task list, create form, and status-change controls
  * (operational execution tracking, not a financial or contractual
- * commitment).
+ * commitment), gated at employee tier and above (Read Only Tier
+ * Enforcement).
  */
 export default function TaskPanel({ projectId, tasks }) {
+  const { user } = useAuth();
+  const canWrite = isAtLeastRole(user?.role, 'employee');
   const [title, setTitle] = useState('');
   const [dueDate, setDueDate] = useState('');
   const [priority, setPriority] = useState('');
@@ -82,6 +87,7 @@ export default function TaskPanel({ projectId, tasks }) {
         </p>
       )}
 
+      {canWrite ? (
       <form className="contact-form" onSubmit={handleSubmit} noValidate>
         <input
           type="text"
@@ -113,6 +119,9 @@ export default function TaskPanel({ projectId, tasks }) {
           {submitting ? 'Adding...' : 'Add Task'}
         </button>
       </form>
+      ) : (
+        <p className="form-note">You have read-only access and can&apos;t create a task.</p>
+      )}
 
       {(!tasks || tasks.length === 0) ? (
         <p className="activity-meta">No tasks yet.</p>
@@ -130,15 +139,17 @@ export default function TaskPanel({ projectId, tasks }) {
                     {task.due_date ? ` · due ${task.due_date}` : ''}
                   </p>
                 </div>
-                <select
-                  value={task.status}
-                  onChange={(event) => handleStatusChange(task.id, event.target.value)}
-                  aria-label={`Status for ${task.title}`}
-                >
-                  <option value="pending">Pending</option>
-                  <option value="in_progress">In Progress</option>
-                  <option value="done">Done</option>
-                </select>
+                {canWrite && (
+                  <select
+                    value={task.status}
+                    onChange={(event) => handleStatusChange(task.id, event.target.value)}
+                    aria-label={`Status for ${task.title}`}
+                  >
+                    <option value="pending">Pending</option>
+                    <option value="in_progress">In Progress</option>
+                    <option value="done">Done</option>
+                  </select>
+                )}
               </div>
             </li>
           ))}

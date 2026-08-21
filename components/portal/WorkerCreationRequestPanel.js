@@ -93,6 +93,9 @@ export default function WorkerCreationRequestPanel({ requests }) {
         </p>
       )}
 
+      {!isAtLeastRole(user?.role, 'employee') ? (
+        <p className="form-note">You have read-only access and can&apos;t propose a worker.</p>
+      ) : (
       <form className="contact-form" onSubmit={handleSubmit} noValidate>
         <input
           type="text"
@@ -132,6 +135,7 @@ export default function WorkerCreationRequestPanel({ requests }) {
           {submitting ? 'Submitting...' : 'Submit Request'}
         </button>
       </form>
+      )}
 
       {(!requests || requests.length === 0) ? (
         <p className="activity-meta">No worker creation requests yet.</p>

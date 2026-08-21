@@ -143,6 +143,9 @@ export default function VideoAssetPanel({ campaignId, videoAssets, workers, appr
         </p>
       )}
 
+      {!isAtLeastRole(user?.role, 'employee') ? (
+        <p className="form-note">You have read-only access and can&apos;t create a video asset.</p>
+      ) : (
       <form className="contact-form" onSubmit={handleSubmit} noValidate>
         <input
           type="text"
@@ -202,6 +205,7 @@ export default function VideoAssetPanel({ campaignId, videoAssets, workers, appr
           {submitting ? 'Submitting...' : 'Submit Video'}
         </button>
       </form>
+      )}
 
       {(!videoAssets || videoAssets.length === 0) ? (
         <p className="activity-meta">No video assets yet.</p>
@@ -217,7 +221,7 @@ export default function VideoAssetPanel({ campaignId, videoAssets, workers, appr
                   <p className="activity-meta">{asset.script}</p>
                 </div>
                 <div>
-                  {asset.status === 'draft' && (
+                  {asset.status === 'draft' && isAtLeastRole(user?.role, 'employee') && (
                     <button
                       type="button"
                       className="btn btn-secondary btn-small"

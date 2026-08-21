@@ -3,6 +3,9 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
+import { useAuth } from '@/components/portal/AuthProvider';
+import { isAtLeastRole } from '@/lib/roles';
+
 const STAGE_ORDER = ['prospect', 'lead', 'customer'];
 const HEALTH_STATUSES = ['healthy', 'at_risk', 'churned'];
 
@@ -13,6 +16,8 @@ const HEALTH_STATUSES = ['healthy', 'at_risk', 'churned'];
  * offered client-side (the backend would 400 it anyway).
  */
 export default function ContactDetail({ contact }) {
+  const { user } = useAuth();
+  const canWrite = isAtLeastRole(user?.role, 'employee');
   const [stageSaving, setStageSaving] = useState(false);
   const [healthSaving, setHealthSaving] = useState(false);
   const [error, setError] = useState(null);
@@ -86,37 +91,49 @@ export default function ContactDetail({ contact }) {
         {contact.source ? ` · Source: ${contact.source}` : ''}
       </p>
 
-      <label>
-        Stage:{' '}
-        <select value={contact.stage} onChange={handleStageChange} disabled={stageSaving} aria-label="Contact stage">
-          {availableStages.map((stage) => (
-            <option key={stage} value={stage}>
-              {stage}
-            </option>
-          ))}
-        </select>
-      </label>
-
-      {contact.stage === 'customer' && (
+      {canWrite ? (
         <label>
-          {' '}
-          Health:{' '}
-          <select
-            value={contact.health_status ?? ''}
-            onChange={handleHealthChange}
-            disabled={healthSaving}
-            aria-label="Customer health"
-          >
-            <option value="" disabled>
-              Select...
-            </option>
-            {HEALTH_STATUSES.map((status) => (
-              <option key={status} value={status}>
-                {status}
+          Stage:{' '}
+          <select value={contact.stage} onChange={handleStageChange} disabled={stageSaving} aria-label="Contact stage">
+            {availableStages.map((stage) => (
+              <option key={stage} value={stage}>
+                {stage}
               </option>
             ))}
           </select>
         </label>
+      ) : (
+        <p>
+          Stage: <span className="badge">{contact.stage}</span>
+        </p>
+      )}
+
+      {contact.stage === 'customer' && (
+        canWrite ? (
+          <label>
+            {' '}
+            Health:{' '}
+            <select
+              value={contact.health_status ?? ''}
+              onChange={handleHealthChange}
+              disabled={healthSaving}
+              aria-label="Customer health"
+            >
+              <option value="" disabled>
+                Select...
+              </option>
+              {HEALTH_STATUSES.map((status) => (
+                <option key={status} value={status}>
+                  {status}
+                </option>
+              ))}
+            </select>
+          </label>
+        ) : (
+          <p>
+            Health: <span className="badge">{contact.health_status ?? 'unset'}</span>
+          </p>
+        )
       )}
     </div>
   );

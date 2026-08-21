@@ -3,14 +3,19 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
+import { useAuth } from '@/components/portal/AuthProvider';
+import { isAtLeastRole } from '@/lib/roles';
+
 /**
  * A project-picking sibling to components/portal/TaskPanel.js's own
  * create form — that one is embedded in a single project's own page, so
  * project_id is implicit. The standalone Tasks page spans every project,
  * so this needs its own selector. Same POST /api/portal/tasks route
- * (already generic on project_id) — no backend change needed.
+ * (already generic on project_id), gated at employee tier and above
+ * (Read Only Tier Enforcement).
  */
 export default function TaskCreateForm({ projects }) {
+  const { user } = useAuth();
   const [projectId, setProjectId] = useState(projects[0]?.id ?? '');
   const [title, setTitle] = useState('');
   const [dueDate, setDueDate] = useState('');
@@ -52,6 +57,10 @@ export default function TaskCreateForm({ projects }) {
     } finally {
       setSubmitting(false);
     }
+  }
+
+  if (!isAtLeastRole(user?.role, 'employee')) {
+    return <p className="form-note">You have read-only access and can&apos;t create a task.</p>;
   }
 
   if (projects.length === 0) {

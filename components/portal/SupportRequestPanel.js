@@ -3,14 +3,20 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
+import { useAuth } from '@/components/portal/AuthProvider';
+import { isAtLeastRole } from '@/lib/roles';
+
 /**
  * Phase 0 Package O, objective #12 — staff-facing support request
  * list, status control, and reply thread. Reused on both
  * ContactDetailPage (this contact's own requests) and the org-wide
- * /portal/support inbox (every request, `showContactColumn`).
- * Ungated — any org member, mirrors Package N's Task/Project posture.
+ * /portal/support inbox (every request, `showContactColumn`). Mirrors
+ * Package N's Task/Project posture — gated at employee tier and above
+ * (Read Only Tier Enforcement).
  */
 export default function SupportRequestPanel({ requests, showContactColumn = false }) {
+  const { user } = useAuth();
+  const canWrite = isAtLeastRole(user?.role, 'employee');
   const [expandedId, setExpandedId] = useState(null);
   const [messagesById, setMessagesById] = useState({});
   const [replyBody, setReplyBody] = useState('');
@@ -107,16 +113,20 @@ export default function SupportRequestPanel({ requests, showContactColumn = fals
                 <p className="activity-meta">{request.description}</p>
               </div>
               <div>
-                <select
-                  value={request.status}
-                  onChange={(event) => handleStatusChange(request.id, event.target.value)}
-                  aria-label={`Status for ${request.subject}`}
-                >
-                  <option value="open">Open</option>
-                  <option value="in_progress">In Progress</option>
-                  <option value="resolved">Resolved</option>
-                  <option value="closed">Closed</option>
-                </select>{' '}
+                {canWrite && (
+                  <>
+                    <select
+                      value={request.status}
+                      onChange={(event) => handleStatusChange(request.id, event.target.value)}
+                      aria-label={`Status for ${request.subject}`}
+                    >
+                      <option value="open">Open</option>
+                      <option value="in_progress">In Progress</option>
+                      <option value="resolved">Resolved</option>
+                      <option value="closed">Closed</option>
+                    </select>{' '}
+                  </>
+                )}
                 <button type="button" className="btn btn-secondary btn-small" onClick={() => toggleExpand(request)}>
                   {expandedId === request.id ? 'Hide Thread' : 'View Thread'}
                 </button>
@@ -139,24 +149,28 @@ export default function SupportRequestPanel({ requests, showContactColumn = fals
                     ))}
                   </ul>
                 )}
-                <form
-                  className="contact-form"
-                  onSubmit={(event) => {
-                    event.preventDefault();
-                    handleReply(request.id);
-                  }}
-                  noValidate
-                >
-                  <textarea
-                    value={replyBody}
-                    onChange={(event) => setReplyBody(event.target.value)}
-                    placeholder="Write a reply..."
-                    aria-label="Reply"
-                  />
-                  <button className="btn btn-primary btn-small" type="submit" disabled={!replyBody.trim()}>
-                    Send
-                  </button>
-                </form>
+                {canWrite ? (
+                  <form
+                    className="contact-form"
+                    onSubmit={(event) => {
+                      event.preventDefault();
+                      handleReply(request.id);
+                    }}
+                    noValidate
+                  >
+                    <textarea
+                      value={replyBody}
+                      onChange={(event) => setReplyBody(event.target.value)}
+                      placeholder="Write a reply..."
+                      aria-label="Reply"
+                    />
+                    <button className="btn btn-primary btn-small" type="submit" disabled={!replyBody.trim()}>
+                      Send
+                    </button>
+                  </form>
+                ) : (
+                  <p className="form-note">You have read-only access and can&apos;t reply.</p>
+                )}
               </div>
             )}
           </li>

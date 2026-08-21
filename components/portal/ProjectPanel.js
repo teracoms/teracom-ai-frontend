@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
+import { useAuth } from '@/components/portal/AuthProvider';
+import { isAtLeastRole } from '@/lib/roles';
 import TaskPanel from '@/components/portal/TaskPanel';
 
 /**
@@ -21,6 +23,8 @@ import TaskPanel from '@/components/portal/TaskPanel';
  * round trip.
  */
 export default function ProjectPanel({ departmentId, departments, projects, tasks }) {
+  const { user } = useAuth();
+  const canWrite = isAtLeastRole(user?.role, 'employee');
   const [selectedDepartmentId, setSelectedDepartmentId] = useState(departmentId ?? '');
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
@@ -96,6 +100,9 @@ export default function ProjectPanel({ departmentId, departments, projects, task
         </p>
       )}
 
+      {!canWrite ? (
+        <p className="form-note">You have read-only access and can&apos;t create a project.</p>
+      ) : (
       <form className="contact-form" onSubmit={handleSubmit} noValidate>
         {!departmentId && departments?.length > 0 && (
           <select
@@ -132,6 +139,7 @@ export default function ProjectPanel({ departmentId, departments, projects, task
           {submitting ? 'Creating...' : 'Create Project'}
         </button>
       </form>
+      )}
 
       {(!projects || projects.length === 0) ? (
         <p className="activity-meta">No projects yet.</p>
@@ -147,14 +155,18 @@ export default function ProjectPanel({ departmentId, departments, projects, task
                   {project.description && <p className="activity-meta">{project.description}</p>}
                 </div>
                 <div>
-                  <select
-                    value={project.status}
-                    onChange={(event) => handleStatusChange(project.id, event.target.value)}
-                    aria-label={`Status for ${project.name}`}
-                  >
-                    <option value="active">Active</option>
-                    <option value="completed">Completed</option>
-                  </select>{' '}
+                  {canWrite && (
+                    <>
+                      <select
+                        value={project.status}
+                        onChange={(event) => handleStatusChange(project.id, event.target.value)}
+                        aria-label={`Status for ${project.name}`}
+                      >
+                        <option value="active">Active</option>
+                        <option value="completed">Completed</option>
+                      </select>{' '}
+                    </>
+                  )}
                   <button
                     type="button"
                     className="btn btn-secondary btn-small"

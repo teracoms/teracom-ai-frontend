@@ -3,14 +3,19 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
+import { useAuth } from '@/components/portal/AuthProvider';
+import { isAtLeastRole } from '@/lib/roles';
+
 /**
  * The status-change control extracted from components/portal/TaskPanel.js
  * so the standalone Tasks page (app/portal/(protected)/tasks/page.js) can
  * reuse the exact same PATCH /api/portal/tasks/{id}/status call without
  * duplicating it — same endpoint, same behaviour, just usable outside a
- * single project's own panel.
+ * single project's own panel. Gated at employee tier and above (Read
+ * Only Tier Enforcement).
  */
 export default function TaskStatusControl({ taskId, status }) {
+  const { user } = useAuth();
   const [updating, setUpdating] = useState(false);
   const [error, setError] = useState(null);
   const router = useRouter();
@@ -38,6 +43,10 @@ export default function TaskStatusControl({ taskId, status }) {
     } finally {
       setUpdating(false);
     }
+  }
+
+  if (!isAtLeastRole(user?.role, 'employee')) {
+    return <span className="badge">{status}</span>;
   }
 
   return (

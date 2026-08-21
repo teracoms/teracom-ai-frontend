@@ -3,14 +3,20 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
+import { useAuth } from '@/components/portal/AuthProvider';
+import { isAtLeastRole } from '@/lib/roles';
+
 /**
  * Campaign management (Phase 0 Package K, objective #5). A Marketing
  * Manager creates the campaign that starts the Content Producer -> Video
  * Producer pipeline (objective #12). POST /api/portal/campaigns → POST
- * /campaigns/. Not role-gated backend-side, same "any org member" posture
- * Workers/Knowledge already established.
+ * /campaigns/, backend-gated at employee tier and above (Read Only Tier
+ * Enforcement) — the form itself is hidden below that tier, a
+ * presentation-layer convenience mirroring the rest of this file's own
+ * admin-only Decide-button pattern elsewhere in this codebase.
  */
 export default function CampaignForm() {
+  const { user } = useAuth();
   const [name, setName] = useState('');
   const [objective, setObjective] = useState('');
   const [loading, setLoading] = useState(false);
@@ -48,6 +54,10 @@ export default function CampaignForm() {
     } finally {
       setLoading(false);
     }
+  }
+
+  if (!isAtLeastRole(user?.role, 'employee')) {
+    return <p className="form-note">You have read-only access and can&apos;t create a campaign.</p>;
   }
 
   return (

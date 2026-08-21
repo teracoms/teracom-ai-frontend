@@ -90,6 +90,9 @@ export default function MediaCentreView({ items, approvedContentPieces, approved
         </p>
       )}
 
+      {!isAtLeastRole(user?.role, 'employee') ? (
+        <p className="form-note">You have read-only access and can&apos;t publish to the Media Centre.</p>
+      ) : (
       <form className="contact-form" onSubmit={handlePublish} noValidate>
         <select
           value={kind}
@@ -128,6 +131,7 @@ export default function MediaCentreView({ items, approvedContentPieces, approved
           {publishing ? 'Publishing...' : 'Publish'}
         </button>
       </form>
+      )}
 
       {items.length === 0 ? (
         <EmptyState title="Nothing in the Media Centre yet" description="Publish an approved content piece or video above." />

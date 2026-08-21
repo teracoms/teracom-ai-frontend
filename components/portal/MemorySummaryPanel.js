@@ -3,6 +3,9 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
+import { useAuth } from '@/components/portal/AuthProvider';
+import { isAtLeastRole } from '@/lib/roles';
+
 /**
  * Phase 0 Package H — one shared component for all three memory tiers
  * (organisation, department, worker), parametrised by `{scope, scopeId}`,
@@ -17,6 +20,7 @@ import { useRouter } from 'next/navigation';
  * organisation's tier or this user's role doesn't include it, not a bug.
  */
 export default function MemorySummaryPanel({ scope, scopeId, summaries }) {
+  const { user } = useAuth();
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState(null);
   const router = useRouter();
@@ -53,14 +57,16 @@ export default function MemorySummaryPanel({ scope, scopeId, summaries }) {
         </p>
       )}
 
-      <button
-        type="button"
-        className="btn btn-secondary"
-        onClick={handleGenerate}
-        disabled={generating}
-      >
-        {generating ? 'Generating...' : 'Generate Summary'}
-      </button>
+      {isAtLeastRole(user?.role, 'employee') && (
+        <button
+          type="button"
+          className="btn btn-secondary"
+          onClick={handleGenerate}
+          disabled={generating}
+        >
+          {generating ? 'Generating...' : 'Generate Summary'}
+        </button>
+      )}
 
       {summaries.length === 0 ? (
         <p className="activity-meta">No summaries generated yet for this scope.</p>

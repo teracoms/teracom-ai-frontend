@@ -2,6 +2,9 @@
 
 import { useRef, useState } from 'react';
 
+import { useAuth } from '@/components/portal/AuthProvider';
+import { isAtLeastRole } from '@/lib/roles';
+
 /**
  * Multipart upload → POST /api/portal/knowledge/upload → POST /upload/
  * (worker_id + file; extract-text → create Knowledge row → assign → embed,
@@ -18,6 +21,7 @@ import { useRef, useState } from 'react';
  * KNOWLEDGE_IMPLEMENTATION_REPORT.md §3.
  */
 export default function UploadKnowledgeForm({ workers }) {
+  const { user } = useAuth();
   const [workerId, setWorkerId] = useState(workers[0]?.id ?? '');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -66,6 +70,10 @@ export default function UploadKnowledgeForm({ workers }) {
     } finally {
       setLoading(false);
     }
+  }
+
+  if (!isAtLeastRole(user?.role, 'employee')) {
+    return <p className="form-note">You have read-only access and can&apos;t upload knowledge.</p>;
   }
 
   if (workers.length === 0) {

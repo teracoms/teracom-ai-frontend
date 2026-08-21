@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
+import { useAuth } from '@/components/portal/AuthProvider';
+import { isAtLeastRole } from '@/lib/roles';
 import EmptyState from '@/components/portal/EmptyState';
 
 /**
@@ -15,6 +17,8 @@ import EmptyState from '@/components/portal/EmptyState';
  * new server state.
  */
 export default function WorkerKnowledgeAssignment({ workerId, assigned, available }) {
+  const { user } = useAuth();
+  const canWrite = isAtLeastRole(user?.role, 'employee');
   const [selectedId, setSelectedId] = useState(available[0]?.id ?? '');
   const [pendingRemovalId, setPendingRemovalId] = useState(null);
   const [assigning, setAssigning] = useState(false);
@@ -90,21 +94,25 @@ export default function WorkerKnowledgeAssignment({ workerId, assigned, availabl
                   <p className="activity-title">{item.title}</p>
                   <p className="activity-meta">Source: {item.source}</p>
                 </div>
-                <button
-                  type="button"
-                  className="btn btn-secondary btn-small"
-                  onClick={() => handleRemove(item.id)}
-                  disabled={pendingRemovalId === item.id}
-                >
-                  {pendingRemovalId === item.id ? 'Removing...' : 'Remove'}
-                </button>
+                {canWrite && (
+                  <button
+                    type="button"
+                    className="btn btn-secondary btn-small"
+                    onClick={() => handleRemove(item.id)}
+                    disabled={pendingRemovalId === item.id}
+                  >
+                    {pendingRemovalId === item.id ? 'Removing...' : 'Remove'}
+                  </button>
+                )}
               </div>
             </li>
           ))}
         </ul>
       )}
 
-      {available.length > 0 ? (
+      {!canWrite ? (
+        <p className="form-note">You have read-only access and can&apos;t assign knowledge.</p>
+      ) : available.length > 0 ? (
         <form className="assign-form" onSubmit={handleAssign}>
           <select
             value={selectedId}

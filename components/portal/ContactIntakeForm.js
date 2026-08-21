@@ -3,13 +3,17 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
+import { useAuth } from '@/components/portal/AuthProvider';
+import { isAtLeastRole } from '@/lib/roles';
+
 /**
  * Prospect intake (Phase 0 Package J, objective #4). POST
- * /api/portal/crm/contacts → POST /crm/contacts/. Not role-gated
- * backend-side, same "any org member" posture Workers/Knowledge already
- * established.
+ * /api/portal/crm/contacts → POST /crm/contacts/, backend-gated at
+ * employee tier and above (Read Only Tier Enforcement) — the form
+ * itself is hidden below that tier.
  */
 export default function ContactIntakeForm() {
+  const { user } = useAuth();
   const [name, setName] = useState('');
   const [company, setCompany] = useState('');
   const [email, setEmail] = useState('');
@@ -56,6 +60,10 @@ export default function ContactIntakeForm() {
     } finally {
       setLoading(false);
     }
+  }
+
+  if (!isAtLeastRole(user?.role, 'employee')) {
+    return <p className="form-note">You have read-only access and can&apos;t add a prospect.</p>;
   }
 
   return (

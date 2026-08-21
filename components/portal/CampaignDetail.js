@@ -3,6 +3,9 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
+import { useAuth } from '@/components/portal/AuthProvider';
+import { isAtLeastRole } from '@/lib/roles';
+
 const STAGE_ORDER = ['planning', 'active', 'completed'];
 
 /**
@@ -12,6 +15,7 @@ const STAGE_ORDER = ['planning', 'active', 'completed'];
  * would 400 it anyway).
  */
 export default function CampaignDetail({ campaign }) {
+  const { user } = useAuth();
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
   const router = useRouter();
@@ -54,16 +58,22 @@ export default function CampaignDetail({ campaign }) {
 
       <p className="activity-meta">{campaign.objective || 'No objective on file'}</p>
 
-      <label>
-        Stage:{' '}
-        <select value={campaign.stage} onChange={handleStageChange} disabled={saving} aria-label="Campaign stage">
-          {availableStages.map((stage) => (
-            <option key={stage} value={stage}>
-              {stage}
-            </option>
-          ))}
-        </select>
-      </label>
+      {isAtLeastRole(user?.role, 'employee') ? (
+        <label>
+          Stage:{' '}
+          <select value={campaign.stage} onChange={handleStageChange} disabled={saving} aria-label="Campaign stage">
+            {availableStages.map((stage) => (
+              <option key={stage} value={stage}>
+                {stage}
+              </option>
+            ))}
+          </select>
+        </label>
+      ) : (
+        <p>
+          Stage: <span className="badge">{campaign.stage}</span>
+        </p>
+      )}
     </div>
   );
 }

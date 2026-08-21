@@ -105,6 +105,9 @@ export default function DeploymentRecordPanel({ records }) {
         </p>
       )}
 
+      {!isAtLeastRole(user?.role, 'employee') ? (
+        <p className="form-note">You have read-only access and can&apos;t submit a deployment.</p>
+      ) : (
       <form className="contact-form" onSubmit={handleSubmit} noValidate>
         <input
           type="text"
@@ -126,6 +129,7 @@ export default function DeploymentRecordPanel({ records }) {
           {submitting ? 'Submitting...' : 'Submit Deployment'}
         </button>
       </form>
+      )}
 
       {(!records || records.length === 0) ? (
         <p className="activity-meta">No deployment records yet.</p>

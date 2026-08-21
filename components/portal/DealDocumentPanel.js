@@ -20,7 +20,7 @@ const LABELS = { proposal: 'Proposal', quote: 'Quote', contract: 'Contract' };
  * `amount` field. Not a pricing decision, so no admin gate — any org
  * member may set it.
  */
-function ProposalCostEstimateField({ proposal, onSaved }) {
+function ProposalCostEstimateField({ proposal, onSaved, canWrite }) {
   const [value, setValue] = useState(proposal.internal_cost_estimate ?? '');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
@@ -49,6 +49,10 @@ function ProposalCostEstimateField({ proposal, onSaved }) {
     } finally {
       setSaving(false);
     }
+  }
+
+  if (!canWrite) {
+    return null;
   }
 
   return (
@@ -97,6 +101,7 @@ export default function DealDocumentPanel({ kind, contactId, documents, workers 
   const [error, setError] = useState(null);
   const router = useRouter();
 
+  const canWrite = isAtLeastRole(user?.role, 'employee');
   const endpoints = ENDPOINTS[kind];
   const label = LABELS[kind];
 
@@ -218,6 +223,9 @@ export default function DealDocumentPanel({ kind, contactId, documents, workers 
         </p>
       )}
 
+      {!canWrite ? (
+        <p className="form-note">You have read-only access and can&apos;t submit a {label.toLowerCase()}.</p>
+      ) : (
       <form className="contact-form" onSubmit={handleSubmit} noValidate>
         <input
           type="text"
@@ -281,6 +289,7 @@ export default function DealDocumentPanel({ kind, contactId, documents, workers 
           {submitting ? 'Submitting...' : `Submit ${label}`}
         </button>
       </form>
+      )}
 
       {(!documents || documents.length === 0) ? (
         <p className="activity-meta">No {label.toLowerCase()}s yet.</p>
@@ -299,11 +308,11 @@ export default function DealDocumentPanel({ kind, contactId, documents, workers 
                     <p className="activity-meta">Internal cost estimate: {document.internal_cost_estimate}</p>
                   )}
                   {kind === 'proposal' && (
-                    <ProposalCostEstimateField proposal={document} onSaved={() => router.refresh()} />
+                    <ProposalCostEstimateField proposal={document} onSaved={() => router.refresh()} canWrite={canWrite} />
                   )}
                 </div>
                 <div>
-                  {document.status === 'draft' && kind === 'proposal' && (
+                  {document.status === 'draft' && kind === 'proposal' && canWrite && (
                     <button
                       type="button"
                       className="btn btn-secondary btn-small"

@@ -94,6 +94,9 @@ export default function DepartmentBudgetPanel({ departmentId, departments, budge
         </p>
       )}
 
+      {!isAtLeastRole(user?.role, 'employee') ? (
+        <p className="form-note">You have read-only access and can&apos;t submit a budget.</p>
+      ) : (
       <form className="contact-form" onSubmit={handleSubmit} noValidate>
         {!departmentId && departments?.length > 0 && (
           <select
@@ -133,6 +136,7 @@ export default function DepartmentBudgetPanel({ departmentId, departments, budge
           {submitting ? 'Submitting...' : 'Submit Budget'}
         </button>
       </form>
+      )}
 
       {(!budgets || budgets.length === 0) ? (
         <p className="activity-meta">No department budgets yet.</p>

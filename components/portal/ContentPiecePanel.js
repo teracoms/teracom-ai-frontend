@@ -133,6 +133,9 @@ export default function ContentPiecePanel({ campaignId, contentPieces, workers }
         </p>
       )}
 
+      {!isAtLeastRole(user?.role, 'employee') ? (
+        <p className="form-note">You have read-only access and can&apos;t create content.</p>
+      ) : (
       <form className="contact-form" onSubmit={handleSubmit} noValidate>
         <input
           type="text"
@@ -188,6 +191,7 @@ export default function ContentPiecePanel({ campaignId, contentPieces, workers }
           {submitting ? 'Submitting...' : 'Submit Content'}
         </button>
       </form>
+      )}
 
       {(!contentPieces || contentPieces.length === 0) ? (
         <p className="activity-meta">No content pieces yet.</p>
@@ -203,7 +207,7 @@ export default function ContentPiecePanel({ campaignId, contentPieces, workers }
                   <p className="activity-meta">{piece.content}</p>
                 </div>
                 <div>
-                  {piece.status === 'draft' && (
+                  {piece.status === 'draft' && isAtLeastRole(user?.role, 'employee') && (
                     <button
                       type="button"
                       className="btn btn-secondary btn-small"

@@ -3,6 +3,9 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
+import { useAuth } from '@/components/portal/AuthProvider';
+import { isAtLeastRole } from '@/lib/roles';
+
 /**
  * Phase 0 Package L — the worker-to-federation consultation flow
  * (objectives #4/#5), mirroring CtoOrchestrationPanel's shape:
@@ -14,6 +17,7 @@ import { useRouter } from 'next/navigation';
  * the (locally-generated, always-simulated) consultation.
  */
 export default function FederationConsultationPanel({ workers }) {
+  const { user } = useAuth();
   const [workerId, setWorkerId] = useState(workers[0]?.id ?? '');
   const [message, setMessage] = useState('');
   const [suggestion, setSuggestion] = useState(null);
@@ -135,14 +139,16 @@ export default function FederationConsultationPanel({ workers }) {
           >
             {checking ? 'Checking...' : 'Check Confidence'}
           </button>
-          <button
-            type="button"
-            className="btn btn-primary"
-            onClick={() => handleConsult(suggestion?.federation_provider_id)}
-            disabled={checking || consulting || !message.trim() || !workerId}
-          >
-            {consulting ? 'Consulting...' : 'Consult Federation'}
-          </button>
+          {isAtLeastRole(user?.role, 'employee') && (
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={() => handleConsult(suggestion?.federation_provider_id)}
+              disabled={checking || consulting || !message.trim() || !workerId}
+            >
+              {consulting ? 'Consulting...' : 'Consult Federation'}
+            </button>
+          )}
         </div>
       </form>
 

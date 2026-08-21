@@ -3,6 +3,8 @@
 import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
+import { useAuth } from '@/components/portal/AuthProvider';
+import { isAtLeastRole } from '@/lib/roles';
 import EmptyState from '@/components/portal/EmptyState';
 
 /**
@@ -26,6 +28,8 @@ import EmptyState from '@/components/portal/EmptyState';
  * even though the backend itself would allow it via a direct API call.
  */
 export default function PermissionMatrix({ grants, workers, knowledge }) {
+  const { user } = useAuth();
+  const canWrite = isAtLeastRole(user?.role, 'employee');
   const [query, setQuery] = useState('');
   const [workerId, setWorkerId] = useState(workers[0]?.id ?? '');
   const [knowledgeId, setKnowledgeId] = useState('');
@@ -138,21 +142,25 @@ export default function PermissionMatrix({ grants, workers, knowledge }) {
                   <p className="activity-title">{grant.knowledgeTitle}</p>
                   <p className="activity-meta">Worker: {grant.workerName}</p>
                 </div>
-                <button
-                  type="button"
-                  className="btn btn-secondary btn-small"
-                  onClick={() => handleRemove(grant)}
-                  disabled={pendingRemovalId === grant.id}
-                >
-                  {pendingRemovalId === grant.id ? 'Removing...' : 'Remove'}
-                </button>
+                {canWrite && (
+                  <button
+                    type="button"
+                    className="btn btn-secondary btn-small"
+                    onClick={() => handleRemove(grant)}
+                    disabled={pendingRemovalId === grant.id}
+                  >
+                    {pendingRemovalId === grant.id ? 'Removing...' : 'Remove'}
+                  </button>
+                )}
               </div>
             </li>
           ))}
         </ul>
       )}
 
-      {workers.length === 0 ? (
+      {!canWrite ? (
+        <p className="form-note">You have read-only access and can&apos;t grant document access.</p>
+      ) : workers.length === 0 ? (
         <p className="form-note">Create a worker first before granting it document access.</p>
       ) : (
         <form className="assign-form" onSubmit={handleAssign}>
