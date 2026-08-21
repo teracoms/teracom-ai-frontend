@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { useAuth } from '@/components/portal/AuthProvider';
+import { isAtLeastRole } from '@/lib/roles';
 
 const ENDPOINTS = {
   proposal: { submit: '/api/portal/proposals', decide: (id) => `/api/portal/proposals/${id}/decide` },
@@ -311,7 +312,7 @@ export default function DealDocumentPanel({ kind, contactId, documents, workers 
                       Submit
                     </button>
                   )}
-                  {document.status === 'submitted' && user?.role === 'admin' && (
+                  {document.status === 'submitted' && isAtLeastRole(user?.role, 'admin') && (
                     <>
                       <button
                         type="button"

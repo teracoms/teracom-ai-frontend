@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 import { useAuth } from '@/components/portal/AuthProvider';
+import { isAtLeastRole } from '@/lib/roles';
 
 // "Platform Review Wave 1" navigation redesign — the flat, ever-growing
 // pill list (19 links by Package Q) is replaced with a grouped structure:
@@ -26,6 +27,16 @@ const TOP_LEVEL_LINKS = [
   { href: '/portal/onboarding', label: 'Onboarding' },
 ];
 
+// Admin-and-above-only top-level links — rendered unconditionally in
+// the JSX below, filtered by isAdmin the same way TOP_LEVEL_LINKS
+// isn't, so Governance (previously nested three levels deep inside
+// the Platform group's own adminLinks) gets equal visual weight to
+// Dashboard/Onboarding instead of being the least discoverable admin
+// surface in the product.
+const ADMIN_TOP_LEVEL_LINKS = [
+  { href: '/portal/admin/governance', label: 'Governance' },
+];
+
 const GROUPS = [
   {
     label: 'Workforce',
@@ -35,6 +46,7 @@ const GROUPS = [
       { href: '/portal/chat', label: 'Chat' },
       { href: '/portal/memory', label: 'Memory' },
       { href: '/portal/departments', label: 'Departments' },
+      { href: '/portal/tasks', label: 'Tasks' },
       // Phase 0 Package PQR shipped this as "/portal/cto", labelled
       // "CTO Orchestration" — renamed here per direct instruction; the
       // route itself is unchanged (preserves every existing link/
@@ -62,17 +74,21 @@ const GROUPS = [
   {
     label: 'Platform',
     links: [
+      { href: '/portal/reporting', label: 'Reporting' },
       { href: '/portal/federation', label: 'Federation' },
       { href: '/portal/platform-health', label: 'Health' },
       { href: '/portal/support', label: 'Support' },
     ],
     // The entire /portal/admin/** tree is role-gated
-    // (FRONTEND_ARCHITECTURE_V1.md §C.11) — these two are only added to
+    // (FRONTEND_ARCHITECTURE_V1.md §C.11) — these are only added to
     // the Platform group's own link list for an admin, mirroring the
     // pre-existing ADMIN_LINK's conditional-visibility precedent rather
     // than showing every member a "requires admin access" wall.
+    // Governance itself was promoted out of this list to
+    // ADMIN_TOP_LEVEL_LINKS above — a real GOV1 cascade surface with
+    // its own real audit trail is not a good fit for the least
+    // discoverable spot in the whole nav.
     adminLinks: [
-      { href: '/portal/admin/governance', label: 'Governance' },
       { href: '/portal/admin/communications', label: 'Communications' },
       { href: '/portal/admin', label: 'Administration' },
     ],
@@ -91,7 +107,12 @@ function groupIsActive(pathname, links) {
 export default function PortalNav() {
   const pathname = usePathname();
   const { user } = useAuth();
-  const isAdmin = user?.role === 'admin';
+  // Human Authority Model: hierarchy-aware, not exact-match — an
+  // "owner" (a tier introduced above "admin") must still see every
+  // admin-visible nav item, the same "higher tier implies lower
+  // tier's access" rule the backend's own require_role() now applies
+  // (backend/auth/roles.py#role_at_least()).
+  const isAdmin = isAtLeastRole(user?.role, 'admin');
 
   const [openGroup, setOpenGroup] = useState(null);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -216,6 +237,18 @@ export default function PortalNav() {
               {link.label}
             </Link>
           ))}
+
+          {isAdmin &&
+            ADMIN_TOP_LEVEL_LINKS.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={isActive(pathname, link.href) ? 'portal-nav-link active' : 'portal-nav-link'}
+                onClick={closeMenus}
+              >
+                {link.label}
+              </Link>
+            ))}
 
           {GROUPS.map((group) => {
             const links = groupLinks(group);

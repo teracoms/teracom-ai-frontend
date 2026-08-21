@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { useAuth } from '@/components/portal/AuthProvider';
+import { isAtLeastRole } from '@/lib/roles';
 
 /**
  * Production Operations Platform (Phase 0 Package PQR, objectives
@@ -139,7 +140,7 @@ export default function DeploymentRecordPanel({ records }) {
                   </p>
                   {record.description && <p className="activity-meta">{record.description}</p>}
                 </div>
-                {user?.role === 'admin' && record.status === 'proposed' && (
+                {isAtLeastRole(user?.role, 'admin') && record.status === 'proposed' && (
                   <div>
                     <button
                       type="button"
@@ -157,7 +158,7 @@ export default function DeploymentRecordPanel({ records }) {
                     </button>
                   </div>
                 )}
-                {user?.role === 'admin' && record.status === 'approved' && (
+                {isAtLeastRole(user?.role, 'admin') && record.status === 'approved' && (
                   <button type="button" className="btn btn-primary btn-small" onClick={() => handleComplete(record.id)}>
                     Mark Completed
                   </button>

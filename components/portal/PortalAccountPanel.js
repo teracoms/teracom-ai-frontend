@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { useAuth } from '@/components/portal/AuthProvider';
+import { isAtLeastRole } from '@/lib/roles';
 
 /**
  * Phase 0 Package O, objective #12 — staff-side visibility into this
@@ -61,7 +62,7 @@ export default function PortalAccountPanel({ contactId, portalAccount }) {
           {portalAccount.email} · {portalAccount.active ? 'active' : 'inactive'} · last signed in{' '}
           {portalAccount.last_login_at ? new Date(portalAccount.last_login_at).toLocaleString() : 'never'}
         </p>
-      ) : user?.role === 'admin' ? (
+      ) : isAtLeastRole(user?.role, 'admin') ? (
         <>
           {error && (
             <p className="form-error" role="alert">

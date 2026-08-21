@@ -1,5 +1,6 @@
 import { getSessionToken } from '@/lib/api/auth';
 import { decodeJwtPayload } from '@/lib/api/jwt';
+import { isAtLeastRole } from '@/lib/roles';
 
 /**
  * Role guard for the entire /portal/admin/** tree, per
@@ -21,7 +22,7 @@ import { decodeJwtPayload } from '@/lib/api/jwt';
  */
 export default function AdminLayout({ children }) {
   const token = getSessionToken();
-  const isAdmin = token ? decodeJwtPayload(token)?.role === 'admin' : false;
+  const isAdmin = token ? isAtLeastRole(decodeJwtPayload(token)?.role, 'admin') : false;
 
   if (!isAdmin) {
     return (

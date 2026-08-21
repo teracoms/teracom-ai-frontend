@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { useAuth } from '@/components/portal/AuthProvider';
+import { isAtLeastRole } from '@/lib/roles';
 
 /**
  * Content production workflows (Phase 0 Package K, objective #6) — the
@@ -211,7 +212,7 @@ export default function ContentPiecePanel({ campaignId, contentPieces, workers }
                       Submit
                     </button>
                   )}
-                  {piece.status === 'submitted' && user?.role === 'admin' && (
+                  {piece.status === 'submitted' && isAtLeastRole(user?.role, 'admin') && (
                     <>
                       <button
                         type="button"

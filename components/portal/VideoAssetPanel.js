@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { useAuth } from '@/components/portal/AuthProvider';
+import { isAtLeastRole } from '@/lib/roles';
 
 /**
  * Video production workflows (Phase 0 Package K, objective #7) — the
@@ -225,7 +226,7 @@ export default function VideoAssetPanel({ campaignId, videoAssets, workers, appr
                       Submit
                     </button>
                   )}
-                  {asset.status === 'submitted' && user?.role === 'admin' && (
+                  {asset.status === 'submitted' && isAtLeastRole(user?.role, 'admin') && (
                     <>
                       <button
                         type="button"

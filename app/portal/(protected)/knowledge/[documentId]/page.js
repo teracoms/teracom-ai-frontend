@@ -2,6 +2,7 @@ import Link from 'next/link';
 
 import { getSessionToken } from '@/lib/api/auth';
 import { decodeJwtPayload } from '@/lib/api/jwt';
+import { isAtLeastRole } from '@/lib/roles';
 import { fetchDocument } from '@/lib/api/knowledge';
 import { fetchWorkerList, fetchWorkerKnowledge } from '@/lib/api/workers';
 import { settle, errorMessage } from '@/lib/api/results';
@@ -54,7 +55,7 @@ export default async function DocumentDetailPage({ params }) {
     );
   }
 
-  const isAdmin = decodeJwtPayload(token)?.role === 'admin';
+  const isAdmin = isAtLeastRole(decodeJwtPayload(token)?.role, 'admin');
 
   const [documentResult, assignedResult] = await Promise.allSettled([
     fetchDocument(token, documentId),

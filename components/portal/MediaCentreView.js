@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { useAuth } from '@/components/portal/AuthProvider';
+import { isAtLeastRole } from '@/lib/roles';
 import EmptyState from '@/components/portal/EmptyState';
 
 /**
@@ -141,7 +142,7 @@ export default function MediaCentreView({ items, approvedContentPieces, approved
                   </p>
                   <p className="activity-meta">{item.kind}</p>
                 </div>
-                {item.publication_status === 'ready' && user?.role === 'admin' && (
+                {item.publication_status === 'ready' && isAtLeastRole(user?.role, 'admin') && (
                   <button
                     type="button"
                     className="btn btn-primary btn-small"

@@ -19,6 +19,7 @@ const GROUPS = [
       { href: '/portal/chat', label: 'Chat' },
       { href: '/portal/memory', label: 'Memory' },
       { href: '/portal/departments', label: 'Departments' },
+      { href: '/portal/tasks', label: 'Tasks' },
       { href: '/portal/cto', label: 'Orchestration' },
       { href: '/portal/marketplace', label: 'Marketplace' },
     ],
@@ -42,6 +43,7 @@ const GROUPS = [
   {
     label: 'Platform',
     links: [
+      { href: '/portal/reporting', label: 'Reporting' },
       { href: '/portal/federation', label: 'Federation' },
       { href: '/portal/platform-health', label: 'Health' },
       { href: '/portal/support', label: 'Support' },

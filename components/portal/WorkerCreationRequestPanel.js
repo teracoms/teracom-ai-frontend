@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { useAuth } from '@/components/portal/AuthProvider';
+import { isAtLeastRole } from '@/lib/roles';
 
 /**
  * Worker Lifecycle & Governance (Phase 0 Package PQR, objectives
@@ -145,7 +146,7 @@ export default function WorkerCreationRequestPanel({ requests }) {
                   </p>
                   <p className="activity-meta">{request.role}</p>
                 </div>
-                {request.status === 'submitted' && user?.role === 'admin' && (
+                {request.status === 'submitted' && isAtLeastRole(user?.role, 'admin') && (
                   <div>
                     <button
                       type="button"

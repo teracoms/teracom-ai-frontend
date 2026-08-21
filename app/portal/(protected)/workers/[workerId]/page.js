@@ -2,6 +2,7 @@ import Link from 'next/link';
 
 import { getSessionToken } from '@/lib/api/auth';
 import { decodeJwtPayload } from '@/lib/api/jwt';
+import { isAtLeastRole } from '@/lib/roles';
 import {
   fetchWorkerSummary,
   fetchWorkerActivity,
@@ -39,7 +40,7 @@ export default async function WorkerDetailPage({ params }) {
     );
   }
 
-  const isAdmin = decodeJwtPayload(token)?.role === 'admin';
+  const isAdmin = isAtLeastRole(decodeJwtPayload(token)?.role, 'admin');
 
   // Four independent, already ownership-checked backend calls (see
   // FRONTEND_ARCHITECTURE_V1.md §C.7) fired concurrently, same

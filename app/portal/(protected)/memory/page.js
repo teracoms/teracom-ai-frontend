@@ -2,6 +2,7 @@ import Link from 'next/link';
 
 import { getSessionToken } from '@/lib/api/auth';
 import { decodeJwtPayload } from '@/lib/api/jwt';
+import { isAtLeastRole } from '@/lib/roles';
 import { fetchWorkerList, fetchWorkerMemories } from '@/lib/api/workers';
 import { fetchMemorySummary } from '@/lib/api/memory';
 import { fetchDepartments } from '@/lib/api/departments';
@@ -35,7 +36,7 @@ export default async function MemoryPage() {
     );
   }
 
-  const isAdmin = decodeJwtPayload(token)?.role === 'admin';
+  const isAdmin = isAtLeastRole(decodeJwtPayload(token)?.role, 'admin');
 
   const [summaryResult, workersResult, departmentsResult] = await Promise.allSettled([
     fetchMemorySummary(token),

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { useAuth } from '@/components/portal/AuthProvider';
+import { isAtLeastRole } from '@/lib/roles';
 
 /**
  * Department budget tracking (Phase 0 Package M, objective #5) —
@@ -146,7 +147,7 @@ export default function DepartmentBudgetPanel({ departmentId, departments, budge
                   </p>
                   <p className="activity-meta">Amount allocated: {budget.amount_allocated}</p>
                 </div>
-                {budget.status === 'submitted' && user?.role === 'admin' && (
+                {budget.status === 'submitted' && isAtLeastRole(user?.role, 'admin') && (
                   <div>
                     <button
                       type="button"

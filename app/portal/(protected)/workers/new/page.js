@@ -2,6 +2,7 @@ import Link from 'next/link';
 
 import { getSessionToken } from '@/lib/api/auth';
 import { decodeJwtPayload } from '@/lib/api/jwt';
+import { isAtLeastRole } from '@/lib/roles';
 import CreateWorkerForm from '@/components/portal/CreateWorkerForm';
 
 export const metadata = {
@@ -10,7 +11,7 @@ export const metadata = {
 
 export default function NewWorkerPage() {
   const token = getSessionToken();
-  const isAdmin = token ? decodeJwtPayload(token)?.role === 'admin' : false;
+  const isAdmin = token ? isAtLeastRole(decodeJwtPayload(token)?.role, 'admin') : false;
 
   // POST /workers/ is admin-only backend-side — this is a presentation-layer
   // gate only (per FRONTEND_ARCHITECTURE_V1.md §C.5), rendered as an

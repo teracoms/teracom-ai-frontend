@@ -1,5 +1,6 @@
 import { getSessionToken } from '@/lib/api/auth';
 import { decodeJwtPayload } from '@/lib/api/jwt';
+import { isAtLeastRole } from '@/lib/roles';
 import { fetchWorkerList } from '@/lib/api/workers';
 import { errorMessage } from '@/lib/api/results';
 import WorkerListView from '@/components/portal/WorkerListView';
@@ -33,7 +34,7 @@ export default async function WorkersPage() {
   // so this reads it directly rather than making a second GET /auth/me call
   // just to decide whether to show the "Create Worker" link. Purely a
   // presentation-layer gate — the backend is the actual enforcement, per §C.5.
-  const canCreate = decodeJwtPayload(token)?.role === 'admin';
+  const canCreate = isAtLeastRole(decodeJwtPayload(token)?.role, 'admin');
 
   let workers = [];
   let loadError = null;

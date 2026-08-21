@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { useAuth } from '@/components/portal/AuthProvider';
+import { isAtLeastRole } from '@/lib/roles';
 import EmptyState from '@/components/portal/EmptyState';
 
 /**
@@ -74,7 +75,7 @@ export default function OrganisationOnboardingChecklist({ tasks }) {
                   {task.title} <span className="badge">{task.status}</span>
                 </p>
               </div>
-              {task.status === 'pending' && user?.role === 'admin' && (
+              {task.status === 'pending' && isAtLeastRole(user?.role, 'admin') && (
                 <button
                   type="button"
                   className="btn btn-primary btn-small"

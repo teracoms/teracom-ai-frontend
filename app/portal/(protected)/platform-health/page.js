@@ -1,5 +1,6 @@
 import { getSessionToken } from '@/lib/api/auth';
 import { decodeJwtPayload } from '@/lib/api/jwt';
+import { isAtLeastRole } from '@/lib/roles';
 import { fetchPlatformHealthSummary } from '@/lib/api/platformHealth';
 import { fetchDeploymentRecords } from '@/lib/api/deploymentRecords';
 import { fetchPlatformIncidents } from '@/lib/api/platformIncidents';
@@ -38,7 +39,7 @@ export default async function PlatformHealthPage() {
     );
   }
 
-  const isAdmin = decodeJwtPayload(token)?.role === 'admin';
+  const isAdmin = isAtLeastRole(decodeJwtPayload(token)?.role, 'admin');
 
   // Per-section resilience (ADR-008): the summary, deployment list,
   // incident list, and (admin-only) system metrics are independent of
