@@ -41,6 +41,7 @@ const GROUPS = [
   {
     label: 'Workforce',
     links: [
+      { href: '/portal/digital-workforce', label: 'Digital Workforce' },
       { href: '/portal/workers', label: 'Workers' },
       { href: '/portal/knowledge', label: 'Knowledge' },
       { href: '/portal/chat', label: 'Chat' },
@@ -78,6 +79,8 @@ const GROUPS = [
       { href: '/portal/federation', label: 'Federation' },
       { href: '/portal/platform-health', label: 'Health' },
       { href: '/portal/support', label: 'Support' },
+      { href: '/portal/documentation', label: 'Documentation' },
+      { href: '/portal/training', label: 'Training' },
     ],
     // The entire /portal/admin/** tree is role-gated
     // (FRONTEND_ARCHITECTURE_V1.md §C.11) — these are only added to

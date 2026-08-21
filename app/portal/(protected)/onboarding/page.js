@@ -60,7 +60,8 @@ export default async function OnboardingPage() {
             <h1>Get your organisation set up.</h1>
             <p className="lead">
               A checklist for getting the most out of your licence, seeded automatically once your
-              first purchase is approved.
+              first purchase is approved. For step-by-step guidance on any item below, see{' '}
+              <a href="/portal/training">Training</a>.
             </p>
           </div>
         </div>
