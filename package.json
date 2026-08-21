@@ -1,6 +1,6 @@
 {
-  "name": "teracom-commerce-platform-v3",
-  "version": "3.0.0",
+  "name": "teracom-ai-frontend",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -11,14 +11,13 @@
     "test": "node --test"
   },
   "dependencies": {
+    "@teracoms/ui": "file:../teracom-ui",
     "@types/node": "^22.15.21",
     "@types/react": "^18.3.18",
     "next": "14.2.35",
     "react": "18.3.1",
     "react-dom": "18.3.1",
-    "stripe": "17.3.1",
-    "typescript": "^5.8.3",
-    "zod": "3.23.8"
+    "typescript": "^5.8.3"
   },
   "devDependencies": {
     "eslint": "^8.57.1",

@@ -1,42 +1,59 @@
-# Teracom Commerce Platform V3
+# Teracom AI Frontend
 
-This is the premium Teracom Solutions website rebuilt as a Vercel-ready Next.js application with the business engine underneath it.
+The Teracom AI product application — the portal where organisations manage
+AI workers, knowledge, tasks, and governance.
+
+Per `Website_Application_Separation_Plan_V1.md` (Website/Application
+Separation, Phase 4), the Teracom Solutions marketing/commerce website has
+moved to its own repository, `teracom-solutions-website`. This repo now
+carries only the product application.
 
 ## Included
 
-- Premium Teracom homepage design
-- SecurityOS AI product page
-- Teracom Store page with products and plans
-- Customer Portal placeholder
-- Stripe Checkout API route
-- Stripe webhook route
-- Zoho Books helper integration foundation
-- Supplier CSV / JSON / XML feed parser
-- Admin feed import API route
-- Lead capture API route
-- Sitemap and robots routes
+- Portal: workers, knowledge, tasks, projects, governance, reporting,
+  organisations, users
+- Customer portal
+- Auth (`/auth`, `/customer-portal-auth`)
+- `/portal-contact`
 
-## Deploy
-
-Vercel root directory should remain:
+## Repository layout
 
 ```text
-teracom-commerce-platform
+app/(product)/
+  layout.js                     product root layout (no marketing chrome)
+  portal/                       the Teracom AI product portal
+  customer-portal/              customer-facing portal
+  auth/, customer-portal-auth/  auth flows
+  portal-contact/               contact form
+  api/                          backend proxy routes for the above
+components/, lib/               shared UI/logic used by the product
 ```
 
-## Environment variables to add later
+## Shared design system
+
+Visual styling (CSS custom properties, `.btn`/`.hero`/`.section`/etc. class
+vocabulary) comes from the `@teracoms/ui` package, not a local
+`globals.css`. See `../teracom-ui/README.md`. This repo expects
+`teracom-ui` checked out as a sibling directory:
 
 ```text
-NEXT_PUBLIC_SITE_URL
-STRIPE_SECRET_KEY
-STRIPE_WEBHOOK_SECRET
-ZOHO_CLIENT_ID
-ZOHO_CLIENT_SECRET
-ZOHO_REFRESH_TOKEN
-ZOHO_ORGANIZATION_ID
-ADMIN_IMPORT_TOKEN
+teracom-ai/
+  frontend/                    (this repo, teracom-ai-frontend)
+  teracom-ui/
+  teracom-solutions-website/
 ```
 
-## Notes
+## Environment variables
 
-Stripe and Zoho routes are built but require live credentials before taking real payments or creating invoices.
+See `.env.example` — `NEXT_PUBLIC_SITE_URL` and `BACKEND_API_URL`. This
+app no longer needs Stripe, Zoho, or admin-import credentials; those moved
+to `teracom-solutions-website` with the commerce/lead-capture routes that
+used them.
+
+## Getting started
+
+```bash
+npm install
+cp .env.example .env.local   # fill in real values
+npm run dev
+```

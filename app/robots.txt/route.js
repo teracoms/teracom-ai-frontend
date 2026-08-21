@@ -1,1 +1,0 @@
-export function GET(){return new Response('User-agent: *\nAllow: /\nSitemap: https://www.teracomsolutions.com.au/sitemap.xml\nDisallow: /admin/\nDisallow: /private/\n',{headers:{'content-type':'text/plain'}})}
