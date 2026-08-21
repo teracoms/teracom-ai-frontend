@@ -39,6 +39,7 @@ export default function CreateUserForm() {
   const [form, setForm] = useState(initialForm);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [created, setCreated] = useState(null);
   const router = useRouter();
 
   function updateField(field) {
@@ -48,6 +49,7 @@ export default function CreateUserForm() {
   async function handleSubmit(event) {
     event.preventDefault();
     setError(null);
+    setCreated(null);
     setLoading(true);
 
     try {
@@ -63,6 +65,7 @@ export default function CreateUserForm() {
         throw new Error(data.error || 'Unable to create user.');
       }
 
+      setCreated({ email: form.email, password: form.password });
       setForm(initialForm);
       router.refresh();
     } catch (err) {
@@ -79,6 +82,19 @@ export default function CreateUserForm() {
           {error}
         </p>
       )}
+
+      {created && (
+        <p className="form-note-banner" role="status">
+          <strong>{created.email}</strong> was created. There&apos;s no email invite yet — copy
+          this password now and share it with them directly; it won&apos;t be shown again:{' '}
+          <code>{created.password}</code>
+        </p>
+      )}
+
+      <p className="form-note">
+        There&apos;s no email invite system yet — whatever password you set here is the one
+        you&apos;ll need to share with this person yourself.
+      </p>
 
       <input
         name="first_name"
