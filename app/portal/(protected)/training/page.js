@@ -8,17 +8,24 @@ export const metadata = {
  * The previously-missing in-app Product Training surface. No backend
  * capability exists for training content, and this is deliberately
  * distinct from Onboarding (/portal/onboarding, a one-time checklist
- * auto-seeded when a licence activates): Training is task-oriented
- * "how do I do X" reference, usable any time by anyone, not a setup
- * checklist. Also distinct from Documentation (/portal/documentation),
- * which answers "what is this" rather than "how do I do it".
+ * seeded only once an organisation's first licence request is
+ * approved — never for a trial signup, see
+ * services/organisation_onboarding_service.py#seed_welcome_checklist()'s
+ * own docstring and TERACOM_CUSTOMER_READINESS_REVIEW_V1.md finding
+ * #18): Training is task-oriented "how do I do X" reference, usable
+ * any time by anyone, not a setup checklist. Also distinct from
+ * Documentation (/portal/documentation), which answers "what is
+ * this" rather than "how do I do it".
  */
 const GUIDES = [
   {
     title: 'Get your organisation set up',
     steps: [
-      'Sign up for a trial or have a licence request approved — this activates your organisation.',
-      'Work through your Onboarding checklist, seeded automatically the moment your licence activates.',
+      'Sign up for a trial to start immediately, or have a licence request approved to activate a full organisation.',
+      {
+        text: "Once a licence request is approved, work through your Onboarding checklist — it's seeded automatically at that point, not during a trial. Trial organisations can use these guides in the meantime.",
+        href: '/portal/onboarding',
+      },
       { text: 'Invite your team from Users and assign each person a role.', href: '/portal/admin/users' },
     ],
   },
