@@ -84,9 +84,16 @@ export default async function AdminPage() {
           </article>
           <article>
             <h3>Organisation</h3>
-            <p>Read-only profile — name and slug, as teracom-ai-backend records them.</p>
+            <p>Profile, federation-consultation setting, and sub-organisation management.</p>
             <Link className="btn btn-secondary card-action" href="/portal/admin/organisation">
               Open Organisation
+            </Link>
+          </article>
+          <article>
+            <h3>Departments</h3>
+            <p>Create departments, assign heads, and set each one&apos;s function.</p>
+            <Link className="btn btn-secondary card-action" href="/portal/admin/departments">
+              Open Departments
             </Link>
           </article>
           <article>

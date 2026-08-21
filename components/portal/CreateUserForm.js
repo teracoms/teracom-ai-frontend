@@ -4,13 +4,22 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { useAuth } from '@/components/portal/AuthProvider';
+import { ROLE_ORDER, isAtLeastRole } from '@/lib/roles';
+
+const ROLE_LABELS = {
+  owner: 'Owner',
+  admin: 'Admin',
+  manager: 'Manager',
+  employee: 'Employee',
+  read_only: 'Read Only',
+};
 
 const initialForm = {
   first_name: '',
   last_name: '',
   email: '',
   password: '',
-  role: 'member',
+  role: 'employee',
 };
 
 /**
@@ -19,9 +28,11 @@ const initialForm = {
  * layout.js), so no extra client-side gate is added here. The backend's
  * `password_hash` field name is a naming quirk only (auth/security.py hashes
  * it server-side) — this form labels the field "Password", nothing more.
- * `role` has no server-side enum (a plain string, exact-match checked by
- * require_role) — the select below offers the two values every other role
- * check in this app actually keys off, not a backend-enforced list.
+ * `role` is schemas/user.py#UserRole, the real 5-tier hierarchy
+ * (auth/roles.py#ROLE_ORDER) — the backend's own
+ * assert_can_grant_role() already rejects any role above the caller's
+ * own tier, so the option list here is just the full set for
+ * convenience, not a duplicated permission check.
  */
 export default function CreateUserForm() {
   const { user } = useAuth();
@@ -114,8 +125,11 @@ export default function CreateUserForm() {
         disabled={loading}
         aria-label="Role"
       >
-        <option value="member">Member</option>
-        <option value="admin">Admin</option>
+        {ROLE_ORDER.filter((role) => isAtLeastRole(user?.role, role)).map((role) => (
+          <option key={role} value={role}>
+            {ROLE_LABELS[role]}
+          </option>
+        ))}
       </select>
 
       <button className="btn btn-primary" type="submit" disabled={loading}>

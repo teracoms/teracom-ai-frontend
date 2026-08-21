@@ -33,7 +33,9 @@ export default async function AdminUsersPage() {
   // *rendered output* for a non-admin, but Next.js still executes this
   // child Server Component's own data fetch regardless. This was the
   // last of the original Package 7 admin pages missing this check.
-  if (!isAtLeastRole(decodeJwtPayload(token)?.role, 'admin')) {
+  const viewerPayload = decodeJwtPayload(token);
+
+  if (!isAtLeastRole(viewerPayload?.role, 'admin')) {
     return null;
   }
 
@@ -68,7 +70,11 @@ export default async function AdminUsersPage() {
               {errorMessage(loadError)}
             </p>
           ) : (
-            <UserListView users={users} />
+            <UserListView
+              users={users}
+              currentUserId={viewerPayload?.sub}
+              viewerRole={viewerPayload?.role}
+            />
           )}
         </div>
       </section>

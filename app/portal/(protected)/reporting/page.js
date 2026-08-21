@@ -197,16 +197,34 @@ export default async function ReportingPage() {
 
           <ReportCard title="Platform Health" error={health.error}>
             {health.value && (
-              <ul className="activity-list">
-                {Object.entries(health.value).map(([key, value]) => (
-                  <li key={key}>
+              <>
+                <ul className="activity-list">
+                  <li>
                     <div className="assignment-row">
-                      <span className="activity-title">{key.replace(/_/g, ' ')}</span>
-                      <span className="activity-meta">{String(value)}</span>
+                      <span className="activity-title">Status</span>
+                      <span className="activity-meta">{health.value.status}</span>
                     </div>
                   </li>
-                ))}
-              </ul>
+                  <li>
+                    <div className="assignment-row">
+                      <span className="activity-title">Pending deployments</span>
+                      <span className="activity-meta">{health.value.pending_deployments_count ?? 0}</span>
+                    </div>
+                  </li>
+                  <li>
+                    <div className="assignment-row">
+                      <span className="activity-title">Last deployment</span>
+                      <span className="activity-meta">
+                        {health.value.last_deployment
+                          ? `${health.value.last_deployment.version_label} · ${new Date(health.value.last_deployment.deployed_at).toLocaleString()}`
+                          : 'No deployment recorded yet'}
+                      </span>
+                    </div>
+                  </li>
+                </ul>
+                <p className="activity-meta">Open incidents by severity</p>
+                <CountsList counts={health.value.open_incidents_by_severity} />
+              </>
             )}
           </ReportCard>
         </div>

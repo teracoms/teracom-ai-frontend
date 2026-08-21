@@ -3,16 +3,22 @@
 import { useMemo, useState } from 'react';
 
 import EmptyState from '@/components/portal/EmptyState';
+import UserRoleStatusControl from '@/components/portal/UserRoleStatusControl';
 
 /**
  * Client-side search/filter over the full user list — same rationale as
  * WorkerListView.js: GET /users/ accepts no query parameters at all, so this
  * filters the already-fetched array in the browser. Rendered as rows, not
- * cards — there is no per-user detail page to link to (no update/delete
- * endpoint exists backend-side, so a detail page would just repeat what's
- * already shown here — see ADMIN_IMPLEMENTATION_REPORT.md §2).
+ * cards — there is no per-user detail page to link to.
+ *
+ * `currentUserId`/`viewerRole` come from the signed-in admin's own token
+ * (see app/portal/(protected)/admin/users/page.js) and are threaded through
+ * to UserRoleStatusControl per row — User Management (PATCH /users/{id}/role,
+ * /users/{id}/status) now has a real UI here; it previously had none even
+ * though the backend endpoints and their escalation/self-action guards
+ * already existed.
  */
-export default function UserListView({ users }) {
+export default function UserListView({ users, currentUserId, viewerRole }) {
   const [query, setQuery] = useState('');
   const [role, setRole] = useState('all');
 
@@ -78,9 +84,17 @@ export default function UserListView({ users }) {
                   <p className="activity-title">
                     {user.first_name} {user.last_name}
                   </p>
-                  <p className="activity-meta">{user.email}</p>
+                  <p className="activity-meta">
+                    {user.email} · {user.status === 'inactive' ? 'Inactive' : 'Active'}
+                  </p>
                 </div>
-                <span className="badge">{user.role}</span>
+                <UserRoleStatusControl
+                  userId={user.id}
+                  role={user.role}
+                  status={user.status}
+                  viewerRole={viewerRole}
+                  isSelf={user.id === currentUserId}
+                />
               </div>
             </li>
           ))}
