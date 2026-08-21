@@ -10,8 +10,8 @@ import { isAtLeastRole } from '@/lib/roles';
  * (worker_id + file; extract-text → create Knowledge row → assign → embed,
  * all server-side in one backend call — see FRONTEND_ARCHITECTURE_V1.md
  * §C.8). Loading-state pattern (useState flag, fetch, try/catch/finally) is
- * the same minimal one CheckoutButton.js established as this codebase's only
- * prior client-side data-fetching precedent.
+ * the same minimal one used throughout this codebase's client-side
+ * data-fetching components.
  *
  * teracom-ai-backend's UploadResponse is `{filename, status}` only — no id
  * of the created document (schemas/upload.py) — so a post-success redirect

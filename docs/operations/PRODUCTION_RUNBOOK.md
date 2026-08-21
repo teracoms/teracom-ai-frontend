@@ -71,9 +71,12 @@ Run these after any start/restart, or as a periodic external check:
 curl -sf -o /dev/null -w "backend: %{http_code}\n" http://127.0.0.1:8000/
 # Expect: backend: 200
 
-# Frontend — the marketing homepage and the portal login page are both unauthenticated
-curl -sf -o /dev/null -w "frontend /: %{http_code}\n" http://127.0.0.1:3000/
+# Frontend — this repo no longer serves the marketing homepage ("/" now
+# 404s here; the Website/Application Separation's Phase 4 moved it to
+# teracom-solutions-website). Use the portal/customer-portal login pages
+# instead — both unauthenticated, both genuinely served by this repo.
 curl -sf -o /dev/null -w "frontend /portal/login: %{http_code}\n" http://127.0.0.1:3000/portal/login
+curl -sf -o /dev/null -w "frontend /customer-portal/login: %{http_code}\n" http://127.0.0.1:3000/customer-portal/login
 # Expect: 200 for both
 
 # One-line "is everything actually up" check
@@ -140,7 +143,7 @@ systemctl --user enable --now teracom-backend.service teracom-frontend.service
 ## 8. Secrets management
 
 - **File permissions**: both `.env` files are now `600` (owner read/write only) — previously `644` (group *and* world readable) on a multi-user host, fixed by "Package SEC1". Re-check this (`ls -la backend/.env frontend/.env`) after any file is recreated (e.g. `cp .env.example .env`), since a fresh copy inherits the umask, not the original's permissions.
-- **No secrets manager exists** — every credential (`JWT_SECRET_KEY`, `DATABASE_URL`, `LICENSING_SIGNING_PRIVATE_KEY_B64`, `STRIPE_SECRET_KEY`, `ZOHO_*`, `ADMIN_IMPORT_TOKEN`) lives in a plaintext `.env` file on disk. Acceptable for a single-operator dev/staging host; not acceptable for a real production deployment with more than one person's access — migrating to a real secrets manager (Vault, AWS Secrets Manager, etc.) is tracked as a known gap, not solved by this package.
+- **No secrets manager exists** — every credential (`JWT_SECRET_KEY`, `DATABASE_URL`, `LICENSING_SIGNING_PRIVATE_KEY_B64` in `backend/.env`) lives in a plaintext `.env` file on disk. Acceptable for a single-operator dev/staging host; not acceptable for a real production deployment with more than one person's access — migrating to a real secrets manager (Vault, AWS Secrets Manager, etc.) is tracked as a known gap, not solved by this package. **Correction, Website/Application Separation Phase 4:** `STRIPE_SECRET_KEY`/`ZOHO_*`/`ADMIN_IMPORT_TOKEN` used to live in this repo's own `.env` too, back when this repo also served the marketing/commerce site; that code moved to `teracom-solutions-website` in Phase 4, and those credentials moved with it — `frontend/.env` now holds only `NEXT_PUBLIC_SITE_URL`/`BACKEND_API_URL`, neither a secret.
 - **`JWT_SECRET_KEY` rotation procedure** (new — no rotation procedure existed before this package):
   1. Generate a new key: `python -c "import secrets; print(secrets.token_urlsafe(64))"`.
   2. **Understand the blast radius first**: rotating this key immediately invalidates *every* currently-issued access token *and* every stored refresh token, across all three identity planes (`User`, `StaffUser`, `PortalContact`) — every signed-in session everywhere is forced to log in again the moment the new key takes effect. There is no graceful dual-key transition today (verifying old-key tokens alongside new-key tokens) — this is a real, disruptive operational consequence, not a cosmetic one. Only rotate this key during a planned maintenance window, or in genuine response to a suspected key compromise where forcing every session to re-authenticate is the intended outcome.

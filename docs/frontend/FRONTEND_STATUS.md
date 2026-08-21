@@ -4,16 +4,18 @@
 
 This is a living snapshot — update the table below in the same change that ships or removes a package. For the full technical design these packages implement, see [[frontend-architecture]]. For sequencing of what's next, see [[roadmap]].
 
+**Correction (2026-08-21, Website/Application Separation Phase 4 + repository-audit cleanup):** the "Stack," "off-limits to redesign," and "known unused asset" sections below described the pre-split combined app (this repo serving both the marketing/commerce website and the product portal). Phase 4 moved every website/commerce file — `Header.js`, `Footer.js`, `ExpertisePartners.js`, `CheckoutButton.js`, `app/(marketing)/**` (`/`, `/securityos-ai`, `/store`, `/checkout/*`), `stripe`/`zoho` — to a new repository, `teracom-solutions-website`. Those three sections are corrected below to reflect that; **the package-by-package table, test/build health numbers, and "Last verified" date above are NOT corrected here** — they were already stale before Phase 4 (last updated at Package 9, 2026-08-15; this repo has since had many more packages, waves, and 314 tests, not 90) and bringing that table current is a larger, separate documentation task, not something this cleanup pass attempted.
+
 ---
 
 ## Stack, as it exists today
 
 - **Next.js 14.2.35** (App Router), **React 18.3.1**, plain JavaScript (`tsconfig.json`/`typescript` dependency present but unused — every file is `.js`, `allowJs: true`, `strict: false`).
-- No UI framework or component library. No CSS-in-JS. Styling is one global stylesheet (`app/globals.css`) using CSS custom properties.
+- No UI framework or component library. No CSS-in-JS. Styling comes from the shared `@teracoms/ui` package (`app/(product)/layout.js` imports `@teracoms/ui/globals.css`; a local `app/globals.css` existed pre-Phase-4 and no longer does) using CSS custom properties.
 - No client-state library (no Redux/Zustand), no data-fetching library (no SWR/React Query) — data fetching is plain `fetch` in Server Components/Route Handlers.
 - Test runner: Node's native `node --test` (added in Package 1; required `"type": "module"` in `package.json`).
 - Lint: `eslint` + `eslint-config-next` (added in Package 1; no lint config existed before).
-- Dependencies otherwise: `stripe@17.3.1`, `zod@3.23.8`.
+- Dependencies otherwise: none beyond Next/React/`@teracoms/ui` and editor-tooling-only `typescript`/`@types/*` — `stripe`/`zod` were dropped in Phase 4 along with the commerce code that used them.
 
 ## Package-by-package status
 
@@ -43,8 +45,8 @@ Re-run all three from a clean state (`rm -rf .next`) before trusting this. This 
 
 ## What's explicitly unchanged and off-limits to redesign
 
-Per ADR-001 in [[architecture-decisions]]: `/`, `/securityos-ai`, `/store`, `/checkout/success`, `/checkout/cancel`, `app/layout.js`, `components/Header.js`, `components/Footer.js`, and every existing rule in `app/globals.css`. New work is additive under `/portal/**` with its own nested layout and, so far, purely additive CSS.
+Per ADR-001 in [[architecture-decisions]], as it applied before Phase 4: `/`, `/securityos-ai`, `/store`, `/checkout/success`, `/checkout/cancel`, `app/layout.js`, `components/Header.js`, `components/Footer.js`, and every existing rule in `app/globals.css`. **None of those routes/files exist in this repo anymore** — they moved to `teracom-solutions-website` in Phase 4, along with ADR-001's original scope. This section is kept for historical context (why the old marketing UI was hands-off) rather than deleted; it no longer describes anything reachable from this repo. New work is additive under `/portal/**` with its own nested layout and, so far, purely additive CSS.
 
 ## Known unused asset
 
-`components/ExpertisePartners.js` exists, is fully built (real logos, links, error fallback), and is not imported anywhere in the app. See [[changelog]] 2026-08-14 entry — it survived a revert of related styling work. Not scheduled for wiring-up; noted here so it isn't mistaken for dead code to delete.
+**No longer applicable to this repo — `components/ExpertisePartners.js` moved to `teracom-solutions-website` in Phase 4** along with the rest of the marketing UI. Confirmed still unimported there too (`grep` against that repo's `app/`, 2026-08-21) — the original finding below still holds, just in the other repo now. Original note, kept for historical context: it existed, was fully built (real logos, links, error fallback), and was not imported anywhere in the app. See [[changelog]] 2026-08-14 entry — it survived a revert of related styling work.

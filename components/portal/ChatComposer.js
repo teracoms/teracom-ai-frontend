@@ -6,9 +6,9 @@ import { useState } from 'react';
  * POST /api/portal/chat → POST /chat/, a single blocking request (no
  * streaming exists backend-side — services/ollama_service.py hardcodes
  * "stream": False, confirmed from source). The "Assistant is typing..."
- * note is the loading-state substitute for token-by-token output, same
- * minimal loading-flag/fetch/try-catch-finally pattern CheckoutButton.js
- * established as this codebase's baseline client-interaction precedent.
+ * note is the loading-state substitute for token-by-token output, the same
+ * minimal loading-flag/fetch/try-catch-finally pattern used throughout this
+ * codebase's client-side data-fetching components.
  */
 export default function ChatComposer({ workerId, onMessage }) {
   const [text, setText] = useState('');
