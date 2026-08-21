@@ -3,6 +3,7 @@ import { fetchOperationsSummary } from '@/lib/api/operations';
 import { fetchFinanceSummary } from '@/lib/api/finance';
 import { fetchMarketingSummary } from '@/lib/api/marketing';
 import { fetchPlatformHealthSummary } from '@/lib/api/platformHealth';
+import { fetchPipelineSummary } from '@/lib/api/crm';
 import { settle, errorMessage, isForbidden } from '@/lib/api/results';
 
 export const metadata = {
@@ -47,14 +48,12 @@ function ReportCard({ title, error, children }) {
 
 /**
  * A consolidated, cross-department Reporting surface — previously
- * Operations/Finance/Marketing each had their own real summary
- * endpoint (services/*_summary_service.py) but no single page pulled
- * them together; a human wanting an executive-style overview had to
- * visit three separate department pages. This page adds no new
- * backend data — it only aggregates what already exists and is
- * already real. Sales and Customer Success have no summary endpoint
- * of their own yet (a pre-existing gap, not something this page can
- * fix) so they are not included below.
+ * Operations/Finance/Marketing/Sales/Customer Success each had their
+ * own real summary endpoint (services/*_summary_service.py,
+ * services/crm_pipeline_service.py) but no single page pulled them
+ * together; a human wanting an executive-style overview had to visit
+ * five separate department pages. This page adds no new backend data
+ * — it only aggregates what already exists and is already real.
  */
 export default async function ReportingPage() {
   const token = getSessionToken();
@@ -73,17 +72,19 @@ export default async function ReportingPage() {
     );
   }
 
-  const [operationsResult, financeResult, marketingResult, healthResult] = await Promise.allSettled([
+  const [operationsResult, financeResult, marketingResult, healthResult, pipelineResult] = await Promise.allSettled([
     fetchOperationsSummary(token),
     fetchFinanceSummary(token),
     fetchMarketingSummary(token),
     fetchPlatformHealthSummary(token),
+    fetchPipelineSummary(token),
   ]);
 
   const operations = settle(operationsResult);
   const finance = settle(financeResult);
   const marketing = settle(marketingResult);
   const health = settle(healthResult);
+  const pipeline = settle(pipelineResult);
 
   return (
     <main>
@@ -93,9 +94,8 @@ export default async function ReportingPage() {
             <span className="eyebrow">Reporting</span>
             <h1>Every department&apos;s own real numbers, in one place.</h1>
             <p className="lead">
-              Operations, Finance, Marketing, and platform health — each already tracked
-              separately; this page only brings them together. Sales and Customer Success have
-              no summary endpoint of their own yet, so they aren&apos;t shown here.
+              Operations, Finance, Marketing, Sales &amp; Customer Success, and platform health —
+              each already tracked separately; this page only brings them together.
             </p>
           </div>
         </div>
@@ -161,6 +161,36 @@ export default async function ReportingPage() {
                   {marketing.value.pending_video_count ?? 0} video pending ·{' '}
                   {marketing.value.media_published_count ?? 0} published
                 </p>
+              </>
+            )}
+          </ReportCard>
+
+          <ReportCard title="Sales & Customer Success" error={pipeline.error}>
+            {pipeline.value && (
+              <>
+                <p className="activity-meta">Contacts by stage</p>
+                <CountsList counts={pipeline.value.stage_counts} />
+                <p className="activity-meta">Contacts by health</p>
+                <CountsList counts={pipeline.value.health_counts} />
+                <ul className="activity-list">
+                  <li>
+                    <div className="assignment-row">
+                      <span className="activity-title">Pending proposals / quotes / contracts</span>
+                      <span className="activity-meta">
+                        {pipeline.value.pending_proposals} / {pipeline.value.pending_quotes} /{' '}
+                        {pipeline.value.pending_contracts}
+                      </span>
+                    </div>
+                  </li>
+                  <li>
+                    <div className="assignment-row">
+                      <span className="activity-title">Portal accounts / open support requests</span>
+                      <span className="activity-meta">
+                        {pipeline.value.portal_accounts_count} / {pipeline.value.open_support_requests_count}
+                      </span>
+                    </div>
+                  </li>
+                </ul>
               </>
             )}
           </ReportCard>
