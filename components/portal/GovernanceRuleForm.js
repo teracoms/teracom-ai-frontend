@@ -49,8 +49,15 @@ function parseRuleValue(raw) {
  * departmentId-optional pattern): omitted sets the organisation-wide
  * default, provided sets that department's own override. Admin-only
  * — a presentation-layer convenience, the real gate is backend-side.
+ *
+ * `onSuccess` — optional, CUSTOMER_ONBOARDING_WIZARD_V1.md Step 6.
+ * Called with the saved rule after a successful submit, before the
+ * form resets — lets a caller (the wizard's own Step 6) react to a
+ * real write without this form needing to know anything about wizard
+ * progress itself. Every existing caller that doesn't pass it is
+ * unaffected.
  */
-export default function GovernanceRuleForm({ departmentId }) {
+export default function GovernanceRuleForm({ departmentId, onSuccess }) {
   const { user } = useAuth();
   const [ruleType, setRuleType] = useState(RULE_TYPES[0]);
   const [ruleKey, setRuleKey] = useState('');
@@ -87,6 +94,7 @@ export default function GovernanceRuleForm({ departmentId }) {
         throw new Error(data.error || 'Unable to set this rule.');
       }
 
+      onSuccess?.(data);
       setRuleKey('');
       setRuleValue('');
       router.refresh();

@@ -5,13 +5,20 @@ import { fetchMyOrganisationIdentity, fetchOrganisationSummary } from '@/lib/api
 import { fetchOnboardingWizardProgress } from '@/lib/api/onboardingWizard';
 import { fetchDepartments } from '@/lib/api/departments';
 import { fetchExecutiveRoles } from '@/lib/api/executiveRoles';
-import { fetchWorkerList } from '@/lib/api/workers';
+import { fetchWorkerList, fetchKnowledgeCatalogue } from '@/lib/api/workers';
+import { fetchOrganisationGovernanceRules, fetchGovernancePolicies } from '@/lib/api/governancePolicies';
+import { fetchFederationProviders } from '@/lib/api/federation';
 import { settle, errorMessage } from '@/lib/api/results';
 import { ONBOARDING_WIZARD_STEPS } from '@/lib/onboardingWizardSteps';
 import OnboardingWizardStep1 from '@/components/portal/OnboardingWizardStep1';
 import OnboardingWizardStep2 from '@/components/portal/OnboardingWizardStep2';
 import OnboardingWizardStep3 from '@/components/portal/OnboardingWizardStep3';
 import OnboardingWizardStep4 from '@/components/portal/OnboardingWizardStep4';
+import OnboardingWizardStep5 from '@/components/portal/OnboardingWizardStep5';
+import OnboardingWizardStep6 from '@/components/portal/OnboardingWizardStep6';
+import OnboardingWizardStep7 from '@/components/portal/OnboardingWizardStep7';
+import OnboardingWizardStep8 from '@/components/portal/OnboardingWizardStep8';
+import OnboardingWizardStep9 from '@/components/portal/OnboardingWizardStep9';
 
 export const metadata = {
   title: 'Organisation Setup | Teracom AI Portal',
@@ -44,15 +51,29 @@ export default async function OnboardingWizardPage() {
 
   const isAdmin = isAtLeastRole(decodeJwtPayload(token)?.role, 'admin');
 
-  const [identityResult, progressResult, summaryResult, departmentsResult, executiveRolesResult, workersResult] =
-    await Promise.allSettled([
-      fetchMyOrganisationIdentity(token),
-      fetchOnboardingWizardProgress(token),
-      isAdmin ? fetchOrganisationSummary(token) : Promise.resolve(null),
-      isAdmin ? fetchDepartments(token) : Promise.resolve(null),
-      isAdmin ? fetchExecutiveRoles(token) : Promise.resolve(null),
-      isAdmin ? fetchWorkerList(token) : Promise.resolve(null),
-    ]);
+  const [
+    identityResult,
+    progressResult,
+    summaryResult,
+    departmentsResult,
+    executiveRolesResult,
+    workersResult,
+    knowledgeResult,
+    organisationRulesResult,
+    governancePoliciesResult,
+    federationProvidersResult,
+  ] = await Promise.allSettled([
+    fetchMyOrganisationIdentity(token),
+    fetchOnboardingWizardProgress(token),
+    isAdmin ? fetchOrganisationSummary(token) : Promise.resolve(null),
+    isAdmin ? fetchDepartments(token) : Promise.resolve(null),
+    isAdmin ? fetchExecutiveRoles(token) : Promise.resolve(null),
+    isAdmin ? fetchWorkerList(token) : Promise.resolve(null),
+    isAdmin ? fetchKnowledgeCatalogue(token) : Promise.resolve(null),
+    isAdmin ? fetchOrganisationGovernanceRules(token) : Promise.resolve(null),
+    isAdmin ? fetchGovernancePolicies(token) : Promise.resolve(null),
+    isAdmin ? fetchFederationProviders(token) : Promise.resolve(null),
+  ]);
 
   const identity = settle(identityResult);
   const progress = settle(progressResult);
@@ -60,10 +81,19 @@ export default async function OnboardingWizardPage() {
   const departments = settle(departmentsResult);
   const executiveRoles = settle(executiveRolesResult);
   const workers = settle(workersResult);
+  const knowledge = settle(knowledgeResult);
+  const organisationRules = settle(organisationRulesResult);
+  const governancePolicies = settle(governancePoliciesResult);
+  const federationProviders = settle(federationProvidersResult);
   const completedSteps = progress.value?.completed_steps ?? [];
   const step1Done = completedSteps.includes(1);
   const step2Done = completedSteps.includes(2);
   const step3Done = completedSteps.includes(3);
+  const step4Done = completedSteps.includes(4);
+  const step5Done = completedSteps.includes(5);
+  const step6Done = completedSteps.includes(6);
+  const step7Done = completedSteps.includes(7);
+  const step8Done = completedSteps.includes(8);
 
   return (
     <main>
@@ -197,7 +227,115 @@ export default async function OnboardingWizardPage() {
                 initialWorkers={workers.value ?? []}
                 departments={departments.value ?? []}
                 executiveRoles={executiveRoles.value ?? []}
-                stepAlreadyCompleted={completedSteps.includes(4)}
+                stepAlreadyCompleted={step4Done}
+              />
+            )}
+          </div>
+        </section>
+      )}
+
+      {isAdmin && !identity.error && (
+        <section className="section alt">
+          <div className="container">
+            {!step4Done ? (
+              <p className="activity-meta">
+                Complete digital workforce above first, then come back here to set up your
+                knowledge.
+              </p>
+            ) : knowledge.error ? (
+              <p className="form-error" role="alert">
+                {errorMessage(knowledge.error)}
+              </p>
+            ) : (
+              <OnboardingWizardStep5
+                initialKnowledge={knowledge.value ?? []}
+                stepAlreadyCompleted={step5Done}
+              />
+            )}
+          </div>
+        </section>
+      )}
+
+      {isAdmin && !identity.error && (
+        <section className="section">
+          <div className="container">
+            {!step5Done ? (
+              <p className="activity-meta">
+                Complete knowledge setup above first, then come back here to set up governance.
+              </p>
+            ) : organisationRules.error || governancePolicies.error || departments.error ? (
+              <p className="form-error" role="alert">
+                {errorMessage(organisationRules.error || governancePolicies.error || departments.error)}
+              </p>
+            ) : (
+              <OnboardingWizardStep6
+                organisationRules={organisationRules.value ?? []}
+                departments={departments.value ?? []}
+                governancePolicies={governancePolicies.value?.policies ?? []}
+                stepAlreadyCompleted={step6Done}
+              />
+            )}
+          </div>
+        </section>
+      )}
+
+      {isAdmin && !identity.error && (
+        <section className="section alt">
+          <div className="container">
+            {!step6Done ? (
+              <p className="activity-meta">
+                Complete governance setup above first, then come back here to review integrations.
+              </p>
+            ) : federationProviders.error ? (
+              <p className="form-error" role="alert">
+                {errorMessage(federationProviders.error)}
+              </p>
+            ) : (
+              <OnboardingWizardStep7
+                organisation={summary.value}
+                federationProviders={federationProviders.value ?? []}
+                stepAlreadyCompleted={step7Done}
+              />
+            )}
+          </div>
+        </section>
+      )}
+
+      {isAdmin && !identity.error && (
+        <section className="section">
+          <div className="container">
+            {!step7Done ? (
+              <p className="activity-meta">
+                Complete integrations above first, then come back here to review your
+                organisation.
+              </p>
+            ) : (
+              <OnboardingWizardStep8
+                organisationName={identity.value.name}
+                departments={departments.value ?? []}
+                executiveRoles={executiveRoles.value ?? []}
+                workers={workers.value ?? []}
+                knowledgeCount={(knowledge.value ?? []).length}
+                governanceRuleCount={(organisationRules.value ?? []).length}
+              />
+            )}
+          </div>
+        </section>
+      )}
+
+      {isAdmin && !identity.error && (
+        <section className="section alt">
+          <div className="container">
+            {!step8Done ? (
+              <p className="activity-meta">
+                Review your organisation above first, then come back here to launch.
+              </p>
+            ) : (
+              <OnboardingWizardStep9
+                organisationName={identity.value.name}
+                organisationId={identity.value.id}
+                trialEndsAt={summary.value?.trial_ends_at ?? null}
+                completedSteps={completedSteps}
               />
             )}
           </div>

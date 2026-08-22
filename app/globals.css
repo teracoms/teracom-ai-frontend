@@ -925,3 +925,135 @@ a {
 .wizard-step4-worker-assign select {
   min-width:180px;
 }
+/* CUSTOMER_ONBOARDING_WIZARD_V1.md Step 5 -- Knowledge Setup. */
+.wizard-step5-category-grid {
+  display:grid;grid-template-columns:repeat(auto-fill, minmax(200px, 1fr));gap:12px;margin:12px 0 28px;
+}
+.wizard-step5-category-card {
+  text-align:left;display:flex;flex-direction:column;gap:4px;border:1px solid var(--line);border-radius:16px;padding:14px 16px;background:rgba(255,255,255,.02);color:#fff;cursor:pointer;font:inherit;
+}
+.wizard-step5-category-card:hover {
+  border-color:rgba(255,255,255,.4);
+}
+.wizard-step5-category-card.selected {
+  border-color:#fff;background:rgba(255,255,255,.08);
+}
+.wizard-step5-category-name {
+  font-weight:700;
+}
+.wizard-step5-category-desc {
+  font-size:12px;color:var(--soft);
+}
+.wizard-step5-doc-list {
+  list-style:none;margin:28px 0 0;padding:0;display:grid;gap:10px;
+}
+.wizard-step5-doc-item {
+  display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid var(--line);border-radius:14px;padding:12px 18px;
+}
+.wizard-step5-doc-title {
+  font-weight:700;color:#fff;
+}
+.wizard-step5-doc-tag {
+  font-size:12px;color:var(--soft);
+}
+
+/* Step 6 -- Governance Setup. */
+.wizard-step6-section {
+  border-top:1px solid var(--line);padding-top:24px;margin-top:24px;
+}
+.wizard-step6-section:first-of-type {
+  border-top:0;padding-top:0;margin-top:0;
+}
+.wizard-step6-rule-list {
+  list-style:none;margin:16px 0 0;padding:0;display:grid;gap:8px;
+}
+.wizard-step6-rule-item {
+  display:flex;gap:12px;flex-wrap:wrap;border:1px solid var(--line);border-radius:12px;padding:10px 16px;font-size:13px;
+}
+.wizard-step6-rule-type {
+  font-weight:700;color:#fff;text-transform:capitalize;
+}
+.wizard-step6-rule-key {
+  color:var(--soft);
+}
+.wizard-step6-rule-value {
+  color:#fff;margin-left:auto;
+}
+.wizard-step6-policy-table {
+  width:100%;border-collapse:collapse;margin-top:12px;font-size:13px;
+}
+.wizard-step6-policy-table th, .wizard-step6-policy-table td {
+  text-align:left;padding:8px 12px;border-bottom:1px solid var(--line);
+}
+.wizard-step6-policy-table th {
+  color:var(--soft);font-weight:600;text-transform:uppercase;font-size:11px;letter-spacing:.04em;
+}
+.wizard-step6-policy-table td {
+  color:#fff;text-transform:capitalize;
+}
+
+/* Step 7 -- Integrations. */
+.wizard-step7-section {
+  border-top:1px solid var(--line);padding-top:24px;margin-top:24px;
+}
+.wizard-step7-section:first-of-type {
+  border-top:0;padding-top:0;margin-top:0;
+}
+.wizard-step7-provider-list, .wizard-step7-notyet-list {
+  list-style:none;margin:12px 0 0;padding:0;display:grid;gap:8px;
+}
+.wizard-step7-provider-item {
+  display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid var(--line);border-radius:12px;padding:10px 16px;
+}
+.wizard-step7-provider-name {
+  font-weight:700;color:#fff;
+}
+.wizard-step7-provider-status {
+  font-size:12px;color:var(--soft);text-transform:capitalize;
+}
+.wizard-step7-notyet-item {
+  display:flex;flex-direction:column;gap:2px;border:1px dashed var(--line);border-radius:12px;padding:10px 16px;opacity:.75;
+}
+.wizard-step7-notyet-name {
+  font-weight:700;color:#fff;
+}
+
+/* Step 8 -- Organisation Review. */
+.wizard-step8-summary-grid {
+  display:grid;grid-template-columns:repeat(auto-fit, minmax(140px, 1fr));gap:12px;margin:28px 0;
+}
+.wizard-step8-summary-card {
+  display:flex;flex-direction:column;align-items:center;gap:4px;border:1px solid var(--line);border-radius:16px;padding:20px 12px;text-align:center;
+}
+.wizard-step8-summary-count {
+  font-size:28px;font-weight:700;color:#fff;
+}
+.wizard-step8-summary-label {
+  font-size:12px;color:var(--soft);
+}
+
+/* Step 9 -- Launch Organisation. */
+.wizard-step9-section {
+  border-top:1px solid var(--line);padding-top:24px;margin-top:24px;
+}
+.wizard-step9-section:first-of-type {
+  border-top:0;padding-top:0;margin-top:0;
+}
+.wizard-step9-checklist {
+  list-style:none;margin:12px 0 0;padding:0;display:grid;gap:6px;font-size:14px;color:var(--soft);
+}
+.wizard-step9-checklist li.done {
+  color:#fff;
+}
+.wizard-step9-summary-list {
+  display:grid;grid-template-columns:auto 1fr;gap:8px 18px;margin:12px 0 0;
+}
+.wizard-step9-summary-list dt {
+  color:var(--soft);font-size:13px;
+}
+.wizard-step9-summary-list dd {
+  margin:0;color:#fff;font-weight:700;
+}
+.wizard-step9-next-actions {
+  list-style:none;margin:12px 0 0;padding:0;display:grid;gap:8px;
+}
