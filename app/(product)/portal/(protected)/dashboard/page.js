@@ -10,11 +10,13 @@ import {
   fetchOrganisationSummary,
   fetchMyOrganisationIdentity,
 } from '@/lib/api/dashboard';
+import { fetchOnboardingWizardProgress } from '@/lib/api/onboardingWizard';
 import { settle, errorMessage, isForbidden } from '@/lib/api/results';
 import StatTile from '@/components/portal/StatTile';
 import ActivitySection from '@/components/portal/ActivitySection';
 import OrganisationSummaryCard from '@/components/portal/OrganisationSummaryCard';
 import DashboardQuickLinks from '@/components/portal/DashboardQuickLinks';
+import OnboardingWizardStatusBanner from '@/components/portal/OnboardingWizardStatusBanner';
 import { WorkersIcon, KnowledgeIcon, MemoryIcon, ChatIcon } from '@/components/portal/icons';
 
 export const metadata = {
@@ -44,13 +46,14 @@ export default async function DashboardPage() {
   // Each section's data comes from an independent backend call — Promise.allSettled
   // so that one endpoint failing (e.g. the admin-only /organisations/ call for a
   // non-admin user) doesn't take down the sections that succeeded.
-  const [dashboardResult, activityResult, chatAnalyticsResult, organisationResult, identityResult] =
+  const [dashboardResult, activityResult, chatAnalyticsResult, organisationResult, identityResult, wizardProgressResult] =
     await Promise.allSettled([
       fetchPortalDashboard(token),
       fetchRecentActivity(token),
       fetchChatAnalytics(token),
       fetchOrganisationSummary(token),
       fetchMyOrganisationIdentity(token),
+      fetchOnboardingWizardProgress(token),
     ]);
 
   const dashboard = settle(dashboardResult);
@@ -58,6 +61,7 @@ export default async function DashboardPage() {
   const chatAnalytics = settle(chatAnalyticsResult);
   const organisation = settle(organisationResult);
   const identity = settle(identityResult);
+  const wizardProgress = settle(wizardProgressResult);
 
   const organisationRestricted = isForbidden(organisation.error);
   const canCreateWorker = isAtLeastRole(decodeJwtPayload(token)?.role, 'admin');
@@ -80,6 +84,7 @@ export default async function DashboardPage() {
 
       <section className="section section-compact">
         <div className="container">
+          <OnboardingWizardStatusBanner progress={wizardProgress.error ? null : wizardProgress.value} />
           {isBrandNewOrganisation && (
             <p className="form-note-banner" role="status">
               <strong>Get your organisation started.</strong>{' '}

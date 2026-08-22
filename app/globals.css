@@ -210,7 +210,10 @@ a {
   font-size:16px;font-weight:900;letter-spacing:-.02em;color:#fff;white-space:nowrap;margin-right:8px;
 }
 .portal-nav-org {
-  display:inline-flex;align-items:center;padding:5px 12px;border-radius:999px;background:rgba(255,255,255,.05);border:1px solid var(--line);color:var(--muted);font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px;
+  display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:999px;background:rgba(255,255,255,.05);border:1px solid var(--line);color:var(--muted);font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px;
+}
+.portal-nav-org-logo {
+  width:16px;height:16px;border-radius:4px;object-fit:contain;flex-shrink:0;
 }
 .portal-nav-mobile-toggle {
   display:none;margin-left:auto;padding:8px 16px;border-radius:999px;font-size:13px;font-weight:700;color:var(--muted);background:rgba(255,255,255,.04);border:1px solid var(--line);

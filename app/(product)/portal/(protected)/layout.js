@@ -43,17 +43,21 @@ export default async function ProtectedPortalLayout({ children }) {
   // since the nav already renders fine without it — PortalNav falls back to
   // showing just the product brand if organisationName is null.
   let organisationName = null;
+  // CUSTOMER_ONBOARDING_WIZARD_V1.md -- the logo, once uploaded, shows up
+  // here too, completing UI_IMPLEMENTATION_SPRINT_1.md's own identity work.
+  let hasLogo = false;
   try {
     const token = getSessionToken();
     const organisation = token ? await fetchMyOrganisationIdentity(token) : null;
     organisationName = organisation?.name ?? null;
+    hasLogo = Boolean(organisation?.logo_ref);
   } catch {
     organisationName = null;
   }
 
   return (
     <AuthProvider initialUser={user}>
-      <PortalNav organisationName={organisationName} />
+      <PortalNav organisationName={organisationName} hasLogo={hasLogo} />
       {children}
     </AuthProvider>
   );

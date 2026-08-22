@@ -47,7 +47,7 @@ function groupIsActive(pathname, links) {
   return links.some((link) => isActive(pathname, link.href));
 }
 
-export default function PortalNav({ organisationName = null }) {
+export default function PortalNav({ organisationName = null, hasLogo = false }) {
   const pathname = usePathname();
   const { user } = useAuth();
   // Human Authority Model: hierarchy-aware, not exact-match — an
@@ -161,6 +161,10 @@ export default function PortalNav({ organisationName = null }) {
 
         {organisationName && (
           <span className="portal-nav-org" title="Your organisation">
+            {hasLogo && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src="/api/portal/organisation/logo" alt="" className="portal-nav-org-logo" />
+            )}
             {organisationName}
           </span>
         )}
