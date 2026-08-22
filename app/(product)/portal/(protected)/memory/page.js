@@ -85,7 +85,7 @@ export default async function MemoryPage() {
     <>
       <WorkforceNav />
       <main>
-      <section className="hero hero-product">
+      <section className="hero hero-product hero-memory">
         <div className="container">
           <div className="hero-copy">
             <span className="eyebrow">Memory</span>

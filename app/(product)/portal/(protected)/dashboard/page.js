@@ -70,7 +70,7 @@ export default async function DashboardPage() {
 
   return (
     <main>
-      <section className="hero hero-product">
+      <section className="hero hero-product hero-dashboard">
         <div className="container">
           <div className="hero-copy">
             <span className="eyebrow">{organisationName ?? 'Dashboard'}</span>

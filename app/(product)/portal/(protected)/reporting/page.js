@@ -91,7 +91,7 @@ export default async function ReportingPage() {
     <>
       <PlatformSectionNav />
       <main>
-      <section className="hero hero-product">
+      <section className="hero hero-product hero-reporting">
         <div className="container">
           <div className="hero-copy">
             <span className="eyebrow">Reporting</span>

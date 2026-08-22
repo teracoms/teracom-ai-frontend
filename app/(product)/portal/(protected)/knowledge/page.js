@@ -60,7 +60,7 @@ export default async function KnowledgePage() {
     <>
       <WorkforceNav />
       <main>
-      <section className="hero hero-product">
+      <section className="hero hero-product hero-knowledge">
         <div className="container">
           <div className="hero-copy">
             <span className="eyebrow">Knowledge</span>

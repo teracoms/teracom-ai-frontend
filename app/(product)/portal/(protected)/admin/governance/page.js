@@ -103,7 +103,7 @@ export default async function AdminGovernancePage({ searchParams }) {
 
   return (
     <main>
-      <section className="hero hero-product">
+      <section className="hero hero-product hero-governance">
         <div className="container">
           <div className="hero-copy">
             <span className="eyebrow">

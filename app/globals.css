@@ -45,6 +45,23 @@ a {
 .hero:before {
   content:"";position:absolute;inset:-30%;background:radial-gradient(circle at 80% 18%,rgba(255,23,23,.23),transparent 36%),radial-gradient(circle at 15% 65%,rgba(255,255,255,.08),transparent 32%);pointer-events:none;
 }
+/* Hero background images -- Image Pack V1 (IMAGE_IMPLEMENTATION_PLAN_V1.md,
+   FRONTEND_IMAGE_IMPLEMENTATION_V1.md). Approved palette: deep blue/indigo/
+   teal/electric cyan/gold (TERACOM_VISUAL_IDENTITY_V1.md §1.1) -- image
+   layer only, not this product's own red/white UI chrome above. The red
+   radial-gradient from .hero:before is intentionally not reused here; it
+   would clash with the photo. Mobile: hidden below 640px, see that
+   breakpoint's own rule further down this file. */
+.hero-login:before      { background-image: linear-gradient(90deg, rgba(10,26,58,.72) 0%, rgba(10,26,58,.35) 55%, rgba(10,26,58,.15) 100%), radial-gradient(circle at 15% 65%, rgba(255,255,255,.08), transparent 32%), url('/backgrounds/login-bg.webp'); background-size:cover; background-position:center; background-repeat:no-repeat; }
+.hero-dashboard:before  { background-image: linear-gradient(90deg, rgba(10,26,58,.72) 0%, rgba(10,26,58,.35) 55%, rgba(10,26,58,.15) 100%), radial-gradient(circle at 15% 65%, rgba(255,255,255,.08), transparent 32%), url('/backgrounds/dashboard-bg.webp'); background-size:cover; background-position:center; background-repeat:no-repeat; }
+.hero-org-setup:before  { background-image: linear-gradient(90deg, rgba(10,26,58,.72) 0%, rgba(10,26,58,.35) 55%, rgba(10,26,58,.15) 100%), radial-gradient(circle at 15% 65%, rgba(255,255,255,.08), transparent 32%), url('/backgrounds/org-setup-bg.webp'); background-size:cover; background-position:center; background-repeat:no-repeat; }
+.hero-executive:before  { background-image: linear-gradient(90deg, rgba(10,26,58,.72) 0%, rgba(10,26,58,.35) 55%, rgba(10,26,58,.15) 100%), radial-gradient(circle at 15% 65%, rgba(255,255,255,.08), transparent 32%), url('/backgrounds/executive-bg.webp'); background-size:cover; background-position:center; background-repeat:no-repeat; }
+.hero-workforce:before  { background-image: linear-gradient(90deg, rgba(10,26,58,.72) 0%, rgba(10,26,58,.35) 55%, rgba(10,26,58,.15) 100%), radial-gradient(circle at 15% 65%, rgba(255,255,255,.08), transparent 32%), url('/backgrounds/workforce-bg.webp'); background-size:cover; background-position:center; background-repeat:no-repeat; }
+.hero-knowledge:before  { background-image: linear-gradient(90deg, rgba(10,26,58,.72) 0%, rgba(10,26,58,.35) 55%, rgba(10,26,58,.15) 100%), radial-gradient(circle at 15% 65%, rgba(255,255,255,.08), transparent 32%), url('/backgrounds/knowledge-bg.webp'); background-size:cover; background-position:center; background-repeat:no-repeat; }
+.hero-memory:before     { background-image: linear-gradient(90deg, rgba(10,26,58,.72) 0%, rgba(10,26,58,.35) 55%, rgba(10,26,58,.15) 100%), radial-gradient(circle at 15% 65%, rgba(255,255,255,.08), transparent 32%), url('/backgrounds/memory-bg.webp'); background-size:cover; background-position:center; background-repeat:no-repeat; }
+.hero-governance:before { background-image: linear-gradient(90deg, rgba(10,26,58,.72) 0%, rgba(10,26,58,.35) 55%, rgba(10,26,58,.15) 100%), radial-gradient(circle at 15% 65%, rgba(255,255,255,.08), transparent 32%), url('/backgrounds/governance-bg.webp'); background-size:cover; background-position:center; background-repeat:no-repeat; }
+.hero-platform-admin:before { background-image: linear-gradient(90deg, rgba(10,26,58,.72) 0%, rgba(10,26,58,.35) 55%, rgba(10,26,58,.15) 100%), radial-gradient(circle at 15% 65%, rgba(255,255,255,.08), transparent 32%), url('/backgrounds/platform-admin-bg.webp'); background-size:cover; background-position:center; background-repeat:no-repeat; }
+.hero-reporting:before  { background-image: linear-gradient(90deg, rgba(10,26,58,.72) 0%, rgba(10,26,58,.35) 55%, rgba(10,26,58,.15) 100%), radial-gradient(circle at 15% 65%, rgba(255,255,255,.08), transparent 32%), url('/backgrounds/reporting-bg.webp'); background-size:cover; background-position:center; background-repeat:no-repeat; }
 .hero-copy {
   padding:36px 0;
 }
@@ -152,6 +169,24 @@ a {
   }
   .feature-grid, .product-grid {
     grid-template-columns:1fr;
+  }
+  /* Hide the hero photo below 640px -- full-width stacked text over
+     geometric photo detail is a real legibility risk the plain gradient
+     doesn't have (FRONTEND_IMAGE_IMPLEMENTATION_V1.md §5). Reverts to the
+     same two-gradient effect .hero:before already uses at every width. */
+  .hero-login:before,
+  .hero-dashboard:before,
+  .hero-org-setup:before,
+  .hero-executive:before,
+  .hero-workforce:before,
+  .hero-knowledge:before,
+  .hero-memory:before,
+  .hero-governance:before,
+  .hero-platform-admin:before,
+  .hero-reporting:before {
+    background-image:
+      radial-gradient(circle at 80% 18%, rgba(255,23,23,.23), transparent 36%),
+      radial-gradient(circle at 15% 65%, rgba(255,255,255,.08), transparent 32%);
   }
 }
 .auth-card {

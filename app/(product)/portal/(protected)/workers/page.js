@@ -64,7 +64,7 @@ export default async function WorkersPage() {
     <>
       <WorkforceNav />
       <main>
-      <section className="hero hero-product">
+      <section className="hero hero-product hero-workforce">
         <div className="container">
           <div className="hero-copy">
             <span className="eyebrow">Workers</span>
