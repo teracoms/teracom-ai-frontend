@@ -6,6 +6,7 @@ import { settle, errorMessage } from '@/lib/api/results';
 import EmptyState from '@/components/portal/EmptyState';
 import TaskStatusControl from '@/components/portal/TaskStatusControl';
 import TaskCreateForm from '@/components/portal/TaskCreateForm';
+import WorkforceNav from '@/components/portal/WorkforceNav';
 
 export const metadata = {
   title: 'Tasks | Teracom AI Portal',
@@ -57,7 +58,9 @@ export default async function TasksPage() {
   });
 
   return (
-    <main>
+    <>
+      <WorkforceNav />
+      <main>
       <section className="hero hero-product">
         <div className="container">
           <div className="hero-copy">
@@ -122,5 +125,6 @@ export default async function TasksPage() {
         </div>
       </section>
     </main>
+    </>
   );
 }

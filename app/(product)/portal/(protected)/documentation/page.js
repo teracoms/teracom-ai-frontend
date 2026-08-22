@@ -1,3 +1,5 @@
+import PlatformSectionNav from '@/components/portal/PlatformSectionNav';
+
 export const metadata = {
   title: 'Documentation | Teracom AI Portal',
 };
@@ -122,7 +124,9 @@ const SECTIONS = [
 
 export default function DocumentationPage() {
   return (
-    <main>
+    <>
+      <PlatformSectionNav />
+      <main>
       <section className="hero hero-product">
         <div className="container">
           <div className="hero-copy">
@@ -155,5 +159,6 @@ export default function DocumentationPage() {
         </section>
       ))}
     </main>
+    </>
   );
 }

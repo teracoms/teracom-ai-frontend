@@ -6,6 +6,8 @@ import { fetchDepartments } from '@/lib/api/departments';
 import { fetchWorkerCreationRequests } from '@/lib/api/workerCreationRequests';
 import { settle, errorMessage } from '@/lib/api/results';
 import EmptyState from '@/components/portal/EmptyState';
+import ConceptHelp from '@/components/portal/ConceptHelp';
+import WorkforceNav from '@/components/portal/WorkforceNav';
 
 export const metadata = {
   title: 'Digital Workforce | Teracom AI Portal',
@@ -83,12 +85,17 @@ export default async function DigitalWorkforcePage() {
   }
 
   return (
-    <main>
+    <>
+      <WorkforceNav />
+      <main>
       <section className="hero hero-product">
         <div className="container">
           <div className="hero-copy">
             <span className="eyebrow">Digital Workforce</span>
-            <h1>Your entire AI workforce, at a glance.</h1>
+            <h1>
+              Your entire AI workforce, at a glance.
+              <ConceptHelp concept="digitalWorkforce" />
+            </h1>
             <p className="lead">
               Headcount, department structure, and any worker proposal still waiting on a
               decision — one view instead of three.
@@ -210,5 +217,6 @@ export default async function DigitalWorkforcePage() {
         </section>
       )}
     </main>
+    </>
   );
 }

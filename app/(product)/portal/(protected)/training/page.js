@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import PlatformSectionNav from '@/components/portal/PlatformSectionNav';
 
 export const metadata = {
   title: 'Training | Teracom AI Portal',
@@ -114,7 +115,9 @@ function Step({ step }) {
 
 export default function TrainingPage() {
   return (
-    <main>
+    <>
+      <PlatformSectionNav />
+      <main>
       <section className="hero hero-product">
         <div className="container">
           <div className="hero-copy">
@@ -146,5 +149,6 @@ export default function TrainingPage() {
         </div>
       </section>
     </main>
+    </>
   );
 }

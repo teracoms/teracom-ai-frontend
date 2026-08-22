@@ -3,6 +3,7 @@ import { fetchMarketplacePacks, fetchMarketplaceRecommendations } from '@/lib/ap
 import { errorMessage } from '@/lib/api/results';
 import MarketplacePackCard from '@/components/portal/MarketplacePackCard';
 import EmptyState from '@/components/portal/EmptyState';
+import WorkforceNav from '@/components/portal/WorkforceNav';
 
 export const metadata = {
   title: 'Marketplace | Teracom AI Portal',
@@ -51,7 +52,9 @@ export default async function MarketplacePage() {
   const topRecommended = recommendations?.packs?.slice(0, RECOMMENDED_SECTION_LIMIT) ?? [];
 
   return (
-    <main>
+    <>
+      <WorkforceNav />
+      <main>
       <section className="hero hero-product">
         <div className="container">
           <div className="hero-copy">
@@ -135,5 +138,6 @@ export default async function MarketplacePage() {
         </div>
       </section>
     </main>
+    </>
   );
 }

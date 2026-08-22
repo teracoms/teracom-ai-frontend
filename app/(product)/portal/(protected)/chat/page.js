@@ -3,6 +3,7 @@ import { fetchWorkerList } from '@/lib/api/workers';
 import { errorMessage } from '@/lib/api/results';
 import ChatWorkerCard from '@/components/portal/ChatWorkerCard';
 import EmptyState from '@/components/portal/EmptyState';
+import WorkforceNav from '@/components/portal/WorkforceNav';
 
 export const metadata = {
   title: 'Chat | Teracom AI Portal',
@@ -38,7 +39,9 @@ export default async function ChatPage() {
   }
 
   return (
-    <main>
+    <>
+      <WorkforceNav />
+      <main>
       <section className="hero hero-product">
         <div className="container">
           <div className="hero-copy">
@@ -73,5 +76,6 @@ export default async function ChatPage() {
         </div>
       </section>
     </main>
+    </>
   );
 }

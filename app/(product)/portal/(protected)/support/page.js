@@ -2,6 +2,7 @@ import { getSessionToken } from '@/lib/api/auth';
 import { fetchSupportRequests } from '@/lib/api/supportRequests';
 import { errorMessage } from '@/lib/api/results';
 import SupportRequestPanel from '@/components/portal/SupportRequestPanel';
+import PlatformSectionNav from '@/components/portal/PlatformSectionNav';
 
 export const metadata = {
   title: 'Support | Teracom AI Portal',
@@ -47,7 +48,9 @@ export default async function SupportInboxPage() {
   }
 
   return (
-    <main>
+    <>
+      <PlatformSectionNav />
+      <main>
       <section className="hero hero-product">
         <div className="container">
           <div className="hero-copy">
@@ -64,5 +67,6 @@ export default async function SupportInboxPage() {
         </div>
       </section>
     </main>
+    </>
   );
 }

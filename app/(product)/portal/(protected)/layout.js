@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation';
 
-import { getSessionUser } from '@/lib/api/auth';
+import { getSessionUser, getSessionToken } from '@/lib/api/auth';
+import { fetchMyOrganisationIdentity } from '@/lib/api/dashboard';
 import { AuthProvider } from '@/components/portal/AuthProvider';
 import PortalNav from '@/components/portal/PortalNav';
 
@@ -36,9 +37,23 @@ export default async function ProtectedPortalLayout({ children }) {
     redirect('/portal/login');
   }
 
+  // UI_IMPLEMENTATION_SPRINT_1.md item 1/9 — every role needs to see their
+  // own organisation's identity persistently, not just admins. Best-effort:
+  // a failure here (network blip) shouldn't take down the whole portal,
+  // since the nav already renders fine without it — PortalNav falls back to
+  // showing just the product brand if organisationName is null.
+  let organisationName = null;
+  try {
+    const token = getSessionToken();
+    const organisation = token ? await fetchMyOrganisationIdentity(token) : null;
+    organisationName = organisation?.name ?? null;
+  } catch {
+    organisationName = null;
+  }
+
   return (
     <AuthProvider initialUser={user}>
-      <PortalNav />
+      <PortalNav organisationName={organisationName} />
       {children}
     </AuthProvider>
   );

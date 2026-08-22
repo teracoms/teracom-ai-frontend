@@ -105,6 +105,18 @@ export default function CreateWorkerForm() {
         <option value="inactive">Inactive</option>
       </select>
 
+      {/* UI_IMPLEMENTATION_SPRINT_1.md item 8 -- this form has no department
+          field; a new worker is always created unassigned. Rather than add
+          that field this sprint (a real scope decision, not an oversight --
+          see UI_IMPLEMENTATION_SPRINT_1.md), this note tells the admin the
+          real next step, since "Unassigned to a department" would otherwise
+          be a silent, unexplained state the moment this worker appears in
+          any list view. */}
+      <p className="form-note-banner">
+        This worker will start unassigned to a department. Assign it from that department&apos;s own
+        dashboard once it&apos;s created.
+      </p>
+
       <button className="btn btn-primary" type="submit" disabled={loading}>
         {loading ? 'Creating...' : 'Create Worker'}
       </button>

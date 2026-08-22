@@ -5,6 +5,7 @@ import { fetchMarketingSummary } from '@/lib/api/marketing';
 import { fetchPlatformHealthSummary } from '@/lib/api/platformHealth';
 import { fetchPipelineSummary } from '@/lib/api/crm';
 import { settle, errorMessage, isForbidden } from '@/lib/api/results';
+import PlatformSectionNav from '@/components/portal/PlatformSectionNav';
 
 export const metadata = {
   title: 'Reporting | Teracom AI Portal',
@@ -87,7 +88,9 @@ export default async function ReportingPage() {
   const pipeline = settle(pipelineResult);
 
   return (
-    <main>
+    <>
+      <PlatformSectionNav />
+      <main>
       <section className="hero hero-product">
         <div className="container">
           <div className="hero-copy">
@@ -230,5 +233,6 @@ export default async function ReportingPage() {
         </div>
       </section>
     </main>
+    </>
   );
 }

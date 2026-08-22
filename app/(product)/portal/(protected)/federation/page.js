@@ -8,6 +8,8 @@ import FederationConsultationPanel from '@/components/portal/FederationConsultat
 import FederationConsultationHistory from '@/components/portal/FederationConsultationHistory';
 import FederationSummaryWidget from '@/components/portal/FederationSummaryWidget';
 import EmptyState from '@/components/portal/EmptyState';
+import ConceptHelp from '@/components/portal/ConceptHelp';
+import PlatformSectionNav from '@/components/portal/PlatformSectionNav';
 
 export const metadata = {
   title: 'Federation | Teracom AI Portal',
@@ -52,12 +54,17 @@ export default async function FederationPage() {
   const summaryResult = settle(summarySettled);
 
   return (
-    <main>
+    <>
+      <PlatformSectionNav />
+      <main>
       <section className="hero hero-product">
         <div className="container">
           <div className="hero-copy">
             <span className="eyebrow">Federation</span>
-            <h1>External AI consulting.</h1>
+            <h1>
+              External AI consulting.
+              <ConceptHelp concept="federation" />
+            </h1>
             <p className="lead">
               Browse the registry of external AI providers, check a worker&apos;s confidence
               before escalating, and consult federation when local confidence is insufficient or
@@ -128,5 +135,6 @@ export default async function FederationPage() {
         </div>
       </section>
     </main>
+    </>
   );
 }

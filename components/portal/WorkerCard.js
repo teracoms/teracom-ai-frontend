@@ -10,7 +10,11 @@ import { WorkersIcon, StatusDot } from '@/components/portal/icons';
 // "Platform Review Wave 3" worker-visualisation pass) — StatusDot already
 // existed in icons.js since Wave 1 but was never actually wired into any
 // worker-facing view until now.
-export default function WorkerCard({ worker }) {
+// `departmentName` -- UI_IMPLEMENTATION_SPRINT_1.md item 7/8: department
+// ownership wasn't visible anywhere on the worker list. Optional so this
+// component still renders exactly as before wherever a caller hasn't been
+// updated to look it up.
+export default function WorkerCard({ worker, departmentName }) {
   return (
     <article className="product-card">
       <div>
@@ -23,6 +27,7 @@ export default function WorkerCard({ worker }) {
         </div>
         <h3>{worker.name}</h3>
         <p>{worker.role}</p>
+        <p className="activity-meta">{departmentName ? `Department: ${departmentName}` : 'Unassigned to a department'}</p>
       </div>
       <Link className="btn btn-secondary" href={`/portal/workers/${worker.id}`}>
         View Worker

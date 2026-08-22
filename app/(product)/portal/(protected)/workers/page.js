@@ -2,8 +2,11 @@ import { getSessionToken } from '@/lib/api/auth';
 import { decodeJwtPayload } from '@/lib/api/jwt';
 import { isAtLeastRole } from '@/lib/roles';
 import { fetchWorkerList } from '@/lib/api/workers';
-import { errorMessage } from '@/lib/api/results';
+import { fetchDepartments } from '@/lib/api/departments';
+import { settle, errorMessage } from '@/lib/api/results';
 import WorkerListView from '@/components/portal/WorkerListView';
+import ConceptHelp from '@/components/portal/ConceptHelp';
+import WorkforceNav from '@/components/portal/WorkforceNav';
 
 export const metadata = {
   title: 'Workers | Teracom AI Portal',
@@ -45,13 +48,30 @@ export default async function WorkersPage() {
     loadError = error;
   }
 
+  // UI_IMPLEMENTATION_SPRINT_1.md item 7/8 -- department ownership wasn't
+  // visible anywhere on the worker list. Best-effort: a departments-fetch
+  // failure shouldn't block the worker list itself from rendering, since
+  // WorkerCard already falls back to "Unassigned" for a missing lookup.
+  const [departmentsSettled] = await Promise.allSettled([fetchDepartments(token)]);
+  const departments = settle(departmentsSettled);
+  // A plain object, not a Map -- keeps this a safe, ordinary prop across
+  // the server/client boundary into the client-side WorkerListView below.
+  const departmentNamesById = Object.fromEntries(
+    (departments.value ?? []).map((department) => [department.id, department.name])
+  );
+
   return (
-    <main>
+    <>
+      <WorkforceNav />
+      <main>
       <section className="hero hero-product">
         <div className="container">
           <div className="hero-copy">
             <span className="eyebrow">Workers</span>
-            <h1>Your AI workforce.</h1>
+            <h1>
+              Your AI workforce.
+              <ConceptHelp concept="workers" />
+            </h1>
             <p className="lead">
               Create, configure and assign knowledge to the AI worker agents that power your
               organisation&apos;s chat sessions.
@@ -67,10 +87,11 @@ export default async function WorkersPage() {
               {errorMessage(loadError)}
             </p>
           ) : (
-            <WorkerListView workers={workers} canCreate={canCreate} />
+            <WorkerListView workers={workers} canCreate={canCreate} departmentNamesById={departmentNamesById} />
           )}
         </div>
       </section>
     </main>
+    </>
   );
 }

@@ -14,7 +14,7 @@ import EmptyState from '@/components/portal/EmptyState';
  * array in the browser. Fine at the list sizes a single organisation has
  * today; would need a backend filter param if that ever changes.
  */
-export default function WorkerListView({ workers, canCreate }) {
+export default function WorkerListView({ workers, canCreate, departmentNamesById = {} }) {
   const [query, setQuery] = useState('');
   const [status, setStatus] = useState('all');
 
@@ -77,7 +77,11 @@ export default function WorkerListView({ workers, canCreate }) {
       ) : (
         <div className="product-grid">
           {filtered.map((worker) => (
-            <WorkerCard key={worker.id} worker={worker} />
+            <WorkerCard
+              key={worker.id}
+              worker={worker}
+              departmentName={worker.department_id ? departmentNamesById[worker.department_id] : null}
+            />
           ))}
         </div>
       )}

@@ -13,6 +13,7 @@ import { fetchDepartments } from '@/lib/api/departments';
 import { settle, errorMessage } from '@/lib/api/results';
 import GovernancePolicyTable from '@/components/portal/GovernancePolicyTable';
 import GovernanceRuleForm from '@/components/portal/GovernanceRuleForm';
+import ConceptHelp from '@/components/portal/ConceptHelp';
 
 export const metadata = {
   title: 'Governance | Teracom AI Portal',
@@ -105,8 +106,14 @@ export default async function AdminGovernancePage({ searchParams }) {
       <section className="hero hero-product">
         <div className="container">
           <div className="hero-copy">
-            <span className="eyebrow">Governance</span>
-            <h1>Policy registry.</h1>
+            <span className="eyebrow">
+              Governance
+              <ConceptHelp concept="governance" />
+            </span>
+            <h1>
+              Policy registry.
+              <ConceptHelp concept="policyRegister" />
+            </h1>
             <p className="lead">Every action this platform gates by role, and what role it requires.</p>
           </div>
         </div>
@@ -122,19 +129,24 @@ export default async function AdminGovernancePage({ searchParams }) {
         <div className="container">
           <div className="section-heading left">
             <span className="eyebrow">Cascade</span>
-            <h2>Organisation-wide governance rules.</h2>
+            <h2>
+              Organisation-wide governance rules.
+              <ConceptHelp concept="governanceRules" />
+            </h2>
             <p>
               Set once at organisation level, automatically inherited by every department unless a
               department sets its own override.
             </p>
             <p className="activity-meta">
               Today, a <code>knowledge_assignment</code> / <code>default_knowledge_tags</code> rule
-              has a real, live effect: any worker assigned to a department is automatically granted
-              access to every knowledge document tagged with one of that department&apos;s resolved
-              tags. Other rule types (<code>governance</code>, <code>policy</code>,{' '}
-              <code>standards</code>) are recorded, inherited, overridden, and audited correctly, but
-              nothing elsewhere in the platform reads them back yet — set them to document a
-              decision, not to expect automatic enforcement.
+              (<ConceptHelp concept="knowledgeAssignment" />) has a real, live effect: any worker
+              assigned to a department is automatically granted access to every knowledge document
+              tagged with one of that department&apos;s resolved tags. An <code>approval_threshold</code>{' '}
+              rule (<ConceptHelp concept="approvalThresholds" />) and other rule types (
+              <code>governance</code>, <code>policy</code>, <code>standards</code>) are recorded,
+              inherited, overridden, and audited correctly, but nothing elsewhere in the platform
+              reads them back yet — set them to document a decision, not to expect automatic
+              enforcement.
             </p>
           </div>
           {rules.error ? (
@@ -169,7 +181,10 @@ export default async function AdminGovernancePage({ searchParams }) {
         <div className="container">
           <div className="section-heading left">
             <span className="eyebrow">Cascade</span>
-            <h2>Department overrides.</h2>
+            <h2>
+              Department overrides.
+              <ConceptHelp concept="departmentOverrides" />
+            </h2>
             <p>
               A department&apos;s own value for a rule wins over the organisation default — pick a
               department to see and set its overrides.
@@ -187,6 +202,7 @@ export default async function AdminGovernancePage({ searchParams }) {
                     department.id === selectedDepartmentId ? 'btn btn-primary btn-small' : 'btn btn-secondary btn-small'
                   }
                   href={`/portal/admin/governance?department=${department.id}`}
+                  scroll={false}
                 >
                   {department.name}
                 </Link>

@@ -10,7 +10,9 @@ import { settle, errorMessage } from '@/lib/api/results';
 import StatTile from '@/components/portal/StatTile';
 import MemoryOverviewView from '@/components/portal/MemoryOverviewView';
 import EmptyState from '@/components/portal/EmptyState';
+import ConceptHelp from '@/components/portal/ConceptHelp';
 import { MemoryIcon } from '@/components/portal/icons';
+import WorkforceNav from '@/components/portal/WorkforceNav';
 
 export const metadata = {
   title: 'Memory | Teracom AI Portal',
@@ -80,12 +82,17 @@ export default async function MemoryPage() {
   }
 
   return (
-    <main>
+    <>
+      <WorkforceNav />
+      <main>
       <section className="hero hero-product">
         <div className="container">
           <div className="hero-copy">
             <span className="eyebrow">Memory</span>
-            <h1>What your workers remember.</h1>
+            <h1>
+              What your workers remember.
+              <ConceptHelp concept="memory" />
+            </h1>
             <p className="lead">
               Facts captured automatically during chat, or added manually, grouped by the worker
               they belong to.
@@ -181,5 +188,6 @@ export default async function MemoryPage() {
         </div>
       </section>
     </main>
+    </>
   );
 }

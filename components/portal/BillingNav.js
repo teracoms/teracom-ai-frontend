@@ -1,13 +1,11 @@
-'use client';
-
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import SectionNav from '@/components/portal/SectionNav';
 
 // Section-local sub-navigation for /portal/admin/billing/** — the section
 // has enough sub-pages (Overview, Licence Details, Usage & Capacity,
 // Renewal, Worker Pack, Ownership Transfer, Requests) to warrant its own
-// tab strip, the same "one nav component per meaningfully-sized section"
-// precedent PortalNav.js already set at the top level.
+// tab strip. UI_IMPLEMENTATION_SPRINT_1.md item 5 generalised this
+// component's own original implementation into the reusable SectionNav
+// primitive below, now used the same way for Workforce/Platform/Marketing.
 const LINKS = [
   { href: '/portal/admin/billing', label: 'Overview' },
   { href: '/portal/admin/billing/licence', label: 'Licence Details' },
@@ -19,21 +17,5 @@ const LINKS = [
 ];
 
 export default function BillingNav() {
-  const pathname = usePathname();
-
-  return (
-    <nav className="billing-nav">
-      <div className="container billing-nav-inner">
-        {LINKS.map((link) => (
-          <Link
-            key={link.href}
-            href={link.href}
-            className={pathname === link.href ? 'billing-nav-link active' : 'billing-nav-link'}
-          >
-            {link.label}
-          </Link>
-        ))}
-      </div>
-    </nav>
-  );
+  return <SectionNav links={LINKS} />;
 }

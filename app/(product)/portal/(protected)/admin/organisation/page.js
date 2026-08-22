@@ -3,6 +3,7 @@ import { decodeJwtPayload } from '@/lib/api/jwt';
 import { isAtLeastRole } from '@/lib/roles';
 import { fetchOrganisationSummary } from '@/lib/api/dashboard';
 import { fetchOrganisations } from '@/lib/api/organisations';
+import { fetchUsers } from '@/lib/api/admin';
 import { isForbidden, errorMessage } from '@/lib/api/results';
 import OrganisationSummaryCard from '@/components/portal/OrganisationSummaryCard';
 import FederationEnabledToggle from '@/components/portal/FederationEnabledToggle';
@@ -69,6 +70,22 @@ export default async function AdminOrganisationPage() {
     }
   }
 
+  // UI_IMPLEMENTATION_SPRINT_1.md item 9 -- "business owner visibility."
+  // The 5-tier role hierarchy has a real "owner" tier above "admin", but
+  // self-service signup deliberately still defaults to "admin" (no
+  // owner-only action exists yet to justify it as a default -- see
+  // TERACOM_AI_HANDOVER_V3.md), so most organisations genuinely have no
+  // owner set. Shown honestly either way, not assumed.
+  let owners = [];
+  if (!restricted && !loadError && organisation) {
+    try {
+      const users = await fetchUsers(token);
+      owners = users.filter((orgUser) => orgUser.role === 'owner');
+    } catch {
+      // Best-effort -- the organisation profile above still renders without this.
+    }
+  }
+
   return (
     <main>
       <section className="hero hero-product">
@@ -95,6 +112,35 @@ export default async function AdminOrganisationPage() {
           )}
         </div>
       </section>
+
+      {!restricted && !loadError && organisation && (
+        <section className="section">
+          <div className="container">
+            <div className="section-heading left">
+              <span className="eyebrow">Ownership</span>
+              <h2>Business owner.</h2>
+            </div>
+            {owners.length === 0 ? (
+              <p className="activity-meta">
+                No user holds the &quot;owner&quot; tier for this organisation yet — every
+                self-service signup starts at &quot;admin&quot;, one tier below it. Promote a user
+                to owner from Admin → Users if your organisation wants one on record.
+              </p>
+            ) : (
+              <ul className="activity-list">
+                {owners.map((owner) => (
+                  <li key={owner.id}>
+                    <p className="activity-title">
+                      {owner.first_name} {owner.last_name}
+                    </p>
+                    <p className="activity-meta">{owner.email}</p>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </section>
+      )}
 
       {!restricted && !loadError && organisation && (
         <section className="section alt">

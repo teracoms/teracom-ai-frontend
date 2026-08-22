@@ -10,6 +10,7 @@ import PlatformHealthSummaryWidget from '@/components/portal/PlatformHealthSumma
 import DeploymentRecordPanel from '@/components/portal/DeploymentRecordPanel';
 import PlatformIncidentPanel from '@/components/portal/PlatformIncidentPanel';
 import SystemMetricsPanel from '@/components/portal/SystemMetricsPanel';
+import PlatformSectionNav from '@/components/portal/PlatformSectionNav';
 
 export const metadata = {
   title: 'Platform Health | Teracom AI Portal',
@@ -61,7 +62,9 @@ export default async function PlatformHealthPage() {
   const systemMetricsResult = settle(systemMetricsSettled);
 
   return (
-    <main>
+    <>
+      <PlatformSectionNav />
+      <main>
       <section className="hero hero-product">
         <div className="container">
           <div className="hero-copy">
@@ -125,5 +128,6 @@ export default async function PlatformHealthPage() {
         </div>
       </section>
     </main>
+    </>
   );
 }

@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 
 import { useAuth } from '@/components/portal/AuthProvider';
 import { isAtLeastRole } from '@/lib/roles';
+import { GROUPS } from '@/lib/portalNavGroups';
 
 // "Platform Review Wave 1" navigation redesign — the flat, ever-growing
 // pill list (19 links by Package Q) is replaced with a grouped structure:
@@ -37,67 +38,6 @@ const ADMIN_TOP_LEVEL_LINKS = [
   { href: '/portal/admin/governance', label: 'Governance' },
 ];
 
-const GROUPS = [
-  {
-    label: 'Workforce',
-    links: [
-      { href: '/portal/digital-workforce', label: 'Digital Workforce' },
-      { href: '/portal/workers', label: 'Workers' },
-      { href: '/portal/knowledge', label: 'Knowledge' },
-      { href: '/portal/chat', label: 'Chat' },
-      { href: '/portal/memory', label: 'Memory' },
-      { href: '/portal/departments', label: 'Departments' },
-      { href: '/portal/tasks', label: 'Tasks' },
-      // Phase 0 Package PQR shipped this as "/portal/cto", labelled
-      // "CTO Orchestration" — renamed here per direct instruction; the
-      // route itself is unchanged (preserves every existing link/
-      // bookmark to it).
-      { href: '/portal/cto', label: 'Orchestration' },
-      { href: '/portal/marketplace', label: 'Marketplace' },
-    ],
-  },
-  {
-    label: 'Business',
-    links: [
-      { href: '/portal/sales', label: 'Sales' },
-      { href: '/portal/customer-success', label: 'Customer Success' },
-      { href: '/portal/finance', label: 'Finance' },
-      { href: '/portal/operations', label: 'Operations' },
-    ],
-  },
-  {
-    label: 'Marketing',
-    links: [
-      { href: '/portal/marketing', label: 'Campaigns' },
-      { href: '/portal/media-centre', label: 'Media Centre' },
-    ],
-  },
-  {
-    label: 'Platform',
-    links: [
-      { href: '/portal/reporting', label: 'Reporting' },
-      { href: '/portal/federation', label: 'Federation' },
-      { href: '/portal/platform-health', label: 'Health' },
-      { href: '/portal/support', label: 'Support' },
-      { href: '/portal/documentation', label: 'Documentation' },
-      { href: '/portal/training', label: 'Training' },
-    ],
-    // The entire /portal/admin/** tree is role-gated
-    // (FRONTEND_ARCHITECTURE_V1.md §C.11) — these are only added to
-    // the Platform group's own link list for an admin, mirroring the
-    // pre-existing ADMIN_LINK's conditional-visibility precedent rather
-    // than showing every member a "requires admin access" wall.
-    // Governance itself was promoted out of this list to
-    // ADMIN_TOP_LEVEL_LINKS above — a real GOV1 cascade surface with
-    // its own real audit trail is not a good fit for the least
-    // discoverable spot in the whole nav.
-    adminLinks: [
-      { href: '/portal/admin/communications', label: 'Communications' },
-      { href: '/portal/admin', label: 'Administration' },
-    ],
-  },
-];
-
 function isActive(pathname, href) {
   if (pathname === href) return true;
   return pathname.startsWith(`${href}/`);
@@ -107,7 +47,7 @@ function groupIsActive(pathname, links) {
   return links.some((link) => isActive(pathname, link.href));
 }
 
-export default function PortalNav() {
+export default function PortalNav({ organisationName = null }) {
   const pathname = usePathname();
   const { user } = useAuth();
   // Human Authority Model: hierarchy-aware, not exact-match — an
@@ -218,6 +158,12 @@ export default function PortalNav() {
         <Link href="/portal/dashboard" className="portal-nav-brand">
           Teracom AI
         </Link>
+
+        {organisationName && (
+          <span className="portal-nav-org" title="Your organisation">
+            {organisationName}
+          </span>
+        )}
 
         <button
           type="button"

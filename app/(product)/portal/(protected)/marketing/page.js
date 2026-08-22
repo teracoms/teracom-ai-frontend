@@ -3,6 +3,7 @@ import { fetchCampaigns } from '@/lib/api/marketing';
 import { settle, errorMessage } from '@/lib/api/results';
 import CampaignForm from '@/components/portal/CampaignForm';
 import CampaignListView from '@/components/portal/CampaignListView';
+import MarketingNav from '@/components/portal/MarketingNav';
 
 export const metadata = {
   title: 'Marketing | Teracom AI Portal',
@@ -37,7 +38,9 @@ export default async function MarketingPage({ searchParams }) {
   const campaigns = settle(campaignsSettled);
 
   return (
-    <main>
+    <>
+      <MarketingNav />
+      <main>
       <section className="hero hero-product">
         <div className="container">
           <div className="hero-copy">
@@ -73,5 +76,6 @@ export default async function MarketingPage({ searchParams }) {
         </div>
       </section>
     </main>
+    </>
   );
 }

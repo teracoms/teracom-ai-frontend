@@ -8,6 +8,7 @@ import {
   fetchRecentActivity,
   fetchChatAnalytics,
   fetchOrganisationSummary,
+  fetchMyOrganisationIdentity,
 } from '@/lib/api/dashboard';
 import { settle, errorMessage, isForbidden } from '@/lib/api/results';
 import StatTile from '@/components/portal/StatTile';
@@ -43,30 +44,33 @@ export default async function DashboardPage() {
   // Each section's data comes from an independent backend call — Promise.allSettled
   // so that one endpoint failing (e.g. the admin-only /organisations/ call for a
   // non-admin user) doesn't take down the sections that succeeded.
-  const [dashboardResult, activityResult, chatAnalyticsResult, organisationResult] =
+  const [dashboardResult, activityResult, chatAnalyticsResult, organisationResult, identityResult] =
     await Promise.allSettled([
       fetchPortalDashboard(token),
       fetchRecentActivity(token),
       fetchChatAnalytics(token),
       fetchOrganisationSummary(token),
+      fetchMyOrganisationIdentity(token),
     ]);
 
   const dashboard = settle(dashboardResult);
   const activity = settle(activityResult);
   const chatAnalytics = settle(chatAnalyticsResult);
   const organisation = settle(organisationResult);
+  const identity = settle(identityResult);
 
   const organisationRestricted = isForbidden(organisation.error);
   const canCreateWorker = isAtLeastRole(decodeJwtPayload(token)?.role, 'admin');
   const isBrandNewOrganisation = !dashboard.error && dashboard.value.workers === 0;
+  const organisationName = identity.error ? null : identity.value?.name;
 
   return (
     <main>
       <section className="hero hero-product">
         <div className="container">
           <div className="hero-copy">
-            <span className="eyebrow">Dashboard</span>
-            <h1>Organisation overview.</h1>
+            <span className="eyebrow">{organisationName ?? 'Dashboard'}</span>
+            <h1>{organisationName ? `${organisationName} — Organisation overview.` : 'Organisation overview.'}</h1>
             <p className="lead">
               Workers, knowledge, memory and chat activity for your organisation, in one place.
             </p>
@@ -74,7 +78,7 @@ export default async function DashboardPage() {
         </div>
       </section>
 
-      <section className="section">
+      <section className="section section-compact">
         <div className="container">
           {isBrandNewOrganisation && (
             <p className="form-note-banner" role="status">
@@ -101,16 +105,40 @@ export default async function DashboardPage() {
             </p>
           ) : (
             <div className="stat-grid">
-              <StatTile label="Workers" value={dashboard.value.workers} icon={<WorkersIcon />} />
-              <StatTile label="Knowledge" value={dashboard.value.knowledge} icon={<KnowledgeIcon />} />
-              <StatTile label="Memories" value={dashboard.value.memories} icon={<MemoryIcon />} />
-              <StatTile label="Chat Sessions" value={dashboard.value.chat_sessions} icon={<ChatIcon />} />
+              <StatTile
+                label="Workers"
+                value={dashboard.value.workers}
+                hint="Active AI workers in your organisation"
+                icon={<WorkersIcon />}
+                href="/portal/workers"
+              />
+              <StatTile
+                label="Knowledge"
+                value={dashboard.value.knowledge}
+                hint="Documents in your knowledge base"
+                icon={<KnowledgeIcon />}
+                href="/portal/knowledge"
+              />
+              <StatTile
+                label="Memories"
+                value={dashboard.value.memories}
+                hint="Memories captured across all workers"
+                icon={<MemoryIcon />}
+                href="/portal/memory"
+              />
+              <StatTile
+                label="Chat Sessions"
+                value={dashboard.value.chat_sessions}
+                hint="Conversations across all workers"
+                icon={<ChatIcon />}
+                href="/portal/chat"
+              />
             </div>
           )}
         </div>
       </section>
 
-      <section className="section">
+      <section className="section section-compact">
         <div className="container">
           <div className="section-heading left">
             <span className="eyebrow">Explore your workspace</span>
@@ -120,7 +148,7 @@ export default async function DashboardPage() {
         </div>
       </section>
 
-      <section className="section alt">
+      <section className="section section-compact alt">
         <div className="container dashboard-columns">
           <div>
             <span className="eyebrow">Organisation summary</span>
@@ -144,15 +172,26 @@ export default async function DashboardPage() {
               </p>
             ) : (
               <div className="stat-grid stat-grid-2">
-                <StatTile label="Chat Sessions" value={chatAnalytics.value.sessions} icon={<ChatIcon />} />
-                <StatTile label="Chat Messages" value={chatAnalytics.value.messages} icon={<ChatIcon />} />
+                <StatTile
+                  label="Chat Sessions"
+                  value={chatAnalytics.value.sessions}
+                  hint="All conversations, organisation-wide"
+                  icon={<ChatIcon />}
+                  href="/portal/chat"
+                />
+                <StatTile
+                  label="Chat Messages"
+                  value={chatAnalytics.value.messages}
+                  hint="All messages sent within those sessions"
+                  icon={<ChatIcon />}
+                />
               </div>
             )}
           </div>
         </div>
       </section>
 
-      <section className="section">
+      <section className="section section-compact">
         <div className="container">
           <div className="section-heading left">
             <span className="eyebrow">Recent activity</span>

@@ -12,6 +12,7 @@ import StatTile from '@/components/portal/StatTile';
 import KnowledgeListView from '@/components/portal/KnowledgeListView';
 import KnowledgeSearch from '@/components/portal/KnowledgeSearch';
 import { KnowledgeIcon, WorkersIcon } from '@/components/portal/icons';
+import WorkforceNav from '@/components/portal/WorkforceNav';
 
 export const metadata = {
   title: 'Knowledge | Teracom AI Portal',
@@ -56,7 +57,9 @@ export default async function KnowledgePage() {
   const assignments = settle(assignmentsResult);
 
   return (
-    <main>
+    <>
+      <WorkforceNav />
+      <main>
       <section className="hero hero-product">
         <div className="container">
           <div className="hero-copy">
@@ -132,5 +135,6 @@ export default async function KnowledgePage() {
         </div>
       </section>
     </main>
+    </>
   );
 }

@@ -69,6 +69,12 @@ a {
 .section {
   padding:120px 0;
 }
+/* UI_IMPLEMENTATION_SPRINT_1.md item 2 -- a denser section variant for
+   information-dense screens (Dashboard) without changing .section's
+   padding globally, which every other page still relies on. */
+.section-compact {
+  padding:48px 0;
+}
 .alt {
   background:#090909;
 }
@@ -203,6 +209,9 @@ a {
 .portal-nav-brand {
   font-size:16px;font-weight:900;letter-spacing:-.02em;color:#fff;white-space:nowrap;margin-right:8px;
 }
+.portal-nav-org {
+  display:inline-flex;align-items:center;padding:5px 12px;border-radius:999px;background:rgba(255,255,255,.05);border:1px solid var(--line);color:var(--muted);font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px;
+}
 .portal-nav-mobile-toggle {
   display:none;margin-left:auto;padding:8px 16px;border-radius:999px;font-size:13px;font-weight:700;color:var(--muted);background:rgba(255,255,255,.04);border:1px solid var(--line);
 }
@@ -277,6 +286,9 @@ a {
 .stat-tile:hover {
   background:rgba(255,255,255,.06);transform:translateY(-2px);
 }
+.stat-tile-link {
+  display:block;text-decoration:none;cursor:pointer;
+}
 .stat-tile-heading {
   display:flex;align-items:center;gap:10px;
 }
@@ -285,6 +297,45 @@ a {
 }
 .eyebrow-icon-row {
   display:flex;align-items:center;gap:10px;margin-bottom:18px;
+}
+/* UI_IMPLEMENTATION_SPRINT_1.md item 4/10 -- Contextual Help Framework */
+.concept-help {
+  display:inline-block;position:relative;margin-left:6px;vertical-align:middle;
+}
+.concept-help-toggle {
+  display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid var(--line);color:var(--muted);font-size:12px;font-weight:900;cursor:pointer;list-style:none;user-select:none;
+}
+.concept-help-toggle::-webkit-details-marker {
+  display:none;
+}
+.concept-help-toggle:hover {
+  color:#fff;background:rgba(255,23,23,.14);border-color:rgba(255,23,23,.35);
+}
+.concept-help[open] .concept-help-toggle {
+  color:#fff;background:rgba(255,23,23,.14);border-color:rgba(255,23,23,.35);
+}
+.concept-help-panel {
+  position:absolute;z-index:30;top:calc(100% + 8px);left:0;width:min(340px,80vw);background:#0d0d0d;border:1px solid var(--line);border-radius:16px;padding:18px 20px;box-shadow:0 24px 60px rgba(0,0,0,.45);
+}
+.concept-help-title {
+  font-size:14px;font-weight:900;color:#fff;margin:0 0 10px;
+}
+.concept-help-panel dl {
+  margin:0;display:grid;gap:4px 0;
+}
+.concept-help-panel dt {
+  font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.06em;color:var(--red2);margin-top:10px;
+}
+.concept-help-panel dt:first-child {
+  margin-top:0;
+}
+.concept-help-panel dd {
+  margin:2px 0 0;color:var(--muted);font-size:13px;line-height:1.5;
+}
+@media(max-width:640px) {
+  .concept-help-panel {
+    left:auto;right:0;
+  }
 }
 .worker-card-header {
   display:flex;align-items:center;gap:8px;margin-bottom:16px;

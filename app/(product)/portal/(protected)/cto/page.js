@@ -15,6 +15,8 @@ import FinanceSummaryWidget from '@/components/portal/FinanceSummaryWidget';
 import OperationsSummaryWidget from '@/components/portal/OperationsSummaryWidget';
 import PlatformHealthSummaryWidget from '@/components/portal/PlatformHealthSummaryWidget';
 import EmptyState from '@/components/portal/EmptyState';
+import ConceptHelp from '@/components/portal/ConceptHelp';
+import WorkforceNav from '@/components/portal/WorkforceNav';
 
 export const metadata = {
   title: 'Orchestration | Teracom AI Portal',
@@ -70,12 +72,17 @@ export default async function CtoOrchestrationPage() {
   const platformHealthSummaryResult = settle(platformHealthSummarySettled);
 
   return (
-    <main>
+    <>
+      <WorkforceNav />
+      <main>
       <section className="hero hero-product">
         <div className="container">
           <div className="hero-copy">
             <span className="eyebrow">Orchestration</span>
-            <h1>Orchestration.</h1>
+            <h1>
+              Orchestration.
+              <ConceptHelp concept="orchestration" />
+            </h1>
             <p className="lead">
               Submit a high-level objective and let a lead worker decompose it, delegate across
               your workforce in a bounded chain, and synthesise the results — you decide whether
@@ -180,5 +187,6 @@ export default async function CtoOrchestrationPage() {
         </div>
       </section>
     </main>
+    </>
   );
 }
