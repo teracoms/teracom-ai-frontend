@@ -11,6 +11,7 @@ import { ONBOARDING_WIZARD_STEPS } from '@/lib/onboardingWizardSteps';
 import OnboardingWizardStep1 from '@/components/portal/OnboardingWizardStep1';
 import OnboardingWizardStep2 from '@/components/portal/OnboardingWizardStep2';
 import OnboardingWizardStep3 from '@/components/portal/OnboardingWizardStep3';
+import OnboardingWizardStep4 from '@/components/portal/OnboardingWizardStep4';
 
 export const metadata = {
   title: 'Organisation Setup | Teracom AI Portal',
@@ -62,6 +63,7 @@ export default async function OnboardingWizardPage() {
   const completedSteps = progress.value?.completed_steps ?? [];
   const step1Done = completedSteps.includes(1);
   const step2Done = completedSteps.includes(2);
+  const step3Done = completedSteps.includes(3);
 
   return (
     <main>
@@ -170,7 +172,32 @@ export default async function OnboardingWizardPage() {
                 initialExecutiveRoles={executiveRoles.value ?? []}
                 departments={departments.value ?? []}
                 workers={workers.value ?? []}
-                stepAlreadyCompleted={completedSteps.includes(3)}
+                stepAlreadyCompleted={step3Done}
+              />
+            )}
+          </div>
+        </section>
+      )}
+
+      {isAdmin && !identity.error && (
+        <section className="section">
+          <div className="container">
+            {!step3Done ? (
+              <p className="activity-meta">
+                Complete executive structure above first, then come back here to build your
+                digital workforce.
+              </p>
+            ) : departments.error || executiveRoles.error || workers.error ? (
+              <p className="form-error" role="alert">
+                {errorMessage(departments.error || executiveRoles.error || workers.error)}
+              </p>
+            ) : (
+              <OnboardingWizardStep4
+                organisationName={identity.value.name}
+                initialWorkers={workers.value ?? []}
+                departments={departments.value ?? []}
+                executiveRoles={executiveRoles.value ?? []}
+                stepAlreadyCompleted={completedSteps.includes(4)}
               />
             )}
           </div>

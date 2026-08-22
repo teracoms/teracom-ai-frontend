@@ -13,6 +13,13 @@
 // passes neither, so its visual is unchanged (Organisation -> Departments
 // only). Step 3 passes both, giving the full four-tier hierarchy the
 // requirement asks for.
+//
+// Step 4 requirement #4, "maintain and extend" -- each worker item may
+// optionally carry `departmentLabel`/`executiveOwnerLabel` (precomputed
+// by the caller from department_id/executive_owner_id, since this is a
+// presentational component that doesn't fetch or cross-reference data
+// itself); both are rendered as small tags exactly like a department's
+// own `function` tag, and are simply omitted when absent.
 export default function OrganisationStructureVisual({ organisationName, departments, executiveRoles, workers }) {
   const isFullHierarchy = executiveRoles !== undefined || workers !== undefined;
 
@@ -70,7 +77,13 @@ export default function OrganisationStructureVisual({ organisationName, departme
             <div className="org-structure-band">
               {workers.map((worker) => (
                 <div key={worker.id} className="org-structure-worker-card">
-                  {worker.name}
+                  <span className="org-structure-worker-name">{worker.name}</span>
+                  {worker.departmentLabel && (
+                    <span className="org-structure-worker-tag">{worker.departmentLabel}</span>
+                  )}
+                  {worker.executiveOwnerLabel && (
+                    <span className="org-structure-worker-tag">owned by {worker.executiveOwnerLabel}</span>
+                  )}
                 </div>
               ))}
             </div>

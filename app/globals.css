@@ -773,6 +773,12 @@ a {
 .org-structure-worker-card {
   color:#fff;
 }
+.org-structure-worker-name {
+  font-weight:700;color:#fff;
+}
+.org-structure-worker-tag {
+  font-size:12px;color:var(--soft);
+}
 .org-structure-dept-name {
   font-weight:700;color:#fff;
 }
@@ -842,4 +848,80 @@ a {
 }
 .wizard-step3-role-toggle.selected .wizard-step3-role-check {
   color:#fff;
+}
+/* CUSTOMER_ONBOARDING_WIZARD_V1.md Step 4 -- Digital Workforce. Template
+   grid/card share Step 2's own template styling (combined selector,
+   same visual language for "pick a starter, then customise it"). */
+.wizard-step2-template-grid, .wizard-step4-template-grid {
+  display:grid;grid-template-columns:repeat(auto-fill, minmax(200px, 1fr));gap:12px;margin:12px 0 28px;
+}
+.wizard-step2-template-card {
+  text-align:left;display:flex;flex-direction:column;gap:4px;border:1px solid var(--line);border-radius:16px;padding:14px 16px;background:rgba(255,255,255,.02);color:#fff;cursor:pointer;font:inherit;
+}
+.wizard-step2-template-card:hover {
+  border-color:rgba(255,255,255,.4);
+}
+.wizard-step2-template-card.selected {
+  border-color:#fff;background:rgba(255,255,255,.08);
+}
+/* Step 4's own card is a <div> wrapping a <button> (the pick action)
+   plus a sibling <details> (the guidance disclosure) -- a <details>
+   cannot safely nest inside a <button> (nested interactive content),
+   so unlike Step 2's card the whole card itself isn't the button. */
+.wizard-step4-template-card {
+  display:flex;flex-direction:column;gap:4px;border:1px solid var(--line);border-radius:16px;padding:14px 16px;background:rgba(255,255,255,.02);
+}
+.wizard-step4-template-card:hover {
+  border-color:rgba(255,255,255,.4);
+}
+.wizard-step4-template-card.selected {
+  border-color:#fff;background:rgba(255,255,255,.08);
+}
+.wizard-step4-template-pick {
+  text-align:left;display:flex;flex-direction:column;gap:4px;border:0;background:none;color:#fff;cursor:pointer;font:inherit;padding:0;width:100%;
+}
+.wizard-step4-template-name {
+  font-weight:700;
+}
+.wizard-step4-template-desc {
+  font-size:12px;color:var(--soft);
+}
+.wizard-step4-template-more {
+  margin-top:4px;
+}
+.wizard-step4-template-more summary {
+  font-size:12px;color:var(--soft);cursor:pointer;
+}
+.wizard-step4-template-more dl {
+  margin:8px 0 0;display:grid;gap:6px;
+}
+.wizard-step4-template-more dt {
+  font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--soft);
+}
+.wizard-step4-template-more dd {
+  margin:0;font-size:13px;color:#fff;
+}
+.wizard-step4-worker-list {
+  list-style:none;margin:28px 0 0;padding:0;display:grid;gap:12px;
+}
+.wizard-step4-worker-item {
+  border:1px solid var(--line);border-radius:16px;padding:16px 20px;display:grid;gap:10px;
+}
+.wizard-step4-worker-item-head {
+  display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;
+}
+.wizard-step4-worker-name {
+  font-weight:700;color:#fff;margin:0;
+}
+.wizard-step4-worker-role {
+  font-size:12px;color:var(--soft);text-transform:capitalize;
+}
+.wizard-step4-worker-assign {
+  display:flex;gap:12px;flex-wrap:wrap;
+}
+.wizard-step4-worker-assign label {
+  font-size:12px;color:var(--soft);display:block;margin-bottom:4px;
+}
+.wizard-step4-worker-assign select {
+  min-width:180px;
 }
