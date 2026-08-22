@@ -747,14 +747,31 @@ a {
 .org-structure-empty {
   margin:0;
 }
-.org-structure-departments {
-  display:flex;flex-wrap:wrap;justify-content:center;gap:16px;border-top:1px solid var(--line);padding-top:24px;
+/* CUSTOMER_ONBOARDING_WIZARD_V1.md Step 3 -- extends the visual to the
+   full Organisation -> Executive Team -> Departments -> Workers
+   hierarchy. `.org-structure-tier` wraps each band; `.org-structure-band`
+   is the actual card row (renamed from the old, single-tier-only
+   `.org-structure-departments` -- reused for all three bands now). */
+.org-structure-tier {
+  border-top:1px solid var(--line);padding-top:20px;margin-top:20px;
 }
-.org-structure-dept-card {
+.org-structure-tier:first-of-type {
+  margin-top:0;
+}
+.org-structure-tier-label {
+  font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--soft);margin:0 0 12px;
+}
+.org-structure-band {
+  display:flex;flex-wrap:wrap;justify-content:center;gap:16px;
+}
+.org-structure-dept-card, .org-structure-role-card, .org-structure-worker-card {
   position:relative;display:flex;flex-direction:column;gap:4px;border:1px solid var(--line);border-radius:14px;padding:12px 18px;min-width:120px;background:#0b0b0b;
 }
-.org-structure-dept-card::before {
-  content:'';position:absolute;top:-25px;left:50%;width:1px;height:24px;background:var(--line);
+.org-structure-role-card {
+  font-weight:700;color:#fff;border-color:rgba(255,255,255,.3);
+}
+.org-structure-worker-card {
+  color:#fff;
 }
 .org-structure-dept-name {
   font-weight:700;color:#fff;
@@ -797,4 +814,32 @@ a {
 }
 .wizard-step2-edit-actions {
   display:flex;gap:12px;
+}
+/* CUSTOMER_ONBOARDING_WIZARD_V1.md Step 3 -- Executive Structure. */
+.wizard-step3-orchestrator-card {
+  border:1px solid var(--line);border-radius:20px;background:rgba(255,255,255,.03);padding:20px 24px;margin-bottom:28px;display:flex;align-items:flex-start;gap:10px;
+}
+.wizard-step3-orchestrator-card p {
+  margin:0;
+}
+.wizard-step3-role-grid {
+  display:grid;grid-template-columns:repeat(auto-fill, minmax(180px, 1fr));gap:12px;margin:12px 0 28px;
+}
+.wizard-step3-role-toggle {
+  text-align:left;display:flex;align-items:center;justify-content:space-between;gap:8px;border:1px solid var(--line);border-radius:16px;padding:14px 16px;background:rgba(255,255,255,.02);color:#fff;cursor:pointer;font:inherit;font-weight:700;
+}
+.wizard-step3-role-toggle:hover {
+  border-color:rgba(255,255,255,.4);
+}
+.wizard-step3-role-toggle.selected {
+  border-color:#fff;background:rgba(255,255,255,.08);
+}
+.wizard-step3-role-toggle:disabled {
+  opacity:.5;cursor:not-allowed;
+}
+.wizard-step3-role-check {
+  font-size:12px;color:var(--soft);
+}
+.wizard-step3-role-toggle.selected .wizard-step3-role-check {
+  color:#fff;
 }

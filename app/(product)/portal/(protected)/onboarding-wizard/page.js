@@ -4,10 +4,13 @@ import { isAtLeastRole } from '@/lib/roles';
 import { fetchMyOrganisationIdentity, fetchOrganisationSummary } from '@/lib/api/dashboard';
 import { fetchOnboardingWizardProgress } from '@/lib/api/onboardingWizard';
 import { fetchDepartments } from '@/lib/api/departments';
+import { fetchExecutiveRoles } from '@/lib/api/executiveRoles';
+import { fetchWorkerList } from '@/lib/api/workers';
 import { settle, errorMessage } from '@/lib/api/results';
 import { ONBOARDING_WIZARD_STEPS } from '@/lib/onboardingWizardSteps';
 import OnboardingWizardStep1 from '@/components/portal/OnboardingWizardStep1';
 import OnboardingWizardStep2 from '@/components/portal/OnboardingWizardStep2';
+import OnboardingWizardStep3 from '@/components/portal/OnboardingWizardStep3';
 
 export const metadata = {
   title: 'Organisation Setup | Teracom AI Portal',
@@ -40,19 +43,25 @@ export default async function OnboardingWizardPage() {
 
   const isAdmin = isAtLeastRole(decodeJwtPayload(token)?.role, 'admin');
 
-  const [identityResult, progressResult, summaryResult, departmentsResult] = await Promise.allSettled([
-    fetchMyOrganisationIdentity(token),
-    fetchOnboardingWizardProgress(token),
-    isAdmin ? fetchOrganisationSummary(token) : Promise.resolve(null),
-    isAdmin ? fetchDepartments(token) : Promise.resolve(null),
-  ]);
+  const [identityResult, progressResult, summaryResult, departmentsResult, executiveRolesResult, workersResult] =
+    await Promise.allSettled([
+      fetchMyOrganisationIdentity(token),
+      fetchOnboardingWizardProgress(token),
+      isAdmin ? fetchOrganisationSummary(token) : Promise.resolve(null),
+      isAdmin ? fetchDepartments(token) : Promise.resolve(null),
+      isAdmin ? fetchExecutiveRoles(token) : Promise.resolve(null),
+      isAdmin ? fetchWorkerList(token) : Promise.resolve(null),
+    ]);
 
   const identity = settle(identityResult);
   const progress = settle(progressResult);
   const summary = settle(summaryResult);
   const departments = settle(departmentsResult);
+  const executiveRoles = settle(executiveRolesResult);
+  const workers = settle(workersResult);
   const completedSteps = progress.value?.completed_steps ?? [];
   const step1Done = completedSteps.includes(1);
+  const step2Done = completedSteps.includes(2);
 
   return (
     <main>
@@ -136,7 +145,32 @@ export default async function OnboardingWizardPage() {
               <OnboardingWizardStep2
                 organisationName={identity.value.name}
                 initialDepartments={departments.value ?? []}
-                stepAlreadyCompleted={completedSteps.includes(2)}
+                stepAlreadyCompleted={step2Done}
+              />
+            )}
+          </div>
+        </section>
+      )}
+
+      {isAdmin && !identity.error && (
+        <section className="section alt">
+          <div className="container">
+            {!step2Done ? (
+              <p className="activity-meta">
+                Complete organisation structure above first, then come back here to set up your
+                executive team.
+              </p>
+            ) : executiveRoles.error || workers.error ? (
+              <p className="form-error" role="alert">
+                {errorMessage(executiveRoles.error || workers.error)}
+              </p>
+            ) : (
+              <OnboardingWizardStep3
+                organisationName={identity.value.name}
+                initialExecutiveRoles={executiveRoles.value ?? []}
+                departments={departments.value ?? []}
+                workers={workers.value ?? []}
+                stepAlreadyCompleted={completedSteps.includes(3)}
               />
             )}
           </div>
