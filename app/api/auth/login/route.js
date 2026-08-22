@@ -27,8 +27,8 @@ export async function POST(request) {
 
     const user = await fetchCurrentUser(accessToken);
 
-    setSessionCookie(accessToken);
-    setRefreshCookie(refreshToken);
+    setSessionCookie(request, accessToken);
+    setRefreshCookie(request, refreshToken);
 
     return NextResponse.json({ user });
   } catch (error) {

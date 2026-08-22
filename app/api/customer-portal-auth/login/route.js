@@ -32,8 +32,8 @@ export async function POST(request) {
 
     const portalContact = await fetchCurrentPortalContact(accessToken);
 
-    setPortalContactSessionCookie(accessToken);
-    setPortalContactRefreshCookie(refreshToken);
+    setPortalContactSessionCookie(request, accessToken);
+    setPortalContactRefreshCookie(request, refreshToken);
 
     return NextResponse.json({ portalContact });
   } catch (error) {

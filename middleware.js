@@ -8,6 +8,7 @@ import {
 } from '@/lib/api/constants';
 import { BACKEND_API_URL } from '@/lib/config';
 import { decodeExpiry } from '@/lib/api/edgeJwt';
+import { isSecureRequest } from '@/lib/api/requestProtocol';
 
 // "Package SEC1" — access tokens shrank from 60 to 15 minutes once a
 // real, revocable refresh token existed to carry the long-lived
@@ -122,7 +123,7 @@ export async function middleware(request) {
     if (refreshedAccessToken) {
       response.cookies.set(PORTAL_CONTACT_SESSION_COOKIE_NAME, refreshedAccessToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
+        secure: isSecureRequest(request),
         sameSite: 'lax',
         path: '/',
         maxAge: maxAgeForToken(refreshedAccessToken),
@@ -156,7 +157,7 @@ export async function middleware(request) {
   if (refreshedAccessToken) {
     response.cookies.set(SESSION_COOKIE_NAME, refreshedAccessToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: isSecureRequest(request),
       sameSite: 'lax',
       path: '/',
       maxAge: maxAgeForToken(refreshedAccessToken),
