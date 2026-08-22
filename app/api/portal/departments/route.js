@@ -30,7 +30,7 @@ export async function POST(request) {
   }
 
   try {
-    const data = await createDepartment(token, parsed.name, parsed.description);
+    const data = await createDepartment(token, parsed.name, parsed.description, parsed.purpose, parsed.function);
     return NextResponse.json(data);
   } catch (error) {
     if (error instanceof ApiError) {

@@ -3,9 +3,11 @@ import { decodeJwtPayload } from '@/lib/api/jwt';
 import { isAtLeastRole } from '@/lib/roles';
 import { fetchMyOrganisationIdentity, fetchOrganisationSummary } from '@/lib/api/dashboard';
 import { fetchOnboardingWizardProgress } from '@/lib/api/onboardingWizard';
+import { fetchDepartments } from '@/lib/api/departments';
 import { settle, errorMessage } from '@/lib/api/results';
 import { ONBOARDING_WIZARD_STEPS } from '@/lib/onboardingWizardSteps';
 import OnboardingWizardStep1 from '@/components/portal/OnboardingWizardStep1';
+import OnboardingWizardStep2 from '@/components/portal/OnboardingWizardStep2';
 
 export const metadata = {
   title: 'Organisation Setup | Teracom AI Portal',
@@ -38,15 +40,19 @@ export default async function OnboardingWizardPage() {
 
   const isAdmin = isAtLeastRole(decodeJwtPayload(token)?.role, 'admin');
 
-  const [identityResult, progressResult, summaryResult] = await Promise.allSettled([
+  const [identityResult, progressResult, summaryResult, departmentsResult] = await Promise.allSettled([
     fetchMyOrganisationIdentity(token),
     fetchOnboardingWizardProgress(token),
     isAdmin ? fetchOrganisationSummary(token) : Promise.resolve(null),
+    isAdmin ? fetchDepartments(token) : Promise.resolve(null),
   ]);
 
   const identity = settle(identityResult);
   const progress = settle(progressResult);
   const summary = settle(summaryResult);
+  const departments = settle(departmentsResult);
+  const completedSteps = progress.value?.completed_steps ?? [];
+  const step1Done = completedSteps.includes(1);
 
   return (
     <main>
@@ -105,11 +111,37 @@ export default async function OnboardingWizardPage() {
               initialCountry={summary.value?.country ?? null}
               initialBusinessSize={summary.value?.business_size ?? null}
               hasLogo={Boolean(identity.value.logo_ref)}
-              stepAlreadyCompleted={(progress.value?.completed_steps ?? []).includes(1)}
+              hasFavicon={Boolean(summary.value?.favicon_ref)}
+              initialPrimaryColor={summary.value?.primary_brand_color ?? null}
+              initialSecondaryColor={summary.value?.secondary_brand_color ?? null}
+              stepAlreadyCompleted={step1Done}
             />
           )}
         </div>
       </section>
+
+      {isAdmin && !identity.error && (
+        <section className="section">
+          <div className="container">
+            {!step1Done ? (
+              <p className="activity-meta">
+                Complete organisation setup above first, then come back here to build your
+                organisation structure.
+              </p>
+            ) : departments.error ? (
+              <p className="form-error" role="alert">
+                {errorMessage(departments.error)}
+              </p>
+            ) : (
+              <OnboardingWizardStep2
+                organisationName={identity.value.name}
+                initialDepartments={departments.value ?? []}
+                stepAlreadyCompleted={completedSteps.includes(2)}
+              />
+            )}
+          </div>
+        </section>
+      )}
     </main>
   );
 }

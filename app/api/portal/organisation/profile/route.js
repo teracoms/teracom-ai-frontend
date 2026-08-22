@@ -5,7 +5,8 @@ import { updateOrganisationProfile } from '@/lib/api/dashboard';
 import { ApiError } from '@/lib/api/client';
 
 // Same-origin proxy for the wizard's Organisation Setup step ->
-// PATCH /organisations/profile (country/business_size).
+// PATCH /organisations/profile (country/business_size, and CUSTOMER_
+// ONBOARDING_WIZARD_V1.md Step 2's primary_brand_color/secondary_brand_color).
 export async function PATCH(request) {
   const token = getSessionToken();
 

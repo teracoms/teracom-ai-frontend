@@ -16,6 +16,9 @@ export default function OnboardingWizardStep1({
   initialCountry,
   initialBusinessSize,
   hasLogo,
+  hasFavicon,
+  initialPrimaryColor,
+  initialSecondaryColor,
   stepAlreadyCompleted,
 }) {
   const router = useRouter();
@@ -27,6 +30,14 @@ export default function OnboardingWizardStep1({
   const [businessSize, setBusinessSize] = useState(initialBusinessSize ?? '');
   const [logoPreview, setLogoPreview] = useState(hasLogo ? '/api/portal/organisation/logo' : null);
   const [logoFile, setLogoFile] = useState(null);
+  // CUSTOMER_ONBOARDING_WIZARD_V1.md Step 2 requirement #5, "Branding
+  // Updates" -- extends this same Organisation Setup step, not a new
+  // wizard step, matching the requirement's own wording ("Extend
+  // Organisation Setup to support...").
+  const [faviconPreview, setFaviconPreview] = useState(hasFavicon ? '/api/portal/organisation/favicon' : null);
+  const [faviconFile, setFaviconFile] = useState(null);
+  const [primaryColor, setPrimaryColor] = useState(initialPrimaryColor ?? '#000000');
+  const [secondaryColor, setSecondaryColor] = useState(initialSecondaryColor ?? '#ffffff');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
   const [completed, setCompleted] = useState(stepAlreadyCompleted);
@@ -36,6 +47,13 @@ export default function OnboardingWizardStep1({
     if (!file) return;
     setLogoFile(file);
     setLogoPreview(URL.createObjectURL(file));
+  }
+
+  function handleFaviconChange(event) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    setFaviconFile(file);
+    setFaviconPreview(URL.createObjectURL(file));
   }
 
   async function handleSubmit(event) {
@@ -54,6 +72,14 @@ export default function OnboardingWizardStep1({
         if (!response.ok) throw new Error(data.error || 'Unable to upload logo.');
       }
 
+      if (faviconFile) {
+        const formData = new FormData();
+        formData.append('file', faviconFile);
+        const response = await fetch('/api/portal/organisation/favicon', { method: 'POST', body: formData });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(data.error || 'Unable to upload favicon.');
+      }
+
       if (resolvedIndustry) {
         const response = await fetch('/api/portal/organisation/industry', {
           method: 'PATCH',
@@ -64,13 +90,18 @@ export default function OnboardingWizardStep1({
         if (!response.ok) throw new Error(data.error || 'Unable to save industry.');
       }
 
-      if (country.trim() || businessSize) {
+      const primaryChanged = primaryColor !== (initialPrimaryColor ?? '#000000');
+      const secondaryChanged = secondaryColor !== (initialSecondaryColor ?? '#ffffff');
+
+      if (country.trim() || businessSize || primaryChanged || secondaryChanged) {
         const response = await fetch('/api/portal/organisation/profile', {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             country: country.trim() || undefined,
             business_size: businessSize || undefined,
+            primary_brand_color: primaryChanged ? primaryColor : undefined,
+            secondary_brand_color: secondaryChanged ? secondaryColor : undefined,
           }),
         });
         const data = await response.json().catch(() => ({}));
@@ -129,6 +160,44 @@ export default function OnboardingWizardStep1({
             initials shown instead until you add one.</p>
         )}
         <input id="wizard-logo" type="file" accept=".png,.jpg,.jpeg,.svg,.webp" onChange={handleLogoChange} />
+      </div>
+
+      <div>
+        <label htmlFor="wizard-favicon">Favicon</label>
+        {faviconPreview ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={faviconPreview}
+            alt="Organisation favicon preview"
+            style={{ width: 32, height: 32, objectFit: 'contain', borderRadius: 4, marginBottom: 8 }}
+          />
+        ) : (
+          <p className="activity-meta">No favicon uploaded yet — optional, shown in the browser tab.</p>
+        )}
+        <input id="wizard-favicon" type="file" accept=".png,.ico,.svg" onChange={handleFaviconChange} />
+      </div>
+
+      <div>
+        <label htmlFor="wizard-primary-color">Primary brand colour</label>
+        <input
+          id="wizard-primary-color"
+          type="color"
+          value={primaryColor}
+          onChange={(event) => setPrimaryColor(event.target.value)}
+          style={{ width: 64, height: 40, padding: 2 }}
+        />
+        <p className="activity-meta">Recorded on your organisation now — applying it across the portal is planned separately.</p>
+      </div>
+
+      <div>
+        <label htmlFor="wizard-secondary-color">Secondary brand colour</label>
+        <input
+          id="wizard-secondary-color"
+          type="color"
+          value={secondaryColor}
+          onChange={(event) => setSecondaryColor(event.target.value)}
+          style={{ width: 64, height: 40, padding: 2 }}
+        />
       </div>
 
       <div>
