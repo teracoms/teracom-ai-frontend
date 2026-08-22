@@ -65,8 +65,8 @@ export default function AiConciergePlaceholder() {
 
         <div className="mini-services" style={{ marginTop: '18px' }}>
           <Link href="/portal/start-trial">Start Trial</Link>
-          <Link href="/?interest=Request+Demo#contact">Request Demo</Link>
-          <Link href="/?interest=Talk+to+Sales#contact">Talk to Sales</Link>
+          <Link href="https://www.teracomsolutions.com.au/?interest=Request+Demo#contact">Request Demo</Link>
+          <Link href="https://www.teracomsolutions.com.au/?interest=Talk+to+Sales#contact">Talk to Sales</Link>
           <button type="button" className={openTopic === 'trial' ? 'active' : ''} onClick={() => toggleTopic('trial')}>
             Trial questions
           </button>

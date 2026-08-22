@@ -6,6 +6,8 @@ This is a living snapshot — update the table below in the same change that shi
 
 **Correction (2026-08-21, Website/Application Separation Phase 4 + repository-audit cleanup):** the "Stack," "off-limits to redesign," and "known unused asset" sections below described the pre-split combined app (this repo serving both the marketing/commerce website and the product portal). Phase 4 moved every website/commerce file — `Header.js`, `Footer.js`, `ExpertisePartners.js`, `CheckoutButton.js`, `app/(marketing)/**` (`/`, `/securityos-ai`, `/store`, `/checkout/*`), `stripe`/`zoho` — to a new repository, `teracom-solutions-website`. Those three sections are corrected below to reflect that; **the package-by-package table, test/build health numbers, and "Last verified" date above are NOT corrected here** — they were already stale before Phase 4 (last updated at Package 9, 2026-08-15; this repo has since had many more packages, waves, and 314 tests, not 90) and bringing that table current is a larger, separate documentation task, not something this cleanup pass attempted.
 
+**Further correction (2026-08-22, `UI_DECOUPLING_PLAN_V1.md`):** the "Stack" section's styling description below is now also stale. The shared `@teracoms/ui` package described there has been dissolved; this repo owns its own `app/globals.css` outright, with no cross-repository dependency.
+
 ---
 
 ## Stack, as it exists today

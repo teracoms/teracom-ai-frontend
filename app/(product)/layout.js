@@ -1,4 +1,4 @@
-import '@teracoms/ui/globals.css';
+import '../globals.css';
 
 export const metadata = {
   title: 'Teracom AI Portal',

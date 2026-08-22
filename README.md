@@ -19,29 +19,28 @@ carries only the product application.
 ## Repository layout
 
 ```text
-app/(product)/
-  layout.js                     product root layout (no marketing chrome)
-  portal/                       the Teracom AI product portal
-  customer-portal/              customer-facing portal
-  auth/, customer-portal-auth/  auth flows
-  portal-contact/               contact form
-  api/                          backend proxy routes for the above
+app/
+  globals.css                   this app's own design tokens/component classes
+  (product)/
+    layout.js                   product root layout (no marketing chrome)
+    portal/                     the Teracom AI product portal
+    customer-portal/            customer-facing portal
+    auth/, customer-portal-auth/ auth flows
+    portal-contact/             contact form
+    api/                        backend proxy routes for the above
 components/, lib/               shared UI/logic used by the product
 ```
 
-## Shared design system
+## Design system
 
-Visual styling (CSS custom properties, `.btn`/`.hero`/`.section`/etc. class
-vocabulary) comes from the `@teracoms/ui` package, not a local
-`globals.css`. See `../teracom-ui/README.md`. This repo expects
-`teracom-ui` checked out as a sibling directory:
-
-```text
-teracom-ai/
-  frontend/                    (this repo, teracom-ai-frontend)
-  teracom-ui/
-  teracom-solutions-website/
-```
+Visual styling (CSS custom properties, `.btn`/`.hero`/`.section`/`.portal-*`
+etc. class vocabulary) lives entirely in this repo's own `app/globals.css`.
+Per `UI_DECOUPLING_PLAN_V1.md` (2026-08-22), the former shared `@teracoms/ui`
+package has been dissolved: this app no longer has any cross-repository
+dependency, and can be built and deployed — including at a customer site —
+without checking out any other repository. Edit `app/globals.css` directly
+for any visual change; there is no longer a second file or repository to
+keep in sync.
 
 ## Environment variables
 

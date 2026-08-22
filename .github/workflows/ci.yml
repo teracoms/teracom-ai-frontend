@@ -18,14 +18,9 @@ name: CI
 # builds and boots on its own, without requiring teracom-ai-backend to
 # be running anywhere.
 #
-# package.json depends on @teracoms/ui via a local `file:../teracom-ui`
-# path (see README.md), so this repo and teracoms/teracom-ui are checked
-# out as siblings under the same workspace below rather than this repo
-# alone — npm ci's install of that dependency resolves that relative
-# path the same way it does on a developer's machine. This assumes a
-# `teracoms/teracom-ui` remote exists; harmless if it doesn't yet, since
-# this whole workflow is inert until this repo itself has a remote to
-# run it against.
+# UI_DECOUPLING_PLAN_V1.md (2026-08-22): this repo now owns its own
+# app/globals.css outright — the former @teracoms/ui local `file:`
+# dependency (and the sibling-repo checkout it required) is gone.
 
 on:
   push:
@@ -44,12 +39,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           path: teracom-ai-frontend
-
-      - name: Checkout @teracoms/ui (sibling, for the local file: dependency)
-        uses: actions/checkout@v4
-        with:
-          repository: teracoms/teracom-ui
-          path: teracom-ui
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
