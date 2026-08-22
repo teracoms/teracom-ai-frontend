@@ -11,6 +11,7 @@ import {
   fetchMyOrganisationIdentity,
 } from '@/lib/api/dashboard';
 import { fetchOnboardingWizardProgress } from '@/lib/api/onboardingWizard';
+import { fetchUserSettings } from '@/lib/api/userSettings';
 import { settle, errorMessage, isForbidden } from '@/lib/api/results';
 import StatTile from '@/components/portal/StatTile';
 import ActivitySection from '@/components/portal/ActivitySection';
@@ -46,15 +47,23 @@ export default async function DashboardPage() {
   // Each section's data comes from an independent backend call — Promise.allSettled
   // so that one endpoint failing (e.g. the admin-only /organisations/ call for a
   // non-admin user) doesn't take down the sections that succeeded.
-  const [dashboardResult, activityResult, chatAnalyticsResult, organisationResult, identityResult, wizardProgressResult] =
-    await Promise.allSettled([
-      fetchPortalDashboard(token),
-      fetchRecentActivity(token),
-      fetchChatAnalytics(token),
-      fetchOrganisationSummary(token),
-      fetchMyOrganisationIdentity(token),
-      fetchOnboardingWizardProgress(token),
-    ]);
+  const [
+    dashboardResult,
+    activityResult,
+    chatAnalyticsResult,
+    organisationResult,
+    identityResult,
+    wizardProgressResult,
+    settingsResult,
+  ] = await Promise.allSettled([
+    fetchPortalDashboard(token),
+    fetchRecentActivity(token),
+    fetchChatAnalytics(token),
+    fetchOrganisationSummary(token),
+    fetchMyOrganisationIdentity(token),
+    fetchOnboardingWizardProgress(token),
+    fetchUserSettings(token),
+  ]);
 
   const dashboard = settle(dashboardResult);
   const activity = settle(activityResult);
@@ -62,6 +71,16 @@ export default async function DashboardPage() {
   const organisation = settle(organisationResult);
   const identity = settle(identityResult);
   const wizardProgress = settle(wizardProgressResult);
+  const settings = settle(settingsResult);
+
+  // Settings & Security V1 -- Dashboard Preferences. Defaults to true
+  // (services/settings_service.py#DEFAULT_PREFERENCES), matching this
+  // page's own pre-existing hardcoded .section-compact everywhere below
+  // exactly, so nobody who hasn't touched Settings sees any change.
+  // Explicitly opting out (false) is the real, functioning toggle -- it
+  // switches to the more spacious .section variant instead.
+  const compactDensity = settings.error ? true : settings.value.preferences.dashboard.compact_density;
+  const contentSectionClass = compactDensity ? 'section section-compact' : 'section';
 
   const organisationRestricted = isForbidden(organisation.error);
   const canCreateWorker = isAtLeastRole(decodeJwtPayload(token)?.role, 'admin');
@@ -82,7 +101,7 @@ export default async function DashboardPage() {
         </div>
       </section>
 
-      <section className="section section-compact">
+      <section className={contentSectionClass}>
         <div className="container">
           <OnboardingWizardStatusBanner progress={wizardProgress.error ? null : wizardProgress.value} />
           {isBrandNewOrganisation && (
@@ -143,7 +162,7 @@ export default async function DashboardPage() {
         </div>
       </section>
 
-      <section className="section section-compact">
+      <section className={contentSectionClass}>
         <div className="container">
           <div className="section-heading left">
             <span className="eyebrow">Explore your workspace</span>
@@ -153,7 +172,7 @@ export default async function DashboardPage() {
         </div>
       </section>
 
-      <section className="section section-compact alt">
+      <section className={`${contentSectionClass} alt`}>
         <div className="container dashboard-columns">
           <div>
             <span className="eyebrow">Organisation summary</span>
@@ -196,7 +215,7 @@ export default async function DashboardPage() {
         </div>
       </section>
 
-      <section className="section section-compact">
+      <section className={contentSectionClass}>
         <div className="container">
           <div className="section-heading left">
             <span className="eyebrow">Recent activity</span>

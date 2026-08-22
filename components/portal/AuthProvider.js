@@ -41,10 +41,46 @@ export function AuthProvider({ initialUser = null, children }) {
         throw new Error(message);
       }
 
+      // "Settings & Security V1" -- an account with MFA enabled gets a
+      // challenge instead of a signed-in session; the caller (LoginForm)
+      // switches to a code-entry step and calls verifyMfaLogin below.
+      // No user is set yet -- there is no session yet.
+      if (data.mfaRequired) {
+        return { mfaRequired: true, challengeToken: data.challengeToken };
+      }
+
       setUser(data.user);
       return data.user;
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Unable to sign in.';
+      setError(message);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const verifyMfaLogin = useCallback(async (challengeToken, code) => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch('/api/auth/mfa-verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ challenge_token: challengeToken, code }),
+      });
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(data.error || 'That code is incorrect or has expired.');
+      }
+
+      setUser(data.user);
+      return data.user;
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'That code is incorrect or has expired.';
       setError(message);
       throw err;
     } finally {
@@ -66,7 +102,7 @@ export function AuthProvider({ initialUser = null, children }) {
   }, [router]);
 
   return (
-    <AuthContext.Provider value={{ user, loading, error, login, logout, setError }}>
+    <AuthContext.Provider value={{ user, loading, error, login, verifyMfaLogin, logout, setError }}>
       {children}
     </AuthContext.Provider>
   );

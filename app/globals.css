@@ -1092,3 +1092,22 @@ a {
 .wizard-step9-next-actions {
   list-style:none;margin:12px 0 0;padding:0;display:grid;gap:8px;
 }
+
+/* Settings & Security V1 -- Accessibility preferences, applied by
+   components/portal/AccessibilityPreferences.js toggling these two
+   classes on <body>. Reduce Motion: the standard "kill all motion"
+   pattern. Larger Text: `zoom` (not a root font-size bump) so it
+   scales every element uniformly, including this design system's many
+   explicit-px sizes (clamp() headings, 18px body copy, etc.) that a
+   plain rem-based scale would miss entirely. */
+body.a11y-reduce-motion *,
+body.a11y-reduce-motion *::before,
+body.a11y-reduce-motion *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  scroll-behavior: auto !important;
+}
+body.a11y-larger-text {
+  zoom: 1.15;
+}

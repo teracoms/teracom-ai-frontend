@@ -2,8 +2,10 @@ import { redirect } from 'next/navigation';
 
 import { getSessionUser, getSessionToken } from '@/lib/api/auth';
 import { fetchMyOrganisationIdentity } from '@/lib/api/dashboard';
+import { fetchUserSettings } from '@/lib/api/userSettings';
 import { AuthProvider } from '@/components/portal/AuthProvider';
 import PortalNav from '@/components/portal/PortalNav';
+import AccessibilityPreferences from '@/components/portal/AccessibilityPreferences';
 
 // Authoritative session guard for every /portal route except /portal/login.
 // middleware.js already redirects requests with no session cookie before
@@ -55,8 +57,24 @@ export default async function ProtectedPortalLayout({ children }) {
     organisationName = null;
   }
 
+  // Settings & Security V1 -- Accessibility preferences (Reduce Motion,
+  // Larger Text). Best-effort, same posture as the organisation-identity
+  // fetch above: a failure here shouldn't take down the whole portal,
+  // it just means these two preferences don't apply for this page load.
+  let accessibility = { reduce_motion: false, larger_text: false };
+  try {
+    const token = getSessionToken();
+    const settings = token ? await fetchUserSettings(token) : null;
+    if (settings?.preferences?.accessibility) {
+      accessibility = settings.preferences.accessibility;
+    }
+  } catch {
+    accessibility = { reduce_motion: false, larger_text: false };
+  }
+
   return (
     <AuthProvider initialUser={user}>
+      <AccessibilityPreferences reduceMotion={accessibility.reduce_motion} largerText={accessibility.larger_text} />
       <PortalNav organisationName={organisationName} hasLogo={hasLogo} />
       {children}
     </AuthProvider>

@@ -20,10 +20,28 @@ export async function POST(request) {
   }
 
   try {
-    const { access_token: accessToken, refresh_token: refreshToken } = await loginWithCredentials(
+    const loginResult = await loginWithCredentials(
       credentials.email,
-      credentials.password
+      credentials.password,
+      request.headers.get('user-agent')
     );
+
+    // "Settings & Security V1" -- an account with MFA enabled gets a
+    // short-lived challenge token instead of real tokens; no cookies
+    // are set yet. The client collects a code and redeems it via
+    // POST /api/auth/mfa-verify (app/api/auth/mfa-verify/route.js),
+    // which sets these same two cookies on success. Every account
+    // WITHOUT MFA enabled (the default) is completely unaffected --
+    // loginResult still has access_token/refresh_token exactly as
+    // before.
+    if (loginResult.mfa_required) {
+      return NextResponse.json({
+        mfaRequired: true,
+        challengeToken: loginResult.mfa_challenge_token,
+      });
+    }
+
+    const { access_token: accessToken, refresh_token: refreshToken } = loginResult;
 
     const user = await fetchCurrentUser(accessToken);
 
