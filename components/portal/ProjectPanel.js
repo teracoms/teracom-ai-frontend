@@ -278,6 +278,7 @@ export default function ProjectPanel({ departmentId, departments, projects, task
                       >
                         <option value="active">Active</option>
                         <option value="completed">Completed</option>
+                        <option value="blocked">Blocked</option>
                       </select>{' '}
                     </>
                   )}
