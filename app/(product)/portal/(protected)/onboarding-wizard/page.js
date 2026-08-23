@@ -21,16 +21,18 @@ import OnboardingWizardStep8 from '@/components/portal/OnboardingWizardStep8';
 import OnboardingWizardStep9 from '@/components/portal/OnboardingWizardStep9';
 
 export const metadata = {
-  title: 'Organisation Setup | Teracom AI Portal',
+  title: 'Organisation Workflow Wizard | Teracom AI Portal',
 };
 
 /**
  * CUSTOMER_ONBOARDING_WIZARD_V1.md -- Wizard Framework V1 entry point.
- * Renders the full 9-step shape (ONBOARDING_WIZARD_STEPS) so the
- * framework is testable end-to-end, but only step 1's content is real
- * -- steps 2-9 are shown as "coming soon", not built, per instruction
- * (Executive hierarchy automation, Platform administration, Tenant
- * redesign, and Marketplace automation all remain design-only).
+ * Renders the full 9-step shape (ONBOARDING_WIZARD_STEPS) -- all nine
+ * are real as of Wizard Framework V1-V5 (see onboardingWizardSteps.js),
+ * not "coming soon" placeholders. UI Review Sprint V1 -- reframed from a
+ * one-time onboarding flow to a permanently-available Organisation
+ * Workflow Wizard: every step remains revisitable after completion to
+ * add departments, executive roles, workers, knowledge, governance
+ * rules, or integrations, not just to complete first-time setup.
  */
 export default async function OnboardingWizardPage() {
   const token = getSessionToken();
@@ -40,9 +42,9 @@ export default async function OnboardingWizardPage() {
       <main>
         <section className="section">
           <div className="container">
-            <span className="eyebrow">Organisation Setup</span>
+            <span className="eyebrow">Organisation Workflow Wizard</span>
             <h1>Your session has ended.</h1>
-            <p className="lead">Please sign in again to continue setup.</p>
+            <p className="lead">Please sign in again to continue.</p>
           </div>
         </section>
       </main>
@@ -100,11 +102,13 @@ export default async function OnboardingWizardPage() {
       <section className="hero hero-product">
         <div className="container">
           <div className="hero-copy">
-            <span className="eyebrow">Organisation Setup</span>
-            <h1>Set up {identity.value?.name ?? 'your organisation'}.</h1>
+            <span className="eyebrow">Organisation Workflow Wizard</span>
+            <h1>Manage {identity.value?.name ?? 'your organisation'}&apos;s setup.</h1>
             <p className="lead">
-              A short, guided setup — no documentation required. This is the foundation of a longer
-              wizard; more steps are on the way.
+              Nine guided steps for building and maintaining your organisation — departments,
+              executive roles, workers, knowledge, governance, and integrations. Available any time,
+              not just for first-time setup — revisit a step whenever you need to add or change
+              something.
             </p>
           </div>
         </div>

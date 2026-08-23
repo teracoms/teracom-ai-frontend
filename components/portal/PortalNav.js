@@ -26,10 +26,6 @@ import { GROUPS } from '@/lib/portalNavGroups';
 const TOP_LEVEL_LINKS = [
   { href: '/portal/dashboard', label: 'Dashboard' },
   { href: '/portal/onboarding', label: 'Onboarding' },
-  // Settings & Security V1 -- every signed-in user's own account
-  // settings, not admin-gated (distinct from Organisation Security
-  // below, which is).
-  { href: '/portal/settings', label: 'Settings' },
 ];
 
 // Admin-and-above-only top-level links — rendered unconditionally in
