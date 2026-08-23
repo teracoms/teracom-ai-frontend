@@ -10,9 +10,10 @@ import { GROUPS } from '@/lib/portalNavGroups';
 
 // "Platform Review Wave 1" navigation redesign — the flat, ever-growing
 // pill list (19 links by Package Q) is replaced with a grouped structure:
-// two top-level links (Dashboard, Onboarding) plus four dropdown groups
-// (Workforce, Business, Marketing, Platform) that match every section
-// shipped so far to a semantic home. /portal (the original Package 2
+// top-level links (Dashboard, Onboarding, Workflow Wizard) plus four
+// dropdown groups (Workforce, Business, Marketing, Platform) that match
+// every section shipped so far to a semantic home. /portal (the original
+// Package 2
 // "Overview" launcher page) is intentionally no longer linked from here —
 // its own job (a menu of links to everything else) is now redundant with
 // this nav itself — but the route/page is untouched and still reachable
@@ -26,6 +27,14 @@ import { GROUPS } from '@/lib/portalNavGroups';
 const TOP_LEVEL_LINKS = [
   { href: '/portal/dashboard', label: 'Dashboard' },
   { href: '/portal/onboarding', label: 'Onboarding' },
+  // Product Experience Review V1 / WORKFLOW_WIZARD_V2.md §4 -- the
+  // Organisation Workflow Wizard (/portal/onboarding-wizard) previously had
+  // no nav entry point of its own at all (distinct from "Onboarding" above,
+  // which has always pointed at the separate OrganisationOnboardingTasks
+  // checklist, not the wizard) -- reachable only via the dashboard banner
+  // or a direct URL. A real, permanent top-level link is required to keep
+  // it "permanently accessible" in more than name.
+  { href: '/portal/onboarding-wizard', label: 'Workflow Wizard' },
 ];
 
 // Admin-and-above-only top-level links — rendered unconditionally in

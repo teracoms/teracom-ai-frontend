@@ -51,8 +51,14 @@ a {
    layer only, not this product's own red/white UI chrome above. The red
    radial-gradient from .hero:before is intentionally not reused here; it
    would clash with the photo. Mobile: hidden below 640px, see that
-   breakpoint's own rule further down this file. */
-.hero-login:before      { background-image: linear-gradient(90deg, rgba(10,26,58,.72) 0%, rgba(10,26,58,.35) 55%, rgba(10,26,58,.15) 100%), radial-gradient(circle at 15% 65%, rgba(255,255,255,.08), transparent 32%), url('/backgrounds/login-bg.webp'); background-size:cover; background-position:center; background-repeat:no-repeat; }
+   breakpoint's own rule further down this file.
+   Login groundwork (PRODUCT_EXPERIENCE_REVIEW_V1.md/LOGIN_EXPERIENCE_V1.md,
+   VISUAL_IDENTITY_V3_ROADMAP.md §3) -- Login is the entry-tier page and no
+   longer carries the blue/gold hero image; it fell back to plain .hero:before
+   (this file's own native red/white glow) the moment .hero-login was removed
+   from the login page's className, so no .hero-login rule exists here
+   anymore. Operational-tier pages below are unchanged pending that same
+   roadmap's own page-by-page decision. */
 .hero-dashboard:before  { background-image: linear-gradient(90deg, rgba(10,26,58,.72) 0%, rgba(10,26,58,.35) 55%, rgba(10,26,58,.15) 100%), radial-gradient(circle at 15% 65%, rgba(255,255,255,.08), transparent 32%), url('/backgrounds/dashboard-bg.webp'); background-size:cover; background-position:center; background-repeat:no-repeat; }
 .hero-org-setup:before  { background-image: linear-gradient(90deg, rgba(10,26,58,.72) 0%, rgba(10,26,58,.35) 55%, rgba(10,26,58,.15) 100%), radial-gradient(circle at 15% 65%, rgba(255,255,255,.08), transparent 32%), url('/backgrounds/org-setup-bg.webp'); background-size:cover; background-position:center; background-repeat:no-repeat; }
 .hero-executive:before  { background-image: linear-gradient(90deg, rgba(10,26,58,.72) 0%, rgba(10,26,58,.35) 55%, rgba(10,26,58,.15) 100%), radial-gradient(circle at 15% 65%, rgba(255,255,255,.08), transparent 32%), url('/backgrounds/executive-bg.webp'); background-size:cover; background-position:center; background-repeat:no-repeat; }

@@ -37,7 +37,7 @@ export default async function LoginPage({ searchParams }) {
 
   return (
     <main>
-      <section className="hero hero-product hero-login">
+      <section className="hero hero-product">
         <div className="container">
           <div className="hero-copy">
             <span className="eyebrow">Teracom AI Portal</span>

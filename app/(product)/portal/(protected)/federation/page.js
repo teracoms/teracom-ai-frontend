@@ -9,7 +9,7 @@ import FederationConsultationHistory from '@/components/portal/FederationConsult
 import FederationSummaryWidget from '@/components/portal/FederationSummaryWidget';
 import EmptyState from '@/components/portal/EmptyState';
 import ConceptHelp from '@/components/portal/ConceptHelp';
-import PlatformSectionNav from '@/components/portal/PlatformSectionNav';
+import WorkforceNav from '@/components/portal/WorkforceNav';
 
 export const metadata = {
   title: 'Federation | Teracom AI Portal',
@@ -55,7 +55,7 @@ export default async function FederationPage() {
 
   return (
     <>
-      <PlatformSectionNav />
+      <WorkforceNav />
       <main>
       <section className="hero hero-product">
         <div className="container">

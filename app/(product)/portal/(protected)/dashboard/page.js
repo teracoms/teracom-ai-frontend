@@ -11,6 +11,7 @@ import {
   fetchMyOrganisationIdentity,
 } from '@/lib/api/dashboard';
 import { fetchOnboardingWizardProgress } from '@/lib/api/onboardingWizard';
+import { LAST_AVAILABLE_STEP } from '@/lib/onboardingWizardSteps';
 import { fetchUserSettings } from '@/lib/api/userSettings';
 import { settle, errorMessage, isForbidden } from '@/lib/api/results';
 import StatTile from '@/components/portal/StatTile';
@@ -87,6 +88,20 @@ export default async function DashboardPage() {
   const isBrandNewOrganisation = !dashboard.error && dashboard.value.workers === 0;
   const organisationName = identity.error ? null : identity.value?.name;
 
+  // Product Experience Review V1 / WORKFLOW_WIZARD_V2.md §3 -- these two
+  // banners used to both render for every brand-new organisation, stacked
+  // in the same viewport, pointing at overlapping next steps (the wizard's
+  // own Step 4 already covers "create your first worker"). Only show the
+  // plain "get started" banner when the wizard banner has nothing left to
+  // say for this organisation -- its progress couldn't be fetched, or it
+  // reports every step already done yet this organisation still somehow
+  // has zero workers.
+  const wizardProgressValue = wizardProgress.error ? null : wizardProgress.value;
+  const wizardStepsDone = wizardProgressValue
+    ? (wizardProgressValue.completed_steps ?? []).length >= LAST_AVAILABLE_STEP
+    : false;
+  const showBrandNewOrgBanner = isBrandNewOrganisation && (wizardProgress.error || wizardStepsDone);
+
   return (
     <main>
       <section className="hero hero-product hero-dashboard">
@@ -103,8 +118,8 @@ export default async function DashboardPage() {
 
       <section className={contentSectionClass}>
         <div className="container">
-          <OnboardingWizardStatusBanner progress={wizardProgress.error ? null : wizardProgress.value} />
-          {isBrandNewOrganisation && (
+          <OnboardingWizardStatusBanner progress={wizardProgressValue} />
+          {showBrandNewOrgBanner && (
             <p className="form-note-banner" role="status">
               <strong>Get your organisation started.</strong>{' '}
               {canCreateWorker ? (
