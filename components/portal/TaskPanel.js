@@ -16,6 +16,11 @@ import { isAtLeastRole } from '@/lib/roles';
 export default function TaskPanel({ projectId, tasks, workers }) {
   const { user } = useAuth();
   const canWrite = isAtLeastRole(user?.role, 'employee');
+  // AUTONOMOUS_EXECUTION_V1/AUTONOMOUS_ORGANISATION_V1 — deliberately
+  // a stricter gate than canWrite: real, sandboxed code execution is
+  // admin-tier backend-side (api/tasks.py#execute_task_route()), not
+  // reachable by an ordinary employee-tier task creator.
+  const canExecute = isAtLeastRole(user?.role, 'admin');
   const workersById = new Map((workers ?? []).map((worker) => [worker.id, worker]));
   const [title, setTitle] = useState('');
   const [assigneeWorkerId, setAssigneeWorkerId] = useState('');
@@ -23,7 +28,30 @@ export default function TaskPanel({ projectId, tasks, workers }) {
   const [priority, setPriority] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
+  const [executingTaskId, setExecutingTaskId] = useState(null);
+  const [executions, setExecutions] = useState({});
   const router = useRouter();
+
+  async function handleExecute(taskId) {
+    setError(null);
+    setExecutingTaskId(taskId);
+
+    try {
+      const response = await fetch(`/api/portal/tasks/${taskId}/execute`, { method: 'POST' });
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Unable to execute this task.');
+      }
+
+      setExecutions((prev) => ({ ...prev, [taskId]: data }));
+      router.refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Unable to execute this task.');
+    } finally {
+      setExecutingTaskId(null);
+    }
+  }
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -169,9 +197,29 @@ export default function TaskPanel({ projectId, tasks, workers }) {
                     <option value="pending">Pending</option>
                     <option value="in_progress">In Progress</option>
                     <option value="done">Done</option>
+                    <option value="failed">Failed</option>
                   </select>
                 )}
+                {canExecute && task.assignee_worker_id && (
+                  <button
+                    type="button"
+                    className="btn btn-secondary btn-small"
+                    disabled={executingTaskId === task.id}
+                    onClick={() => handleExecute(task.id)}
+                  >
+                    {executingTaskId === task.id ? 'Executing...' : 'Execute'}
+                  </button>
+                )}
               </div>
+              {executions[task.id] && (
+                <p className="activity-meta">
+                  Last execution:{' '}
+                  <span className="badge">
+                    {executions[task.id].verification_result?.passed ? 'Verified' : 'Failed'}
+                  </span>{' '}
+                  ({executions[task.id].steps?.length ?? 0} step(s) taken)
+                </p>
+              )}
             </li>
           ))}
         </ul>

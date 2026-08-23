@@ -115,7 +115,12 @@ export default async function TasksPage() {
                           {task.due_date ? ` · Due ${task.due_date}` : ''}
                         </p>
                       </div>
-                      <TaskStatusControl taskId={task.id} status={task.status} />
+                      <TaskStatusControl
+                        taskId={task.id}
+                        status={task.status}
+                        assigneeWorkerId={task.assignee_worker_id}
+                      />
+
                     </div>
                   </li>
                 );

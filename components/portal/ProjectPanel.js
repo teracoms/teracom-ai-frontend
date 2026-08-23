@@ -25,6 +25,10 @@ import TaskPanel from '@/components/portal/TaskPanel';
 export default function ProjectPanel({ departmentId, departments, projects, tasks, workers }) {
   const { user } = useAuth();
   const canWrite = isAtLeastRole(user?.role, 'employee');
+  // AUTONOMOUS_ORGANISATION_V1 — Human -> Objective -> Project. Same
+  // stricter admin-tier gate as TaskPanel's Execute action, matching
+  // the backend's own require_role("admin") on POST /projects/plan.
+  const canPlan = isAtLeastRole(user?.role, 'admin');
   const [selectedDepartmentId, setSelectedDepartmentId] = useState(departmentId ?? '');
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
@@ -32,6 +36,52 @@ export default function ProjectPanel({ departmentId, departments, projects, task
   const [error, setError] = useState(null);
   const [expandedProjectId, setExpandedProjectId] = useState(null);
   const router = useRouter();
+
+  const [planWorkerId, setPlanWorkerId] = useState('');
+  const [planObjective, setPlanObjective] = useState('');
+  const [planName, setPlanName] = useState('');
+  const [planning, setPlanning] = useState(false);
+  const [planResult, setPlanResult] = useState(null);
+  const [planError, setPlanError] = useState(null);
+
+  async function handlePlan(event) {
+    event.preventDefault();
+    if (!planWorkerId || !planObjective.trim() || !planName.trim()) return;
+
+    setPlanError(null);
+    setPlanResult(null);
+    setPlanning(true);
+
+    try {
+      const response = await fetch('/api/portal/projects/plan', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          primary_worker_id: planWorkerId,
+          objective: planObjective.trim(),
+          name: planName.trim(),
+          department_id: departmentId ?? selectedDepartmentId ?? undefined,
+        }),
+      });
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Unable to plan this project.');
+      }
+
+      setPlanResult(data);
+
+      if (data.available) {
+        setPlanObjective('');
+        setPlanName('');
+        router.refresh();
+      }
+    } catch (err) {
+      setPlanError(err instanceof Error ? err.message : 'Unable to plan this project.');
+    } finally {
+      setPlanning(false);
+    }
+  }
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -139,6 +189,70 @@ export default function ProjectPanel({ departmentId, departments, projects, task
           {submitting ? 'Creating...' : 'Create Project'}
         </button>
       </form>
+      )}
+
+      {canPlan && (workers ?? []).length > 0 && (
+        <div>
+          <div className="section-heading left">
+            <span className="eyebrow">Autonomous Delivery</span>
+            <h3>Plan a project from an objective.</h3>
+          </div>
+          <p className="form-note">
+            Decomposes your objective into real, worker-assigned tasks automatically (requires a Platinum-tier
+            licence — a project is only created when available).
+          </p>
+          {planError && (
+            <p className="form-error" role="alert">
+              {planError}
+            </p>
+          )}
+          {planResult && !planResult.available && (
+            <p className="form-note">Not available on this organisation&apos;s current licence tier.</p>
+          )}
+          {planResult?.available && (
+            <p className="activity-meta">
+              Created &quot;{planResult.project.name}&quot; with {planResult.tasks.length} task(s).
+            </p>
+          )}
+          <form className="contact-form" onSubmit={handlePlan} noValidate>
+            <select
+              value={planWorkerId}
+              onChange={(event) => setPlanWorkerId(event.target.value)}
+              disabled={planning}
+              aria-label="Lead worker"
+            >
+              <option value="">Select a lead worker...</option>
+              {(workers ?? []).map((worker) => (
+                <option key={worker.id} value={worker.id}>
+                  {worker.name}
+                </option>
+              ))}
+            </select>
+            <input
+              type="text"
+              value={planName}
+              onChange={(event) => setPlanName(event.target.value)}
+              placeholder="Project name"
+              disabled={planning}
+              aria-label="Project name"
+            />
+            <textarea
+              value={planObjective}
+              onChange={(event) => setPlanObjective(event.target.value)}
+              placeholder="Objective, e.g. &quot;1. Build the backend API. 2. Build the frontend UI.&quot;"
+              disabled={planning}
+              aria-label="Objective"
+              rows={3}
+            />
+            <button
+              className="btn btn-primary btn-small"
+              type="submit"
+              disabled={planning || !planWorkerId || !planObjective.trim() || !planName.trim()}
+            >
+              {planning ? 'Planning...' : 'Plan Project'}
+            </button>
+          </form>
+        </div>
       )}
 
       {(!projects || projects.length === 0) ? (
