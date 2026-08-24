@@ -4,6 +4,7 @@ import { isAtLeastRole } from '@/lib/roles';
 import { fetchWorkerList } from '@/lib/api/workers';
 import { fetchUsers } from '@/lib/api/admin';
 import { fetchOrganisationSummary } from '@/lib/api/dashboard';
+import { fetchFinanceSummary } from '@/lib/api/finance';
 import { settle, errorMessage } from '@/lib/api/results';
 import { getReferenceLicence, TIER_ALLOCATIONS } from '@/lib/licensing/referenceLicence';
 import CapacityMeter from '@/components/portal/CapacityMeter';
@@ -15,13 +16,16 @@ export const metadata = {
 
 /**
  * Requirements #3 and #10 — the same screen serves both "Usage & Capacity
- * Dashboard" and "Capacity Monitoring Views". Deliberately hybrid: the
- * *consumption* side (worker/user/organisation counts) is real, live data
- * from endpoints Packages 3/7/2 already built — nothing here is fabricated.
- * The *allocation* ceiling is the reference licence's illustrative tier
- * limit, since no backend entitlement record exists to check consumption
- * against. Each meter is honest about which half is which (see
- * CapacityMeter.js).
+ * Dashboard" and "Capacity Monitoring Views". DIGITAL_ORGANISATION_OPERATIONS_V1
+ * closes the gap this page's own banner used to name: real per-licence
+ * entitlement limits now exist (services/finance_summary_service.py#
+ * get_licensing_summary(), enhanced with real worker/user counts and
+ * utilisation percentages this same round) and this page is now wired
+ * to them. An organisation with no real licence issued yet (e.g. a
+ * trial) has no Entitlement row to check against — GET /finance/summary's
+ * own `licensing: null` in that case — so this page falls back to the
+ * illustrative reference licence only then, clearly labelled as such
+ * either way.
  */
 export default async function BillingUsagePage() {
   const token = getSessionToken();
@@ -54,18 +58,26 @@ export default async function BillingUsagePage() {
     return null;
   }
 
-  const [workersResult, usersResult, organisationResult] = await Promise.allSettled([
+  const [workersResult, usersResult, organisationResult, financeResult] = await Promise.allSettled([
     fetchWorkerList(token),
     fetchUsers(token),
     fetchOrganisationSummary(token),
+    fetchFinanceSummary(token),
   ]);
 
   const workers = settle(workersResult);
   const users = settle(usersResult);
   const organisation = settle(organisationResult);
+  const finance = settle(financeResult);
 
-  const licence = getReferenceLicence();
-  const allocation = TIER_ALLOCATIONS[licence.tier];
+  const licensing = finance.value?.licensing ?? null;
+  const referenceLicence = getReferenceLicence();
+  const referenceAllocation = TIER_ALLOCATIONS[referenceLicence.tier];
+
+  const tierLabel = licensing ? licensing.tier : referenceLicence.tier;
+  const workerAllocation = licensing ? licensing.worker_limit : referenceAllocation.workers;
+  const organisationAllocation = licensing ? licensing.organisation_limit : referenceAllocation.organisations;
+  const userAllocation = licensing ? licensing.user_limit : null;
 
   return (
     <main>
@@ -75,9 +87,15 @@ export default async function BillingUsagePage() {
             <span className="eyebrow">Billing &amp; Licensing</span>
             <h1>Usage &amp; capacity.</h1>
             <p className="lead">
-              Real, current counts from your organisation, shown against the {licence.tier} tier&apos;s
-              illustrative allocation.
+              Real, current counts from your organisation, shown against the {tierLabel} tier&apos;s{' '}
+              {licensing ? 'real licensed' : 'illustrative'} allocation.
             </p>
+            {licensing?.expiring_soon && (
+              <p className="form-note">
+                This licence expires in {licensing.days_until_expiry} day(s)
+                {licensing.expires_at ? ` (${licensing.expires_at.slice(0, 10)})` : ''}.
+              </p>
+            )}
           </div>
         </div>
       </section>
@@ -93,7 +111,7 @@ export default async function BillingUsagePage() {
               <CapacityMeter
                 label="Workers"
                 used={workers.value.length}
-                allocation={allocation.workers}
+                allocation={workerAllocation}
                 icon={<WorkersIcon />}
               />
             )}
@@ -102,11 +120,13 @@ export default async function BillingUsagePage() {
               <p className="form-error" role="alert">
                 {errorMessage(users.error)}
               </p>
+            ) : userAllocation != null ? (
+              <CapacityMeter label="Users" used={users.value.length} allocation={userAllocation} icon={<OrganisationIcon />} />
             ) : (
               <CapacityMeter
                 label="Users"
                 used={users.value.length}
-                allocationLabel={licence.userAllocationLabel}
+                allocationLabel={licensing ? 'Per your licensed user count (contract-specific)' : referenceLicence.userAllocationLabel}
                 icon={<OrganisationIcon />}
               />
             )}
@@ -119,7 +139,7 @@ export default async function BillingUsagePage() {
               <CapacityMeter
                 label="Organisations"
                 used={organisation.value ? 1 : 0}
-                allocation={allocation.organisations}
+                allocation={organisationAllocation}
                 icon={<OrganisationIcon />}
               />
             )}
@@ -129,15 +149,20 @@ export default async function BillingUsagePage() {
 
       <section className="section alt">
         <div className="container">
-          <p className="illustrative-data-banner" role="note">
-            <strong>Partially illustrative</strong>
-            Worker, user, and organisation counts above are real, live data. The allocation
-            ceilings shown are illustrative example values, not this page&apos;s own real{' '}
-            <code>Plan</code>/<code>Entitlement</code> data — real per-licence entitlement limits
-            already exist, but this specific page has not yet been wired to call them.
-            Worker-limit enforcement itself also remains inconsistent — enforced only on the
-            Marketplace pack-provisioning path, not on direct admin worker creation.
-          </p>
+          {licensing ? (
+            <p className="activity-meta">
+              Worker/user/organisation allocation ceilings above are your organisation&apos;s own real,
+              active <code>{licensing.tier}</code> licence — not illustrative data.
+            </p>
+          ) : (
+            <p className="illustrative-data-banner" role="note">
+              <strong>Partially illustrative</strong>
+              Worker, user, and organisation counts above are real, live data. Your organisation has
+              no active licence yet, so the allocation ceilings shown are illustrative example values
+              for the {referenceLicence.tier} tier, not a real <code>Licence</code>/<code>Entitlement</code>{' '}
+              record — once a real licence is issued, this page shows its real limits instead.
+            </p>
+          )}
         </div>
       </section>
     </main>

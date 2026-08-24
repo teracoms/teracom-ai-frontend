@@ -4,6 +4,8 @@ import { fetchFinanceSummary } from '@/lib/api/finance';
 import { fetchMarketingSummary } from '@/lib/api/marketing';
 import { fetchPlatformHealthSummary } from '@/lib/api/platformHealth';
 import { fetchPipelineSummary } from '@/lib/api/crm';
+import { fetchOrganisationHealthSummary } from '@/lib/api/organisationHealth';
+import { fetchExecutiveDashboardSummary } from '@/lib/api/executiveDashboard';
 import { settle, errorMessage, isForbidden } from '@/lib/api/results';
 import PlatformSectionNav from '@/components/portal/PlatformSectionNav';
 
@@ -53,8 +55,15 @@ function ReportCard({ title, error, children }) {
  * own real summary endpoint (services/*_summary_service.py,
  * services/crm_pipeline_service.py) but no single page pulled them
  * together; a human wanting an executive-style overview had to visit
- * five separate department pages. This page adds no new backend data
- * — it only aggregates what already exists and is already real.
+ * five separate department pages.
+ *
+ * DIGITAL_ORGANISATION_OPERATIONS_V1 adds the Organisation Health and
+ * Executive Summary cards -- the Organisation Health Dashboard and
+ * Executive Dashboard this workstream's own objective named
+ * (services/organisation_health_service.py,
+ * services/executive_dashboard_service.py). Everything else on this
+ * page still adds no new backend data of its own — it only aggregates
+ * what already exists and is already real.
  */
 export default async function ReportingPage() {
   const token = getSessionToken();
@@ -73,12 +82,22 @@ export default async function ReportingPage() {
     );
   }
 
-  const [operationsResult, financeResult, marketingResult, healthResult, pipelineResult] = await Promise.allSettled([
+  const [
+    operationsResult,
+    financeResult,
+    marketingResult,
+    healthResult,
+    pipelineResult,
+    organisationHealthResult,
+    executiveResult,
+  ] = await Promise.allSettled([
     fetchOperationsSummary(token),
     fetchFinanceSummary(token),
     fetchMarketingSummary(token),
     fetchPlatformHealthSummary(token),
     fetchPipelineSummary(token),
+    fetchOrganisationHealthSummary(token),
+    fetchExecutiveDashboardSummary(token),
   ]);
 
   const operations = settle(operationsResult);
@@ -86,6 +105,8 @@ export default async function ReportingPage() {
   const marketing = settle(marketingResult);
   const health = settle(healthResult);
   const pipeline = settle(pipelineResult);
+  const organisationHealth = settle(organisationHealthResult);
+  const executive = settle(executiveResult);
 
   return (
     <>
@@ -97,8 +118,9 @@ export default async function ReportingPage() {
             <span className="eyebrow">Reporting</span>
             <h1>Every department&apos;s own real numbers, in one place.</h1>
             <p className="lead">
-              Operations, Finance, Marketing, Sales &amp; Customer Success, and platform health —
-              each already tracked separately; this page only brings them together.
+              Operations, Finance, Marketing, Sales &amp; Customer Success, platform health,
+              organisation health, and an executive summary — each already tracked separately;
+              this page only brings them together.
             </p>
           </div>
         </div>
@@ -227,6 +249,122 @@ export default async function ReportingPage() {
                 </ul>
                 <p className="activity-meta">Open incidents by severity</p>
                 <CountsList counts={health.value.open_incidents_by_severity} />
+              </>
+            )}
+          </ReportCard>
+
+          <ReportCard title="Organisation Health" error={organisationHealth.error}>
+            {organisationHealth.value && (
+              <>
+                <ul className="activity-list">
+                  <li>
+                    <div className="assignment-row">
+                      <span className="activity-title">Workers</span>
+                      <span className="activity-meta">
+                        {organisationHealth.value.workers.total} total ·{' '}
+                        {organisationHealth.value.workers.active} active
+                      </span>
+                    </div>
+                  </li>
+                  <li>
+                    <div className="assignment-row">
+                      <span className="activity-title">Worker pool utilisation</span>
+                      <span className="activity-meta">
+                        {organisationHealth.value.worker_pools.total_members} /{' '}
+                        {organisationHealth.value.worker_pools.total_capacity} (
+                        {organisationHealth.value.worker_pools.utilisation_percent}%)
+                      </span>
+                    </div>
+                  </li>
+                  <li>
+                    <div className="assignment-row">
+                      <span className="activity-title">Scheduler</span>
+                      <span className="activity-meta">
+                        {organisationHealth.value.scheduler.has_run
+                          ? `Last activity: ${new Date(organisationHealth.value.scheduler.last_occurred_at).toLocaleString()}`
+                          : 'No scheduler activity yet'}
+                      </span>
+                    </div>
+                  </li>
+                  <li>
+                    <div className="assignment-row">
+                      <span className="activity-title">Memory</span>
+                      <span className="activity-meta">
+                        {organisationHealth.value.memory.worker_memory_count} worker ·{' '}
+                        {organisationHealth.value.memory.organisation_memory_count} organisation
+                      </span>
+                    </div>
+                  </li>
+                </ul>
+                {organisationHealth.value.worker_pools.pools.length > 0 && (
+                  <>
+                    <p className="activity-meta">Pools</p>
+                    <ul className="activity-list">
+                      {organisationHealth.value.worker_pools.pools.map((pool) => (
+                        <li key={pool.id}>
+                          <div className="assignment-row">
+                            <span className="activity-title">{pool.name}</span>
+                            <span className="activity-meta">
+                              {pool.member_count} / {pool.capacity}
+                            </span>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  </>
+                )}
+              </>
+            )}
+          </ReportCard>
+
+          <ReportCard title="Executive Summary" error={executive.error}>
+            {executive.value && (
+              <>
+                <ul className="activity-list">
+                  <li>
+                    <div className="assignment-row">
+                      <span className="activity-title">Organisation</span>
+                      <span className="activity-meta">
+                        {executive.value.organisation.name} · {executive.value.organisation.status}
+                      </span>
+                    </div>
+                  </li>
+                  <li>
+                    <div className="assignment-row">
+                      <span className="activity-title">Chat sessions / memories</span>
+                      <span className="activity-meta">
+                        {executive.value.worker_activity.chat_session_count} /{' '}
+                        {executive.value.worker_activity.memory_count}
+                      </span>
+                    </div>
+                  </li>
+                  <li>
+                    <div className="assignment-row">
+                      <span className="activity-title">Task executions (succeeded / failed)</span>
+                      <span className="activity-meta">
+                        {executive.value.worker_activity.task_executions_succeeded} /{' '}
+                        {executive.value.worker_activity.task_executions_failed}
+                      </span>
+                    </div>
+                  </li>
+                </ul>
+                {executive.value.departments.length > 0 && (
+                  <>
+                    <p className="activity-meta">Departments (workers / projects)</p>
+                    <ul className="activity-list">
+                      {executive.value.departments.map((department) => (
+                        <li key={department.id}>
+                          <div className="assignment-row">
+                            <span className="activity-title">{department.name}</span>
+                            <span className="activity-meta">
+                              {department.worker_count} / {department.project_count}
+                            </span>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  </>
+                )}
               </>
             )}
           </ReportCard>
