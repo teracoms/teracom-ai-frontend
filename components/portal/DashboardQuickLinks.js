@@ -26,17 +26,15 @@ const GROUPS = [
     ],
   },
   {
-    label: 'Business',
+    // CUSTOMER_PLATFORM_UX_REVIEW_V1 -- Business and Marketing merged into
+    // one organisational-management group, mirroring the same consolidation
+    // PortalNav.js's own dropdown just made (lib/portalNavGroups.js).
+    label: 'My Organisation',
     links: [
       { href: '/portal/sales', label: 'Sales' },
       { href: '/portal/customer-success', label: 'Customer Success' },
       { href: '/portal/finance', label: 'Finance' },
       { href: '/portal/operations', label: 'Operations' },
-    ],
-  },
-  {
-    label: 'Marketing',
-    links: [
       { href: '/portal/marketing', label: 'Campaigns' },
       { href: '/portal/media-centre', label: 'Media Centre' },
     ],

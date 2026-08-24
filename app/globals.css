@@ -59,7 +59,19 @@ a {
    from the login page's className, so no .hero-login rule exists here
    anymore. Operational-tier pages below are unchanged pending that same
    roadmap's own page-by-page decision. */
-.hero-dashboard:before  { background-image: linear-gradient(90deg, rgba(10,26,58,.72) 0%, rgba(10,26,58,.35) 55%, rgba(10,26,58,.15) 100%), radial-gradient(circle at 15% 65%, rgba(255,255,255,.08), transparent 32%), url('/backgrounds/dashboard-bg.webp'); background-size:cover; background-position:center; background-repeat:no-repeat; }
+/* CUSTOMER_PLATFORM_UX_REVIEW_V1 -- the Dashboard no longer gets a
+   bespoke background photo. The blue/indigo/gold treatment every other
+   hero variant below still uses was a deliberately approved palette
+   (teracom-ai-docs/IMAGE_IMPLEMENTATION_PLAN_V1.md §8), but direct,
+   repeated feedback on the Dashboard specifically was that it reads as
+   off-brand and generic there -- so this one variant is deliberately
+   left with no :before override, falling back to the plain
+   red/black .hero:before glow every page already uses when it has no
+   photo of its own (e.g. Login). If/when a bespoke on-brand Dashboard
+   graphic is commissioned, match every other hero image's real spec:
+   1920x1080 source, exported to WebP, dropped in as
+   /backgrounds/dashboard-bg.webp with an -alt.webp variant, same as
+   this file's other hero variants below. */
 .hero-org-setup:before  { background-image: linear-gradient(90deg, rgba(10,26,58,.72) 0%, rgba(10,26,58,.35) 55%, rgba(10,26,58,.15) 100%), radial-gradient(circle at 15% 65%, rgba(255,255,255,.08), transparent 32%), url('/backgrounds/org-setup-bg.webp'); background-size:cover; background-position:center; background-repeat:no-repeat; }
 .hero-executive:before  { background-image: linear-gradient(90deg, rgba(10,26,58,.72) 0%, rgba(10,26,58,.35) 55%, rgba(10,26,58,.15) 100%), radial-gradient(circle at 15% 65%, rgba(255,255,255,.08), transparent 32%), url('/backgrounds/executive-bg.webp'); background-size:cover; background-position:center; background-repeat:no-repeat; }
 .hero-workforce:before  { background-image: linear-gradient(90deg, rgba(10,26,58,.72) 0%, rgba(10,26,58,.35) 55%, rgba(10,26,58,.15) 100%), radial-gradient(circle at 15% 65%, rgba(255,255,255,.08), transparent 32%), url('/backgrounds/workforce-bg.webp'); background-size:cover; background-position:center; background-repeat:no-repeat; }
@@ -97,6 +109,36 @@ a {
    padding globally, which every other page still relies on. */
 .section-compact {
   padding:48px 0;
+}
+/* CUSTOMER_PLATFORM_UX_REVIEW_V1 -- Dashboard and Login both need to get
+   to their real content well within one viewport, not after ~200px of
+   the marketing-site-style hero padding every other product page still
+   uses. Scoped to these two pages' own hero variant so nothing else's
+   hero treatment changes. */
+.hero-compact {
+  padding:44px 0 28px;
+}
+.hero-compact .hero-copy {
+  padding:12px 0;
+}
+.hero-compact .lead {
+  margin-top:14px;
+}
+/* Login's copy and sign-in form sit side by side inside the hero itself
+   (both visible together, no scroll needed) rather than the form living
+   in its own .section below a tall hero -- collapses to one column on
+   narrower viewports, same 980px breakpoint every other two-column
+   layout on this page (.login-actions-grid) already uses. */
+.hero-login-grid {
+  display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center;
+}
+.hero-login-grid .auth-card {
+  margin:0;max-width:100%;
+}
+@media(max-width:980px) {
+  .hero-login-grid {
+    grid-template-columns:1fr;gap:32px;
+  }
 }
 .alt {
   background:#090909;
@@ -248,10 +290,19 @@ a {
   display:flex;align-items:center;gap:18px;padding:14px 0;
 }
 .portal-nav-brand {
-  font-size:16px;font-weight:900;letter-spacing:-.02em;color:#fff;white-space:nowrap;margin-right:8px;
+  display:inline-flex;align-items:center;white-space:nowrap;margin-right:8px;flex-shrink:0;
+}
+/* CUSTOMER_PLATFORM_UX_REVIEW_V1 -- the supplied logo (public/brand/
+   teracom-logo.png) is a dark wordmark on its own near-white native
+   background, not a transparent asset -- placed directly on this dark
+   nav it would either disappear (transparent) or leave a harsh light
+   rectangle (opaque, no chip). A small light plate keeps the logo at
+   full, unmodified brand fidelity while the header itself stays dark. */
+.portal-nav-logo {
+  display:block;height:32px;width:auto;padding:6px 12px;border-radius:10px;background:#f9fafb;
 }
 .portal-nav-org {
-  display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:999px;background:rgba(255,255,255,.05);border:1px solid var(--line);color:var(--muted);font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px;
+  display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:999px;background:rgba(255,255,255,.05);border:1px solid var(--line);color:var(--muted);font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px;margin-left:auto;
 }
 .portal-nav-org-logo {
   width:16px;height:16px;border-radius:4px;object-fit:contain;flex-shrink:0;

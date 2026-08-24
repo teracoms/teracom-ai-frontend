@@ -37,8 +37,12 @@ export default async function LoginPage({ searchParams }) {
 
   return (
     <main>
-      <section className="hero hero-product">
-        <div className="container">
+      {/* CUSTOMER_PLATFORM_UX_REVIEW_V1 -- the sign-in form now lives
+          inside the hero itself, side by side with its copy, instead of
+          its own .section below a full-height hero -- both are visible
+          together on a normal viewport with no scroll required. */}
+      <section className="hero hero-product hero-compact">
+        <div className="container hero-login-grid">
           <div className="hero-copy">
             <span className="eyebrow">Teracom AI Portal</span>
             <h1>Sign in to your workspace.</h1>
@@ -47,11 +51,7 @@ export default async function LoginPage({ searchParams }) {
               organisation.
             </p>
           </div>
-        </div>
-      </section>
 
-      <section className="section">
-        <div className="container">
           <div className="auth-card">
             <LoginForm nextPath={nextPath} />
             <p className="form-note" style={{ marginTop: '16px' }}>

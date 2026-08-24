@@ -6,49 +6,30 @@ import { usePathname } from 'next/navigation';
 
 import { useAuth } from '@/components/portal/AuthProvider';
 import { isAtLeastRole } from '@/lib/roles';
-import { GROUPS } from '@/lib/portalNavGroups';
+import { NAV_ITEMS } from '@/lib/portalNavGroups';
 
 // "Platform Review Wave 1" navigation redesign — the flat, ever-growing
 // pill list (19 links by Package Q) is replaced with a grouped structure:
-// top-level links (Dashboard, Onboarding, Workflow Wizard) plus four
-// dropdown groups (Workforce, Business, Marketing, Platform) that match
-// every section shipped so far to a semantic home. /portal (the original
-// Package 2
-// "Overview" launcher page) is intentionally no longer linked from here —
-// its own job (a menu of links to everything else) is now redundant with
-// this nav itself — but the route/page is untouched and still reachable
+// top-level links plus dropdown groups that match every section shipped
+// so far to a semantic home. /portal (the original Package 2 "Overview"
+// launcher page) is intentionally no longer linked from here — its own
+// job (a menu of links to everything else) is now redundant with this
+// nav itself — but the route/page is untouched and still reachable
 // directly, so nothing is actually removed.
+//
+// CUSTOMER_PLATFORM_UX_REVIEW_V1 -- previously rendered as three separate
+// blocks in a fixed order (every plain top-level link, then every
+// admin-only top-level link, then every dropdown group) via
+// TOP_LEVEL_LINKS/ADMIN_TOP_LEVEL_LINKS/GROUPS; that meant a dropdown
+// group could never appear before a later plain link. Moving Workforce to
+// sit directly after Dashboard needed one ordered sequence instead — see
+// lib/portalNavGroups.js#NAV_ITEMS, which now owns this ordering.
 //
 // Marketing's third requested sub-item, "Production", has no distinct
 // page of its own — content/video drafting happens inside a campaign's
 // own detail view (/portal/marketing/[campaignId]), not a separate route
 // — so it isn't listed here as a dead link. See this package's
 // implementation report for the full reasoning.
-const TOP_LEVEL_LINKS = [
-  { href: '/portal/dashboard', label: 'Dashboard' },
-  { href: '/portal/onboarding', label: 'Onboarding' },
-  // Product Experience Review V1 / WORKFLOW_WIZARD_V2.md §4 -- the
-  // Organisation Workflow Wizard (/portal/onboarding-wizard) previously had
-  // no nav entry point of its own at all (distinct from "Onboarding" above,
-  // which has always pointed at the separate OrganisationOnboardingTasks
-  // checklist, not the wizard) -- reachable only via the dashboard banner
-  // or a direct URL. A real, permanent top-level link is required to keep
-  // it "permanently accessible" in more than name.
-  { href: '/portal/onboarding-wizard', label: 'Workflow Wizard' },
-];
-
-// Admin-and-above-only top-level links — rendered unconditionally in
-// the JSX below, filtered by isAdmin the same way TOP_LEVEL_LINKS
-// isn't, so Governance (previously nested three levels deep inside
-// the Platform group's own adminLinks) gets equal visual weight to
-// Dashboard/Onboarding instead of being the least discoverable admin
-// surface in the product.
-const ADMIN_TOP_LEVEL_LINKS = [
-  { href: '/portal/admin/governance', label: 'Governance' },
-  // Settings & Security V1 -- Enforce MFA / Session Policies / Security
-  // Policies / Audit Controls, same admin-and-above gate as Governance.
-  { href: '/portal/admin/security', label: 'Security' },
-];
 
 function isActive(pathname, href) {
   if (pathname === href) return true;
@@ -168,18 +149,11 @@ export default function PortalNav({ organisationName = null, hasLogo = false }) 
     <nav className="portal-nav" ref={navRef}>
       <div className="container portal-nav-inner">
         <Link href="/portal/dashboard" className="portal-nav-brand">
-          Teracom AI
+          {/* eslint-disable-next-line @next/next/no-img-element -- a
+              static local brand asset, not a per-organisation upload;
+              next/image's runtime optimisation exists for the latter. */}
+          <img src="/brand/teracom-logo.png" alt="Teracom AI" className="portal-nav-logo" />
         </Link>
-
-        {organisationName && (
-          <span className="portal-nav-org" title="Your organisation">
-            {hasLogo && (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src="/api/portal/organisation/logo" alt="" className="portal-nav-org-logo" />
-            )}
-            {organisationName}
-          </span>
-        )}
 
         <button
           type="button"
@@ -192,51 +166,43 @@ export default function PortalNav({ organisationName = null, hasLogo = false }) 
         </button>
 
         <div className={mobileOpen ? 'portal-nav-links open' : 'portal-nav-links'}>
-          {TOP_LEVEL_LINKS.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={isActive(pathname, link.href) ? 'portal-nav-link active' : 'portal-nav-link'}
-              onClick={closeMenus}
-            >
-              {link.label}
-            </Link>
-          ))}
+          {NAV_ITEMS.map((item) => {
+            if (item.kind === 'link') {
+              if (item.adminOnly && !isAdmin) return null;
 
-          {isAdmin &&
-            ADMIN_TOP_LEVEL_LINKS.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={isActive(pathname, link.href) ? 'portal-nav-link active' : 'portal-nav-link'}
-                onClick={closeMenus}
-              >
-                {link.label}
-              </Link>
-            ))}
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={isActive(pathname, item.href) ? 'portal-nav-link active' : 'portal-nav-link'}
+                  onClick={closeMenus}
+                >
+                  {item.label}
+                </Link>
+              );
+            }
 
-          {GROUPS.map((group) => {
-            const links = groupLinks(group);
+            const links = groupLinks(item);
             const active = groupIsActive(pathname, links);
-            const open = openGroup === group.label;
+            const open = openGroup === item.label;
 
-            const dropdownId = `portal-nav-dropdown-${group.label}`;
+            const dropdownId = `portal-nav-dropdown-${item.label}`;
 
             return (
-              <div className="portal-nav-group" key={group.label}>
+              <div className="portal-nav-group" key={item.label}>
                 <button
                   type="button"
                   ref={(node) => {
-                    triggerRefs.current[group.label] = node;
+                    triggerRefs.current[item.label] = node;
                   }}
                   className={active ? 'portal-nav-link portal-nav-group-toggle active' : 'portal-nav-link portal-nav-group-toggle'}
                   aria-expanded={open}
                   aria-haspopup="true"
                   aria-controls={dropdownId}
-                  onClick={() => setOpenGroup((current) => (current === group.label ? null : group.label))}
-                  onKeyDown={(event) => handleTriggerKeyDown(event, group.label)}
+                  onClick={() => setOpenGroup((current) => (current === item.label ? null : item.label))}
+                  onKeyDown={(event) => handleTriggerKeyDown(event, item.label)}
                 >
-                  {group.label}
+                  {item.label}
                   <span className="portal-nav-caret" aria-hidden="true">
                     ▾
                   </span>
@@ -245,11 +211,11 @@ export default function PortalNav({ organisationName = null, hasLogo = false }) 
                 <div
                   id={dropdownId}
                   ref={(node) => {
-                    dropdownRefs.current[group.label] = node;
+                    dropdownRefs.current[item.label] = node;
                   }}
                   className={open ? 'portal-nav-dropdown open' : 'portal-nav-dropdown'}
                   role="menu"
-                  onKeyDown={(event) => handleDropdownKeyDown(event, group.label)}
+                  onKeyDown={(event) => handleDropdownKeyDown(event, item.label)}
                 >
                   {links.map((link) => (
                     <Link
@@ -267,6 +233,21 @@ export default function PortalNav({ organisationName = null, hasLogo = false }) 
             );
           })}
         </div>
+
+        {/* CUSTOMER_PLATFORM_UX_REVIEW_V1 -- moved to the far right of the
+            bar (was rendered directly beside the brand) and given its own
+            visually distinct treatment (a bordered, muted pill) so it
+            reads as "which organisation you're in", not part of the
+            Teracom AI platform brand itself. */}
+        {organisationName && (
+          <span className="portal-nav-org" title="Your organisation">
+            {hasLogo && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src="/api/portal/organisation/logo" alt="" className="portal-nav-org-logo" />
+            )}
+            {organisationName}
+          </span>
+        )}
       </div>
     </nav>
   );
