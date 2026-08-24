@@ -6,6 +6,7 @@ import { fetchPlatformHealthSummary } from '@/lib/api/platformHealth';
 import { fetchPipelineSummary } from '@/lib/api/crm';
 import { fetchOrganisationHealthSummary } from '@/lib/api/organisationHealth';
 import { fetchExecutiveDashboardSummary } from '@/lib/api/executiveDashboard';
+import { fetchOrganisationalIntelligenceSummary } from '@/lib/api/organisationalIntelligence';
 import { settle, errorMessage, isForbidden } from '@/lib/api/results';
 import PlatformSectionNav from '@/components/portal/PlatformSectionNav';
 
@@ -61,9 +62,17 @@ function ReportCard({ title, error, children }) {
  * Executive Summary cards -- the Organisation Health Dashboard and
  * Executive Dashboard this workstream's own objective named
  * (services/organisation_health_service.py,
- * services/executive_dashboard_service.py). Everything else on this
- * page still adds no new backend data of its own — it only aggregates
- * what already exists and is already real.
+ * services/executive_dashboard_service.py).
+ *
+ * AUTONOMOUS_OPERATIONS_V1 adds the Organisational Intelligence card
+ * -- the Executive Work Queue, Worker Capacity Management,
+ * Organisational Intelligence, and Executive Decision Support
+ * objectives, all backed by one real, deterministic computation
+ * (services/organisational_intelligence_service.py) reusing this same
+ * organisation's own Project/Task/Worker Pool data, never an
+ * LLM-generated summary. Everything else on this page still adds no
+ * new backend data of its own — it only aggregates what already
+ * exists and is already real.
  */
 export default async function ReportingPage() {
   const token = getSessionToken();
@@ -90,6 +99,7 @@ export default async function ReportingPage() {
     pipelineResult,
     organisationHealthResult,
     executiveResult,
+    intelligenceResult,
   ] = await Promise.allSettled([
     fetchOperationsSummary(token),
     fetchFinanceSummary(token),
@@ -98,6 +108,7 @@ export default async function ReportingPage() {
     fetchPipelineSummary(token),
     fetchOrganisationHealthSummary(token),
     fetchExecutiveDashboardSummary(token),
+    fetchOrganisationalIntelligenceSummary(token),
   ]);
 
   const operations = settle(operationsResult);
@@ -107,6 +118,7 @@ export default async function ReportingPage() {
   const pipeline = settle(pipelineResult);
   const organisationHealth = settle(organisationHealthResult);
   const executive = settle(executiveResult);
+  const intelligence = settle(intelligenceResult);
 
   return (
     <>
@@ -360,6 +372,59 @@ export default async function ReportingPage() {
                               {department.worker_count} / {department.project_count}
                             </span>
                           </div>
+                        </li>
+                      ))}
+                    </ul>
+                  </>
+                )}
+              </>
+            )}
+          </ReportCard>
+
+          <ReportCard title="Organisational Intelligence" error={intelligence.error}>
+            {intelligence.value && (
+              <>
+                <ul className="activity-list">
+                  <li>
+                    <div className="assignment-row">
+                      <span className="activity-title">Blocked projects / escalations</span>
+                      <span className="activity-meta">
+                        {intelligence.value.work_queue.blocked_projects.length} /{' '}
+                        {intelligence.value.work_queue.escalations.length}
+                      </span>
+                    </div>
+                  </li>
+                  <li>
+                    <div className="assignment-row">
+                      <span className="activity-title">Stalled tasks / unresolved failures</span>
+                      <span className="activity-meta">
+                        {intelligence.value.intelligence.stalled_task_count} /{' '}
+                        {intelligence.value.intelligence.unresolved_verification_failure_count}
+                      </span>
+                    </div>
+                  </li>
+                  <li>
+                    <div className="assignment-row">
+                      <span className="activity-title">Inactive projects / overloaded pools</span>
+                      <span className="activity-meta">
+                        {intelligence.value.intelligence.inactive_projects.length} /{' '}
+                        {intelligence.value.intelligence.overloaded_pools.length}
+                      </span>
+                    </div>
+                  </li>
+                </ul>
+                {intelligence.value.decision_support.recommended_actions.length === 0 ? (
+                  <p className="activity-meta">No recommended actions right now.</p>
+                ) : (
+                  <>
+                    <p className="activity-meta">Recommended actions</p>
+                    <ul className="activity-list">
+                      {intelligence.value.decision_support.recommended_actions.slice(0, 8).map((action, index) => (
+                        // eslint-disable-next-line react/no-array-index-key -- these are
+                        // freshly-generated recommendation strings with no stable id of
+                        // their own, recomputed on every request.
+                        <li key={index}>
+                          <p className="activity-meta">{action}</p>
                         </li>
                       ))}
                     </ul>
