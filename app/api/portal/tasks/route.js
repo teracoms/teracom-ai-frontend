@@ -34,6 +34,7 @@ export async function POST(request) {
       title: parsed.title,
       description: parsed.description,
       assignee_worker_id: parsed.assignee_worker_id,
+      assignee_worker_pool_id: parsed.assignee_worker_pool_id,
       due_date: parsed.due_date,
       priority: parsed.priority,
     });

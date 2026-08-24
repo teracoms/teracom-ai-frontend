@@ -2,6 +2,7 @@ import { getSessionToken } from '@/lib/api/auth';
 import { fetchTasks } from '@/lib/api/tasks';
 import { fetchProjects } from '@/lib/api/projects';
 import { fetchWorkerList } from '@/lib/api/workers';
+import { fetchWorkerPools } from '@/lib/api/workerPools';
 import { settle, errorMessage } from '@/lib/api/results';
 import EmptyState from '@/components/portal/EmptyState';
 import TaskStatusControl from '@/components/portal/TaskStatusControl';
@@ -38,18 +39,21 @@ export default async function TasksPage() {
     );
   }
 
-  const [tasksResult, projectsResult, workersResult] = await Promise.allSettled([
+  const [tasksResult, projectsResult, workersResult, workerPoolsResult] = await Promise.allSettled([
     fetchTasks(token),
     fetchProjects(token),
     fetchWorkerList(token),
+    fetchWorkerPools(token),
   ]);
 
   const tasks = settle(tasksResult);
   const projects = settle(projectsResult);
   const workers = settle(workersResult);
+  const workerPools = settle(workerPoolsResult);
 
   const projectsById = new Map((projects.value ?? []).map((project) => [project.id, project]));
   const workersById = new Map((workers.value ?? []).map((worker) => [worker.id, worker]));
+  const poolsById = new Map((workerPools.value ?? []).map((pool) => [pool.id, pool]));
 
   const sortedTasks = [...(tasks.value ?? [])].sort((a, b) => {
     if (a.status === b.status) return 0;
@@ -83,6 +87,7 @@ export default async function TasksPage() {
           <TaskCreateForm
             projects={projects.value ?? []}
             workers={(workers.value ?? []).filter((worker) => worker.status === 'active')}
+            workerPools={workerPools.value ?? []}
           />
         </div>
       </section>
@@ -103,6 +108,7 @@ export default async function TasksPage() {
               {sortedTasks.map((task) => {
                 const project = projectsById.get(task.project_id);
                 const assignee = task.assignee_worker_id ? workersById.get(task.assignee_worker_id) : null;
+                const pool = !assignee && task.assignee_worker_pool_id ? poolsById.get(task.assignee_worker_pool_id) : null;
                 return (
                   <li key={task.id}>
                     <div className="assignment-row">
@@ -110,7 +116,11 @@ export default async function TasksPage() {
                         <p className="activity-title">{task.title}</p>
                         <p className="activity-meta">
                           {project ? project.name : 'Unknown project'}
-                          {assignee ? ` · Assigned to ${assignee.name}` : ''}
+                          {assignee
+                            ? ` · Assigned to ${assignee.name}`
+                            : pool
+                              ? ` · Routed to ${pool.name} (not yet assigned)`
+                              : ''}
                           {task.priority ? ` · Priority: ${task.priority}` : ''}
                           {task.due_date ? ` · Due ${task.due_date}` : ''}
                         </p>
@@ -119,6 +129,7 @@ export default async function TasksPage() {
                         taskId={task.id}
                         status={task.status}
                         assigneeWorkerId={task.assignee_worker_id}
+                        assigneeWorkerPoolId={task.assignee_worker_pool_id}
                       />
 
                     </div>

@@ -22,7 +22,7 @@ import TaskPanel from '@/components/portal/TaskPanel';
  * `tasks` by project_id client-side rather than a second network
  * round trip.
  */
-export default function ProjectPanel({ departmentId, departments, projects, tasks, workers }) {
+export default function ProjectPanel({ departmentId, departments, projects, tasks, workers, workerPools }) {
   const { user } = useAuth();
   const canWrite = isAtLeastRole(user?.role, 'employee');
   // AUTONOMOUS_ORGANISATION_V1 — Human -> Objective -> Project. Same
@@ -259,7 +259,23 @@ export default function ProjectPanel({ departmentId, departments, projects, task
         <p className="activity-meta">No projects yet.</p>
       ) : (
         <ul className="activity-list">
-          {projects.map((project) => (
+          {projects.map((project) => {
+            // MULTI_ORGANISATION_PLATFORM_V1 -- Multi-Project
+            // Visibility: a real task-count breakdown per project,
+            // computed client-side from the same `tasks` this
+            // workspace already fetches once for every project
+            // (rather than a second network round trip per project
+            // to GET /projects/{id}/status) -- display only; the
+            // project's own `status` badge above remains the
+            // backend's own authoritative bidirectional-lifecycle
+            // value.
+            const projectTasks = (tasks ?? []).filter((task) => task.project_id === project.id);
+            const counts = projectTasks.reduce(
+              (acc, task) => ({ ...acc, [task.status]: (acc[task.status] ?? 0) + 1 }),
+              {}
+            );
+
+            return (
             <li key={project.id}>
               <div className="assignment-row">
                 <div>
@@ -267,6 +283,13 @@ export default function ProjectPanel({ departmentId, departments, projects, task
                     {project.name} <span className="badge">{project.status}</span>
                   </p>
                   {project.description && <p className="activity-meta">{project.description}</p>}
+                  {projectTasks.length > 0 && (
+                    <p className="activity-meta">
+                      {projectTasks.length} task(s) — {counts.done ?? 0} done · {counts.in_progress ?? 0} in
+                      progress · {counts.pending ?? 0} pending
+                      {counts.failed ? ` · ${counts.failed} failed` : ''}
+                    </p>
+                  )}
                 </div>
                 <div>
                   {canWrite && (
@@ -294,12 +317,14 @@ export default function ProjectPanel({ departmentId, departments, projects, task
               {expandedProjectId === project.id && (
                 <TaskPanel
                   projectId={project.id}
-                  tasks={(tasks ?? []).filter((task) => task.project_id === project.id)}
+                  tasks={projectTasks}
                   workers={workers}
+                  workerPools={workerPools}
                 />
               )}
             </li>
-          ))}
+            );
+          })}
         </ul>
       )}
     </div>

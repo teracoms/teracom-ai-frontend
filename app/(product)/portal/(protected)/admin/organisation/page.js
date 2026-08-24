@@ -4,10 +4,12 @@ import { isAtLeastRole } from '@/lib/roles';
 import { fetchOrganisationSummary } from '@/lib/api/dashboard';
 import { fetchOrganisations } from '@/lib/api/organisations';
 import { fetchUsers } from '@/lib/api/admin';
+import { fetchAIProviderConfig } from '@/lib/api/aiProviderConfig';
 import { isForbidden, errorMessage } from '@/lib/api/results';
 import OrganisationSummaryCard from '@/components/portal/OrganisationSummaryCard';
 import FederationEnabledToggle from '@/components/portal/FederationEnabledToggle';
 import CreateSubOrganisationForm from '@/components/portal/CreateSubOrganisationForm';
+import AIProviderConfigCard from '@/components/portal/AIProviderConfigCard';
 
 export const metadata = {
   title: 'Organisation | Teracom AI Portal',
@@ -86,6 +88,18 @@ export default async function AdminOrganisationPage() {
     }
   }
 
+  // MULTI_ORGANISATION_PLATFORM_V1 -- read-open backend-side; a
+  // failure here shouldn't block the rest of this page, same
+  // per-section resilience already applied to owners above.
+  let aiProviderConfig = null;
+  if (!restricted && !loadError && organisation) {
+    try {
+      aiProviderConfig = await fetchAIProviderConfig(token);
+    } catch {
+      // Best-effort -- the organisation profile above still renders without this.
+    }
+  }
+
   return (
     <main>
       <section className="hero hero-product hero-org-setup">
@@ -154,6 +168,22 @@ export default async function AdminOrganisationPage() {
               </p>
             </div>
             <FederationEnabledToggle organisation={organisation} />
+          </div>
+        </section>
+      )}
+
+      {!restricted && !loadError && organisation && aiProviderConfig && (
+        <section className="section">
+          <div className="container">
+            <div className="section-heading left">
+              <span className="eyebrow">AI Provider</span>
+              <h2>AI provider configuration.</h2>
+              <p>
+                Which model actually backs every worker&apos;s own turn in this organisation — a
+                Worker is an organisational role, never a specific AI model.
+              </p>
+            </div>
+            <AIProviderConfigCard config={aiProviderConfig} />
           </div>
         </section>
       )}

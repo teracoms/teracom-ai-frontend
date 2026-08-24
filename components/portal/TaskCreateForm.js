@@ -15,11 +15,13 @@ import { isAtLeastRole } from '@/lib/roles';
  * needed a backend or proxy-route change, only this picker), gated at
  * employee tier and above (Read Only Tier Enforcement).
  */
-export default function TaskCreateForm({ projects, workers }) {
+export default function TaskCreateForm({ projects, workers, workerPools }) {
   const { user } = useAuth();
   const [projectId, setProjectId] = useState(projects[0]?.id ?? '');
   const [title, setTitle] = useState('');
-  const [assigneeWorkerId, setAssigneeWorkerId] = useState('');
+  // MULTI_ORGANISATION_PLATFORM_V1 -- a single picker covering both a
+  // specific worker and a pool, mirroring TaskPanel.js's own convention.
+  const [assignee, setAssignee] = useState('');
   const [dueDate, setDueDate] = useState('');
   const [priority, setPriority] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -33,6 +35,8 @@ export default function TaskCreateForm({ projects, workers }) {
     setError(null);
     setSubmitting(true);
 
+    const [assigneeKind, assigneeId] = assignee ? assignee.split(':') : [];
+
     try {
       const response = await fetch('/api/portal/tasks', {
         method: 'POST',
@@ -40,7 +44,8 @@ export default function TaskCreateForm({ projects, workers }) {
         body: JSON.stringify({
           project_id: projectId,
           title: title.trim(),
-          assignee_worker_id: assigneeWorkerId || undefined,
+          assignee_worker_id: assigneeKind === 'worker' ? assigneeId : undefined,
+          assignee_worker_pool_id: assigneeKind === 'pool' ? assigneeId : undefined,
           due_date: dueDate || undefined,
           priority: priority || undefined,
         }),
@@ -52,7 +57,7 @@ export default function TaskCreateForm({ projects, workers }) {
       }
 
       setTitle('');
-      setAssigneeWorkerId('');
+      setAssignee('');
       setDueDate('');
       setPriority('');
       router.refresh();
@@ -102,17 +107,30 @@ export default function TaskCreateForm({ projects, workers }) {
           aria-label="Task title"
         />
         <select
-          value={assigneeWorkerId}
-          onChange={(event) => setAssigneeWorkerId(event.target.value)}
+          value={assignee}
+          onChange={(event) => setAssignee(event.target.value)}
           disabled={submitting}
           aria-label="Assignee"
         >
           <option value="">Unassigned</option>
-          {(workers ?? []).map((worker) => (
-            <option key={worker.id} value={worker.id}>
-              {worker.name}
-            </option>
-          ))}
+          {(workers ?? []).length > 0 && (
+            <optgroup label="Workers">
+              {workers.map((worker) => (
+                <option key={worker.id} value={`worker:${worker.id}`}>
+                  {worker.name}
+                </option>
+              ))}
+            </optgroup>
+          )}
+          {(workerPools ?? []).length > 0 && (
+            <optgroup label="Pools">
+              {workerPools.map((pool) => (
+                <option key={pool.id} value={`pool:${pool.id}`}>
+                  {pool.name}
+                </option>
+              ))}
+            </optgroup>
+          )}
         </select>
         <input
           type="date"

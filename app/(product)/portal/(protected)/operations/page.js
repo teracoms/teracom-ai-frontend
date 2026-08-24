@@ -4,6 +4,7 @@ import { fetchProjects } from '@/lib/api/projects';
 import { fetchTasks } from '@/lib/api/tasks';
 import { fetchDepartments } from '@/lib/api/departments';
 import { fetchWorkerList } from '@/lib/api/workers';
+import { fetchWorkerPools } from '@/lib/api/workerPools';
 import { settle, errorMessage } from '@/lib/api/results';
 import OperationsSummaryWidget from '@/components/portal/OperationsSummaryWidget';
 import ProjectPanel from '@/components/portal/ProjectPanel';
@@ -36,20 +37,24 @@ export default async function OperationsPage() {
   }
 
   // Per-section resilience (ADR-008): the summary, project list, task
-  // list, department list, and worker list are independent of each other.
-  const [summarySettled, projectsSettled, tasksSettled, departmentsSettled, workersSettled] = await Promise.allSettled([
-    fetchOperationsSummary(token),
-    fetchProjects(token),
-    fetchTasks(token),
-    fetchDepartments(token),
-    fetchWorkerList(token),
-  ]);
+  // list, department list, worker list, and worker pool list are
+  // independent of each other.
+  const [summarySettled, projectsSettled, tasksSettled, departmentsSettled, workersSettled, workerPoolsSettled] =
+    await Promise.allSettled([
+      fetchOperationsSummary(token),
+      fetchProjects(token),
+      fetchTasks(token),
+      fetchDepartments(token),
+      fetchWorkerList(token),
+      fetchWorkerPools(token),
+    ]);
 
   const summaryResult = settle(summarySettled);
   const projectsResult = settle(projectsSettled);
   const tasksResult = settle(tasksSettled);
   const departmentsResult = settle(departmentsSettled);
   const workersResult = settle(workersSettled);
+  const workerPoolsResult = settle(workerPoolsSettled);
 
   return (
     <main>
@@ -90,6 +95,7 @@ export default async function OperationsPage() {
               projects={projectsResult.value ?? []}
               tasks={tasksResult.value ?? []}
               workers={(workersResult.value ?? []).filter((worker) => worker.status === 'active')}
+              workerPools={workerPoolsResult.value ?? []}
             />
           )}
         </div>

@@ -21,7 +21,7 @@ import { isAtLeastRole } from '@/lib/roles';
  * page a user actually lands on, not only a single project's expanded
  * task list.
  */
-export default function TaskStatusControl({ taskId, status, assigneeWorkerId }) {
+export default function TaskStatusControl({ taskId, status, assigneeWorkerId, assigneeWorkerPoolId }) {
   const { user } = useAuth();
   const [updating, setUpdating] = useState(false);
   const [error, setError] = useState(null);
@@ -89,7 +89,7 @@ export default function TaskStatusControl({ taskId, status, assigneeWorkerId }) 
         <option value="done">Done</option>
         <option value="failed">Failed</option>
       </select>
-      {canExecute && assigneeWorkerId && (
+      {canExecute && (assigneeWorkerId || assigneeWorkerPoolId) && (
         <button
           type="button"
           className="btn btn-secondary btn-small"
