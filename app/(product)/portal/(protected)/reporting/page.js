@@ -7,6 +7,7 @@ import { fetchPipelineSummary } from '@/lib/api/crm';
 import { fetchOrganisationHealthSummary } from '@/lib/api/organisationHealth';
 import { fetchExecutiveDashboardSummary } from '@/lib/api/executiveDashboard';
 import { fetchOrganisationalIntelligenceSummary } from '@/lib/api/organisationalIntelligence';
+import { fetchExecutiveBriefingSummary } from '@/lib/api/executiveBriefing';
 import { settle, errorMessage, isForbidden } from '@/lib/api/results';
 import PlatformSectionNav from '@/components/portal/PlatformSectionNav';
 
@@ -73,6 +74,11 @@ function ReportCard({ title, error, children }) {
  * LLM-generated summary. Everything else on this page still adds no
  * new backend data of its own — it only aggregates what already
  * exists and is already real.
+ *
+ * COPILOT_CTO_INTEGRATION_FOUNDATION_V1 adds the Executive Briefing
+ * card -- the same Organisational Intelligence findings, reshaped
+ * around the four questions an executive (or the CTO Worker, via the
+ * CTO Readiness Layer in services/context_builder.py) actually asks.
  */
 export default async function ReportingPage() {
   const token = getSessionToken();
@@ -100,6 +106,7 @@ export default async function ReportingPage() {
     organisationHealthResult,
     executiveResult,
     intelligenceResult,
+    briefingResult,
   ] = await Promise.allSettled([
     fetchOperationsSummary(token),
     fetchFinanceSummary(token),
@@ -109,6 +116,7 @@ export default async function ReportingPage() {
     fetchOrganisationHealthSummary(token),
     fetchExecutiveDashboardSummary(token),
     fetchOrganisationalIntelligenceSummary(token),
+    fetchExecutiveBriefingSummary(token),
   ]);
 
   const operations = settle(operationsResult);
@@ -119,6 +127,7 @@ export default async function ReportingPage() {
   const organisationHealth = settle(organisationHealthResult);
   const executive = settle(executiveResult);
   const intelligence = settle(intelligenceResult);
+  const briefing = settle(briefingResult);
 
   return (
     <>
@@ -425,6 +434,52 @@ export default async function ReportingPage() {
                         // their own, recomputed on every request.
                         <li key={index}>
                           <p className="activity-meta">{action}</p>
+                        </li>
+                      ))}
+                    </ul>
+                  </>
+                )}
+              </>
+            )}
+          </ReportCard>
+
+          <ReportCard title="Executive Briefing" error={briefing.error}>
+            {briefing.value && (
+              <>
+                {briefing.value.what_needs_attention.length === 0 ? (
+                  <p className="activity-meta">Nothing needs attention right now.</p>
+                ) : (
+                  <>
+                    <p className="activity-meta">What needs attention</p>
+                    <ul className="activity-list">
+                      {briefing.value.what_needs_attention.slice(0, 5).map((item, index) => (
+                        // eslint-disable-next-line react/no-array-index-key -- freshly
+                        // generated strings with no stable id, recomputed on every request.
+                        <li key={index}>
+                          <p className="activity-meta">{item}</p>
+                        </li>
+                      ))}
+                    </ul>
+                  </>
+                )}
+                <ul className="activity-list">
+                  <li>
+                    <div className="assignment-row">
+                      <span className="activity-title">Blocked / overloaded</span>
+                      <span className="activity-meta">
+                        {briefing.value.what_is_blocked.length} /{' '}
+                        {briefing.value.what_is_overloaded.length}
+                      </span>
+                    </div>
+                  </li>
+                </ul>
+                {briefing.value.what_should_happen_next.length > 0 && (
+                  <>
+                    <p className="activity-meta">What should happen next</p>
+                    <ul className="activity-list">
+                      {briefing.value.what_should_happen_next.map((project) => (
+                        <li key={project.id}>
+                          <p className="activity-meta">{project.name}</p>
                         </li>
                       ))}
                     </ul>
