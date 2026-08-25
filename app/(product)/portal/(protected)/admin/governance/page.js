@@ -111,7 +111,7 @@ export default async function AdminGovernancePage({ searchParams }) {
               <ConceptHelp concept="governance" />
             </span>
             <h1>
-              Policy registry.
+              Governance: Policy Register.
               <ConceptHelp concept="policyRegister" />
             </h1>
             <p className="lead">Every action this platform gates by role, and what role it requires.</p>

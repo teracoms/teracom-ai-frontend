@@ -4,6 +4,7 @@ import { getSessionToken } from '@/lib/api/auth';
 import { fetchWorkerSummary, fetchWorkerMemories } from '@/lib/api/workers';
 import { settle } from '@/lib/api/results';
 import { ApiError } from '@/lib/api/client';
+import MemoryArchiveControl from '@/components/portal/MemoryArchiveControl';
 
 export const metadata = {
   title: 'Memory | Teracom AI Portal',
@@ -38,7 +39,7 @@ export default async function MemoryDetailPage({ params }) {
 
   const [summaryResult, memoriesResult] = await Promise.allSettled([
     fetchWorkerSummary(token, workerId),
-    fetchWorkerMemories(token, workerId),
+    fetchWorkerMemories(token, workerId, { includeArchived: true }),
   ]);
 
   const summary = settle(summaryResult);
@@ -96,7 +97,8 @@ export default async function MemoryDetailPage({ params }) {
             <span className="eyebrow">Memory</span>
             <h1>{workerName ? `Memory for ${workerName}` : 'Memory detail'}</h1>
             <p className="lead">
-              <span className="badge">{memory.memory_type}</span>
+              <span className="badge">{memory.memory_type}</span>{' '}
+              {memory.is_archived && <span className="badge">Archived</span>}
             </p>
           </div>
         </div>
@@ -110,9 +112,23 @@ export default async function MemoryDetailPage({ params }) {
 
       <section className="section alt">
         <div className="container">
-          <p className="form-note-banner" role="note">
-            Memories can&apos;t be edited or deleted from this app — only created and read.
-          </p>
+          {memory.is_archived ? (
+            <p className="form-note-banner" role="note">
+              This memory is archived — it no longer appears in worker memory lists, and won&apos;t
+              be used in chat or orchestration context.
+            </p>
+          ) : (
+            <>
+              <p className="form-note-banner" role="note">
+                Memories can&apos;t be edited from this app, but an admin can archive one that&apos;s
+                incorrect or no longer relevant.
+              </p>
+              <MemoryArchiveControl
+                archiveUrl={`/api/portal/memory/${memoryId}/archive`}
+                body={{ worker_id: workerId }}
+              />
+            </>
+          )}
           <Link className="btn btn-secondary" href={`/portal/memory/${workerId}`}>
             Back to Worker Memory
           </Link>

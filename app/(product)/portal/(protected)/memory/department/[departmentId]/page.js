@@ -111,7 +111,7 @@ export default async function DepartmentMemoryPage({ params }) {
               {errorMessage(memories.error)}
             </p>
           ) : (
-            <DepartmentMemoryView memories={memories.value ?? []} />
+            <DepartmentMemoryView memories={memories.value ?? []} departmentId={departmentId} />
           )}
         </div>
       </section>

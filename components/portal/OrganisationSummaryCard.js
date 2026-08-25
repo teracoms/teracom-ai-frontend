@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 import EmptyState from '@/components/portal/EmptyState';
 import { OrganisationIcon, ClockIcon } from '@/components/portal/icons';
 
@@ -28,7 +30,15 @@ const TRIAL_BANNER_TEXT = {
  * computed backend-side (services/trial_service.py) so the grace-period
  * length doesn't need to be duplicated here.
  */
-export default function OrganisationSummaryCard({ organisation, restricted }) {
+// CUSTOMER_PLATFORM_UX_REFACTOR_V1 -- `linkToFullProfile` fixes
+// UX_REVIEW_CUSTOMER_PLATFORM_V1.md §M3: the Dashboard and
+// /portal/admin/organisation both render this exact card from the exact
+// same GET /organisations/ data, with nothing telling a user why they'd
+// ever need the second one. The Dashboard now passes this prop to add a
+// direct link to the fuller profile page (federation setting, AI provider
+// config, sub-organisations, business owner); the profile page itself
+// passes nothing, so it doesn't link to itself.
+export default function OrganisationSummaryCard({ organisation, restricted, linkToFullProfile = false }) {
   if (restricted) {
     return (
       <EmptyState
@@ -75,6 +85,14 @@ export default function OrganisationSummaryCard({ organisation, restricted }) {
           {trialStatus === 'active'
             ? TRIAL_BANNER_TEXT.active(daysRemaining(organisation.trial_ends_at))
             : TRIAL_BANNER_TEXT[trialStatus]()}
+        </p>
+      )}
+
+      {linkToFullProfile && !restricted && (
+        <p style={{ marginTop: '0.75rem' }}>
+          <Link className="btn btn-secondary btn-small" href="/portal/admin/organisation">
+            View full organisation profile
+          </Link>
         </p>
       )}
     </div>

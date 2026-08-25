@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 import { getSessionToken } from '@/lib/api/auth';
 import { decodeJwtPayload } from '@/lib/api/jwt';
 import { isAtLeastRole } from '@/lib/roles';
@@ -64,6 +66,13 @@ export default async function WorkerPackPage() {
 
       <section className="section">
         <div className="container">
+          <p className="illustrative-data-banner" role="note">
+            <strong>Illustrative data</strong>
+            The worker allocation shown below is an example, not necessarily your organisation&apos;s
+            real entitlement -- see <Link href="/portal/admin/billing">Licence Overview</Link> for
+            your real, current status. Your current worker count above is real. Submitting this
+            request is real regardless.
+          </p>
           <WorkerPackWizard
             currentWorkerCount={currentWorkerCount}
             workerAllocation={allocation.workers}

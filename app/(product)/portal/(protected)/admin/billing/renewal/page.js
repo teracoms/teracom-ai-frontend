@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 import { getReferenceLicence } from '@/lib/licensing/referenceLicence';
 import RenewalWizard from '@/components/portal/RenewalWizard';
 
@@ -25,6 +27,12 @@ export default function RenewalPage() {
 
       <section className="section">
         <div className="container">
+          <p className="illustrative-data-banner" role="note">
+            <strong>Illustrative data</strong>
+            The tier and dates shown below are an example, not necessarily your organisation&apos;s
+            real licence -- see <Link href="/portal/admin/billing">Licence Overview</Link> for your
+            real, current status. Submitting this request is real regardless.
+          </p>
           <RenewalWizard licence={licence} />
         </div>
       </section>

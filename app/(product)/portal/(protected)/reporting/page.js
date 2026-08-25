@@ -9,7 +9,6 @@ import { fetchExecutiveDashboardSummary } from '@/lib/api/executiveDashboard';
 import { fetchOrganisationalIntelligenceSummary } from '@/lib/api/organisationalIntelligence';
 import { fetchExecutiveBriefingSummary } from '@/lib/api/executiveBriefing';
 import { settle, errorMessage, isForbidden } from '@/lib/api/results';
-import PlatformSectionNav from '@/components/portal/PlatformSectionNav';
 
 export const metadata = {
   title: 'Reporting | Teracom AI Portal',
@@ -130,9 +129,7 @@ export default async function ReportingPage() {
   const briefing = settle(briefingResult);
 
   return (
-    <>
-      <PlatformSectionNav />
-      <main>
+    <main>
       <section className="hero hero-product hero-reporting">
         <div className="container">
           <div className="hero-copy">
@@ -491,6 +488,5 @@ export default async function ReportingPage() {
         </div>
       </section>
     </main>
-    </>
   );
 }

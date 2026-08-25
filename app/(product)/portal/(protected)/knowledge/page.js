@@ -75,7 +75,7 @@ export default async function KnowledgePage() {
               Upload Document
             </Link>
             <Link className="btn btn-secondary" href="/portal/knowledge/connectors">
-              Connectors
+              Connectors (Coming Soon)
             </Link>
           </div>
         </div>

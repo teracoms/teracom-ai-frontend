@@ -1,13 +1,10 @@
+import Link from 'next/link';
+
 import { getSessionToken } from '@/lib/api/auth';
 import { fetchOperationsSummary } from '@/lib/api/operations';
-import { fetchProjects } from '@/lib/api/projects';
-import { fetchTasks } from '@/lib/api/tasks';
-import { fetchDepartments } from '@/lib/api/departments';
-import { fetchWorkerList } from '@/lib/api/workers';
-import { fetchWorkerPools } from '@/lib/api/workerPools';
 import { settle, errorMessage } from '@/lib/api/results';
 import OperationsSummaryWidget from '@/components/portal/OperationsSummaryWidget';
-import ProjectPanel from '@/components/portal/ProjectPanel';
+import MyOrganisationNav from '@/components/portal/MyOrganisationNav';
 
 export const metadata = {
   title: 'Operations | Teracom AI Portal',
@@ -16,8 +13,15 @@ export const metadata = {
 /**
  * The Operations & Project Delivery workspace (Phase 0 Package N):
  * Operations Manager Worker / retrofitted Project Manager Worker's
- * shared home — org-wide project/task delivery tracking and
- * organisation-wide operational visibility.
+ * shared home — organisation-wide operational visibility.
+ *
+ * CUSTOMER_PLATFORM_UX_REFACTOR_V1 -- this page used to also embed a full
+ * ProjectPanel (create/list/expand-tasks for every project), duplicating
+ * the exact same UI the new dedicated /portal/projects page now owns
+ * (UX_REVIEW_CUSTOMER_PLATFORM_V1.md §H2/§M1). Operations keeps its own
+ * distinct job -- the organisation-wide statistics summary -- and links
+ * out to Projects for the actual project/task management workflow,
+ * instead of maintaining two full copies of the same create/manage UI.
  */
 export default async function OperationsPage() {
   const token = getSessionToken();
@@ -36,70 +40,44 @@ export default async function OperationsPage() {
     );
   }
 
-  // Per-section resilience (ADR-008): the summary, project list, task
-  // list, department list, worker list, and worker pool list are
-  // independent of each other.
-  const [summarySettled, projectsSettled, tasksSettled, departmentsSettled, workersSettled, workerPoolsSettled] =
-    await Promise.allSettled([
-      fetchOperationsSummary(token),
-      fetchProjects(token),
-      fetchTasks(token),
-      fetchDepartments(token),
-      fetchWorkerList(token),
-      fetchWorkerPools(token),
-    ]);
-
+  const [summarySettled] = await Promise.allSettled([fetchOperationsSummary(token)]);
   const summaryResult = settle(summarySettled);
-  const projectsResult = settle(projectsSettled);
-  const tasksResult = settle(tasksSettled);
-  const departmentsResult = settle(departmentsSettled);
-  const workersResult = settle(workersSettled);
-  const workerPoolsResult = settle(workerPoolsSettled);
 
   return (
-    <main>
-      <section className="hero hero-product">
-        <div className="container">
-          <div className="hero-copy">
-            <span className="eyebrow">Operations</span>
-            <h1>Projects &amp; task delivery.</h1>
-            <p className="lead">
-              The Operations workspace — track projects and their tasks across your organisation,
-              optionally scoped to a department.
+    <>
+      <MyOrganisationNav />
+      <main>
+        <section className="hero hero-product">
+          <div className="container">
+            <div className="hero-copy">
+              <span className="eyebrow">Operations</span>
+              <h1>Organisation-wide delivery statistics.</h1>
+              <p className="lead">
+                A live rollup of every project and task across your organisation. To create a
+                project, add a task, or manage one directly, see{' '}
+                <Link href="/portal/projects">Projects</Link>.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section className="section">
+          <div className="container">
+            {summaryResult.error ? (
+              <p className="form-error" role="alert">
+                {errorMessage(summaryResult.error)}
+              </p>
+            ) : (
+              <OperationsSummaryWidget summary={summaryResult.value} />
+            )}
+            <p style={{ marginTop: '1.5rem' }}>
+              <Link className="btn btn-primary" href="/portal/projects">
+                Open Projects
+              </Link>
             </p>
           </div>
-        </div>
-      </section>
-
-      <section className="section">
-        <div className="container">
-          {summaryResult.error ? (
-            <p className="form-error" role="alert">
-              {errorMessage(summaryResult.error)}
-            </p>
-          ) : (
-            <OperationsSummaryWidget summary={summaryResult.value} />
-          )}
-        </div>
-      </section>
-
-      <section className="section alt">
-        <div className="container">
-          {projectsResult.error || tasksResult.error || departmentsResult.error ? (
-            <p className="form-error" role="alert">
-              {errorMessage(projectsResult.error ?? tasksResult.error ?? departmentsResult.error)}
-            </p>
-          ) : (
-            <ProjectPanel
-              departments={departmentsResult.value ?? []}
-              projects={projectsResult.value ?? []}
-              tasks={tasksResult.value ?? []}
-              workers={(workersResult.value ?? []).filter((worker) => worker.status === 'active')}
-              workerPools={workerPoolsResult.value ?? []}
-            />
-          )}
-        </div>
-      </section>
-    </main>
+        </section>
+      </main>
+    </>
   );
 }

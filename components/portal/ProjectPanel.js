@@ -2,10 +2,12 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 import { useAuth } from '@/components/portal/AuthProvider';
 import { isAtLeastRole } from '@/lib/roles';
 import TaskPanel from '@/components/portal/TaskPanel';
+import ProjectStatusControl from '@/components/portal/ProjectStatusControl';
 
 /**
  * Project tracking (Phase 0 Package N, objective: retrofit Project
@@ -113,27 +115,6 @@ export default function ProjectPanel({ departmentId, departments, projects, task
       setError(err instanceof Error ? err.message : 'Unable to create this project.');
     } finally {
       setSubmitting(false);
-    }
-  }
-
-  async function handleStatusChange(projectId, status) {
-    setError(null);
-
-    try {
-      const response = await fetch(`/api/portal/projects/${projectId}/status`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status }),
-      });
-      const data = await response.json().catch(() => ({}));
-
-      if (!response.ok) {
-        throw new Error(data.error || "Unable to update this project's status.");
-      }
-
-      router.refresh();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Unable to update this project's status.");
     }
   }
 
@@ -292,26 +273,17 @@ export default function ProjectPanel({ departmentId, departments, projects, task
                   )}
                 </div>
                 <div>
-                  {canWrite && (
-                    <>
-                      <select
-                        value={project.status}
-                        onChange={(event) => handleStatusChange(project.id, event.target.value)}
-                        aria-label={`Status for ${project.name}`}
-                      >
-                        <option value="active">Active</option>
-                        <option value="completed">Completed</option>
-                        <option value="blocked">Blocked</option>
-                      </select>{' '}
-                    </>
-                  )}
+                  <ProjectStatusControl projectId={project.id} status={project.status} />
                   <button
                     type="button"
                     className="btn btn-secondary btn-small"
                     onClick={() => setExpandedProjectId(expandedProjectId === project.id ? null : project.id)}
                   >
                     {expandedProjectId === project.id ? 'Hide Tasks' : 'View Tasks'}
-                  </button>
+                  </button>{' '}
+                  <Link className="btn btn-secondary btn-small" href={`/portal/projects/${project.id}`}>
+                    Open Project
+                  </Link>
                 </div>
               </div>
               {expandedProjectId === project.id && (

@@ -180,8 +180,8 @@ export default async function DashboardPage() {
       <section className={contentSectionClass}>
         <div className="container">
           <div className="section-heading left">
-            <span className="eyebrow">Explore your workspace</span>
-            <h2>Everything available to your organisation.</h2>
+            <span className="eyebrow">Quick actions</span>
+            <h2>Common next steps.</h2>
           </div>
           <DashboardQuickLinks />
         </div>
@@ -199,6 +199,7 @@ export default async function DashboardPage() {
               <OrganisationSummaryCard
                 organisation={organisation.value}
                 restricted={organisationRestricted}
+                linkToFullProfile
               />
             )}
           </div>

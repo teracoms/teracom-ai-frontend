@@ -27,7 +27,7 @@ const SECTIONS = [
         body: 'Groups workers under a head. A department can carry a function tag ("sales", "customer_success", "marketing", "finance", or "operations") that unlocks its own dashboard widgets and boosts CTO orchestration routing toward that department. Assigning a head and creating departments is admin and above.',
       },
       {
-        title: 'Digital Workforce',
+        title: 'Workforce Overview',
         body: 'A single-page overview of your whole workforce: headcount, active/inactive split, every department with its head and members, unassigned workers, and any worker proposal still waiting on a decision.',
       },
       {
@@ -40,8 +40,12 @@ const SECTIONS = [
     heading: 'Doing the work',
     items: [
       {
+        title: 'Projects',
+        body: 'A container for related tasks, with a status (active / completed / blocked), optionally scoped to a department. Every project has its own page — open one directly, or ask a worker to plan one from a goal (requires a Platinum-tier licence).',
+      },
+      {
         title: 'Tasks',
-        body: 'Real, trackable units of work with a status (pending / in progress / done), an assignee, a due date and a priority. The standalone Tasks page shows every task across every project in one place.',
+        body: 'Real, trackable units of work with a status (pending / in progress / done), an assignee, a due date and a priority. The standalone Tasks page shows every task across every project in one place; a task can also be added from inside its own project.',
       },
       {
         title: 'Knowledge',
@@ -49,7 +53,7 @@ const SECTIONS = [
       },
       {
         title: 'Memory',
-        body: 'What a worker (or a department, or the organisation as a whole) has learned or decided over time — separate from Knowledge, which is source material you upload rather than something a worker produces.',
+        body: 'What a worker (or a department, or the organisation as a whole) has learned or decided over time — separate from Knowledge, which is source material you upload rather than something a worker produces. An admin can archive an incorrect or stale memory so it stops appearing and stops being used in chat or orchestration — memory has no true edit, only create/read/archive.',
       },
       {
         title: 'Chat',
@@ -70,7 +74,7 @@ const SECTIONS = [
       },
       {
         title: 'Operations',
-        body: 'Projects and their tasks, grouped by status, with an overdue count.',
+        body: 'Organisation-wide project and task delivery statistics — counts by status and an overdue count. To create or manage a project or task directly, see Projects.',
       },
       {
         title: 'Marketing & Media Centre',
@@ -83,7 +87,7 @@ const SECTIONS = [
     items: [
       {
         title: 'Reporting',
-        body: 'One page pulling together Operations, Finance, Marketing, Sales & Customer Success, and platform health — the executive-style overview that used to mean visiting five separate pages.',
+        body: 'One page pulling together Operations, Finance, Marketing, Sales & Customer Success, Platform Health, Organisation Health, Executive Dashboard, Organisational Intelligence, and Executive Briefing — the executive-style overview that used to mean visiting many separate pages. A top-level nav item, not nested under anything.',
       },
       {
         title: 'Federation',
@@ -111,12 +115,12 @@ const SECTIONS = [
         body: 'Organisation- and department-level rules that admins can set and override (admin and above), cascading down automatically — a department without its own override inherits the organisation default. Today only knowledge_assignment rules have a live effect (a worker joining a department automatically gets access to matching-tagged knowledge); other rule types are recorded and audited for future enforcement.',
       },
       {
-        title: 'Billing',
-        body: 'Licence usage against your entitlements, worker-pack add-ons, and (enterprise) ownership transfer.',
+        title: 'Billing & Licensing',
+        body: 'Your real, current licence status once your organisation has one — tier, hosting model, status, expiry, and usage against your entitlements. Before then, this page shows a clearly-labelled illustrative example instead of pretending to have real data. Also covers worker-pack add-ons and (enterprise) ownership transfer.',
       },
       {
-        title: 'Organisation',
-        body: 'Your organisation\'s own profile — name, industry, federation setting — and, for enterprise customers, any sub-organisation you\'ve created underneath it.',
+        title: 'Organisation Profile',
+        body: 'The full detail behind the Dashboard\'s own Organisation summary card — name, industry, federation setting, AI provider configuration — and, for enterprise customers, any sub-organisation you\'ve created underneath it.',
       },
     ],
   },

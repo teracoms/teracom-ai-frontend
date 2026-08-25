@@ -83,15 +83,19 @@ export default async function AdminPage() {
             </Link>
           </article>
           <article>
-            <h3>Organisation</h3>
-            <p>Profile, federation-consultation setting, and sub-organisation management.</p>
+            <h3>Organisation Profile</h3>
+            <p>Federation-consultation setting, AI provider configuration, and sub-organisation management.</p>
             <Link className="btn btn-secondary card-action" href="/portal/admin/organisation">
-              Open Organisation
+              Open Organisation Profile
             </Link>
           </article>
           <article>
             <h3>Departments</h3>
-            <p>Create departments, assign heads, and set each one&apos;s function.</p>
+            <p>
+              Assign heads and set each department&apos;s function. Creating a new department can
+              also be done from the <Link href="/portal/departments">Departments</Link> page
+              directly.
+            </p>
             <Link className="btn btn-secondary card-action" href="/portal/admin/departments">
               Open Departments
             </Link>

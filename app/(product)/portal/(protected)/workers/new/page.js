@@ -42,7 +42,7 @@ export default function NewWorkerPage() {
         <div className="container">
           <div className="hero-copy">
             <span className="eyebrow">Workers</span>
-            <h1>Create a new AI worker.</h1>
+            <h1>Create a new worker.</h1>
             <p className="lead">
               Its role, purpose and instructions become the system-prompt components used for
               every chat session with this worker.

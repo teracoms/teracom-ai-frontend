@@ -3,6 +3,7 @@ import { fetchContacts } from '@/lib/api/crm';
 import { settle, errorMessage } from '@/lib/api/results';
 import ContactIntakeForm from '@/components/portal/ContactIntakeForm';
 import ContactListView from '@/components/portal/ContactListView';
+import MyOrganisationNav from '@/components/portal/MyOrganisationNav';
 
 export const metadata = {
   title: 'Sales | Teracom AI Portal',
@@ -37,7 +38,9 @@ export default async function SalesPage({ searchParams }) {
   const contacts = settle(contactsSettled);
 
   return (
-    <main>
+    <>
+      <MyOrganisationNav />
+      <main>
       <section className="hero hero-product">
         <div className="container">
           <div className="hero-copy">
@@ -74,5 +77,6 @@ export default async function SalesPage({ searchParams }) {
         </div>
       </section>
     </main>
+    </>
   );
 }

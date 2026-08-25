@@ -8,6 +8,7 @@ import { fetchWorkerList } from '@/lib/api/workers';
 import { settle, errorMessage } from '@/lib/api/results';
 import EmptyState from '@/components/portal/EmptyState';
 import WorkforceNav from '@/components/portal/WorkforceNav';
+import CreateDepartmentForm from '@/components/portal/CreateDepartmentForm';
 
 export const metadata = {
   title: 'Departments | Teracom AI Portal',
@@ -67,15 +68,34 @@ export default async function DepartmentsPage() {
         </div>
       </section>
 
-      <section className="section">
-        <div className="container">
-          {canManage && (
-            <p style={{ marginBottom: '1rem' }}>
+      {/* CUSTOMER_PLATFORM_UX_REFACTOR_V1 -- fixes
+          UX_REVIEW_CUSTOMER_PLATFORM_V1.md §M2: creating a department used
+          to require leaving this page entirely for Admin -> Departments,
+          unlike Workers (create and browse on one page). Department heads
+          and function tags are a real, separately-scoped decision (picking
+          from an existing worker, setting one of five function values) --
+          that stays at Admin -> Departments rather than being folded in
+          here -- but creating a new department no longer requires the
+          detour. */}
+      {canManage && (
+        <section className="section alt">
+          <div className="container">
+            <div className="section-heading left">
+              <span className="eyebrow">New</span>
+              <h2>Create a department.</h2>
+            </div>
+            <CreateDepartmentForm />
+            <p style={{ marginTop: '1rem' }}>
               <Link className="btn btn-secondary btn-small" href="/portal/admin/departments">
-                Manage Departments
+                Assign heads &amp; set functions
               </Link>
             </p>
-          )}
+          </div>
+        </section>
+      )}
+
+      <section className="section">
+        <div className="container">
           {departments.error ? (
             <p className="form-error" role="alert">
               {errorMessage(departments.error)}

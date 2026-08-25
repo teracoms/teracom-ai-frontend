@@ -4,7 +4,7 @@ import { fetchContent, fetchVideo } from '@/lib/api/marketingProduction';
 import { fetchMediaCentreItems } from '@/lib/api/mediaCentre';
 import { settle, errorMessage } from '@/lib/api/results';
 import MediaCentreView from '@/components/portal/MediaCentreView';
-import MarketingNav from '@/components/portal/MarketingNav';
+import MyOrganisationNav from '@/components/portal/MyOrganisationNav';
 
 export const metadata = {
   title: 'Media Centre | Teracom AI Portal',
@@ -61,7 +61,7 @@ export default async function MediaCentrePage() {
 
   return (
     <>
-      <MarketingNav />
+      <MyOrganisationNav />
       <main>
       <section className="hero hero-product">
         <div className="container">

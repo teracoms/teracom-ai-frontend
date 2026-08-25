@@ -4,6 +4,7 @@ import { getSessionToken } from '@/lib/api/auth';
 import { fetchContacts } from '@/lib/api/crm';
 import { settle, errorMessage } from '@/lib/api/results';
 import EmptyState from '@/components/portal/EmptyState';
+import MyOrganisationNav from '@/components/portal/MyOrganisationNav';
 
 export const metadata = {
   title: 'Customer Success | Teracom AI Portal',
@@ -45,7 +46,9 @@ export default async function CustomerSuccessPage({ searchParams }) {
   );
 
   return (
-    <main>
+    <>
+      <MyOrganisationNav />
+      <main>
       <section className="hero hero-product">
         <div className="container">
           <div className="hero-copy">
@@ -112,5 +115,6 @@ export default async function CustomerSuccessPage({ searchParams }) {
         </div>
       </section>
     </main>
+    </>
   );
 }

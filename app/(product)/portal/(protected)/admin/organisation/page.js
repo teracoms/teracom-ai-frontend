@@ -12,7 +12,7 @@ import CreateSubOrganisationForm from '@/components/portal/CreateSubOrganisation
 import AIProviderConfigCard from '@/components/portal/AIProviderConfigCard';
 
 export const metadata = {
-  title: 'Organisation | Teracom AI Portal',
+  title: 'Organisation Profile | Teracom AI Portal',
 };
 
 /**
@@ -106,10 +106,11 @@ export default async function AdminOrganisationPage() {
         <div className="container">
           <div className="hero-copy">
             <span className="eyebrow">Organisation</span>
-            <h1>Your organisation.</h1>
+            <h1>Organisation profile.</h1>
             <p className="lead">
-              Your organisation&apos;s profile, its federation-consultation setting, and any
-              sub-organisation you&apos;ve created underneath it.
+              The full profile behind the Dashboard&apos;s own Organisation summary card: federation
+              consultation, AI provider configuration, business owner, and any sub-organisation
+              you&apos;ve created underneath this one.
             </p>
           </div>
         </div>

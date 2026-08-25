@@ -8,6 +8,7 @@ import DepartmentBudgetPanel from '@/components/portal/DepartmentBudgetPanel';
 import LicensingSummaryCard from '@/components/portal/LicensingSummaryCard';
 import EmptyState from '@/components/portal/EmptyState';
 import { BillingIcon } from '@/components/portal/icons';
+import MyOrganisationNav from '@/components/portal/MyOrganisationNav';
 
 export const metadata = {
   title: 'Finance | Teracom AI Portal',
@@ -49,7 +50,9 @@ export default async function FinancePage() {
   const departmentsResult = settle(departmentsSettled);
 
   return (
-    <main>
+    <>
+      <MyOrganisationNav />
+      <main>
       <section className="hero hero-product">
         <div className="container">
           <div className="hero-copy">
@@ -111,5 +114,6 @@ export default async function FinancePage() {
         </div>
       </section>
     </main>
+    </>
   );
 }
