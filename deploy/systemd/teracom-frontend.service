@@ -7,7 +7,7 @@ StartLimitBurst=5
 
 [Service]
 Type=simple
-WorkingDirectory=%h/teracom-ai/frontend
+WorkingDirectory=%h/teracom-ai/teracom-ai-frontend
 Environment=NODE_ENV=production
 ExecStart=/usr/local/bin/npm run start
 Restart=on-failure
