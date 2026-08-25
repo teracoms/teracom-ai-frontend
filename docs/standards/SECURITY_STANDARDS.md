@@ -34,7 +34,7 @@ These are documented, deliberate trade-offs given backend constraints, not bugs 
 - Login rate limiting is in-process/backend-side and resets on restart, isn't shared across instances — a backend gap, not something the frontend can fix.
 - Frontend role gating has no hierarchy because the backend's role check doesn't either (exact string equality).
 
-Before "fixing" any of these, read the relevant ADR in [[architecture-decisions]] (ADR-004, ADR-006) and the "Remaining risks" section of the relevant implementation report under `docs/frontend/IMPLEMENTATION_REPORTS/` — the trade-off was made deliberately with the backend's actual constraints in mind.
+Before "fixing" any of these, read the relevant ADR in `teracom-ai-docs/Decisions/ARCHITECTURE_DECISIONS.md` (ADR-004, ADR-006) and the "Remaining risks" section of the relevant implementation report, now in `teracom-ai-docs/Reports/` (moved from this repo's own `docs/frontend/IMPLEMENTATION_REPORTS/`, `DOCUMENTATION_RESTRUCTURE_V1`, 2026-08-25) — the trade-off was made deliberately with the backend's actual constraints in mind.
 
 ## 7. Sovereign Edition licensing — do not treat as solved
 

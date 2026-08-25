@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 /**
  * Generic guided-wizard shell shared by the Renewal, Worker Pack, and
- * Ownership Transfer wizards — per docs/governance/UX_VISION.md §3/§6, all
+ * Ownership Transfer wizards — per teracom-ai-docs/Reference/UX_VISION.md §3/§6, all
  * three are Wizard-tier by direct instruction (§5 item 4: "a guided flow is
  * a natural fit here regardless of NL feasibility, since a human-approval
  * step is mandatory either way"), not single dense forms.

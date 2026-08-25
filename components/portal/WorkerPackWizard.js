@@ -3,7 +3,7 @@
 import WizardShell from '@/components/portal/WizardShell';
 import { WORKER_PACK_SIZES } from '@/lib/licensing/referenceLicence';
 
-// docs/governance/BILLING_AND_LICENSING_UX.md's exact 3 named steps.
+// teracom-ai-docs/Reference/BILLING_AND_LICENSING_UX.md's exact 3 named steps.
 // `currentWorkerCount`/`workerAllocation` are passed in from the page —
 // currentWorkerCount is real, live data (GET /worker-list/); workerAllocation
 // is the reference licence's illustrative tier ceiling. Submission itself is

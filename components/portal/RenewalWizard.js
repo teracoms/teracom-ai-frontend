@@ -19,7 +19,7 @@ function IllustrativeDataBanner() {
   );
 }
 
-// docs/governance/BILLING_AND_LICENSING_UX.md's exact 4 named steps.
+// teracom-ai-docs/Reference/BILLING_AND_LICENSING_UX.md's exact 4 named steps.
 export default function RenewalWizard({ licence }) {
   const steps = [
     {

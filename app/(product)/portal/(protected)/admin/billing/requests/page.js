@@ -8,7 +8,7 @@ export const metadata = {
 };
 
 /**
- * docs/governance/BILLING_AND_LICENSING_UX.md's Navigation section lists
+ * teracom-ai-docs/Reference/BILLING_AND_LICENSING_UX.md's Navigation section lists
  * "Requests" and "Approval History" as two separate sections; they are
  * combined into one page here — entry points to the two request wizards,
  * plus a history table below — a deliberate consolidation for this package's

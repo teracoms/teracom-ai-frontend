@@ -18,7 +18,7 @@ function IllustrativeDataBanner() {
   );
 }
 
-// docs/governance/BILLING_AND_LICENSING_UX.md's exact 5 named steps.
+// teracom-ai-docs/Reference/BILLING_AND_LICENSING_UX.md's exact 5 named steps.
 // `organisation` (name/slug) is real, live data — see the page that renders
 // this — so "Current Ownership" reflects the real organisation, not
 // invented data.
