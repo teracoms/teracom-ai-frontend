@@ -7,6 +7,7 @@ import { fetchWorkerPools } from '@/lib/api/workerPools';
 import { settle, errorMessage } from '@/lib/api/results';
 import ProjectPanel from '@/components/portal/ProjectPanel';
 import WorkforceNav from '@/components/portal/WorkforceNav';
+import Link from 'next/link';
 
 export const metadata = {
   title: 'Projects | Teracom AI Portal',
@@ -71,6 +72,19 @@ export default async function ProjectsPage() {
                 statistics.
               </p>
             </div>
+          </div>
+        </section>
+
+        <section className="section">
+          <div className="container">
+            {/* CUSTOMER_EXPERIENCE_REDESIGN_V1 -- points toward the new
+                outcome-first Initiative flow before the manual
+                project/task-oriented form below it (preserved, unchanged,
+                for anyone who wants direct control). */}
+            <p className="form-note-banner" role="note">
+              Describe what you want and let Teracom AI start it for you —{' '}
+              <Link href="/portal/start">Start a New Initiative</Link>.
+            </p>
           </div>
         </section>
 

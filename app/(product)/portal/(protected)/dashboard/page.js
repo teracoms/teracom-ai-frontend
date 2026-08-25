@@ -19,6 +19,7 @@ import ActivitySection from '@/components/portal/ActivitySection';
 import OrganisationSummaryCard from '@/components/portal/OrganisationSummaryCard';
 import DashboardQuickLinks from '@/components/portal/DashboardQuickLinks';
 import OnboardingWizardStatusBanner from '@/components/portal/OnboardingWizardStatusBanner';
+import PrimaryActionHero from '@/components/portal/PrimaryActionHero';
 import { WorkersIcon, KnowledgeIcon, MemoryIcon, ChatIcon } from '@/components/portal/icons';
 
 export const metadata = {
@@ -104,11 +105,17 @@ export default async function DashboardPage() {
 
   return (
     <main>
+      <PrimaryActionHero />
+
+      {/* CUSTOMER_EXPERIENCE_REDESIGN_V1 -- unchanged below except h1 -> h2,
+          since PrimaryActionHero above is now the page's own h1. Every stat,
+          summary, and activity section on this page is preserved exactly as
+          it was -- nothing removed. */}
       <section className="hero hero-product hero-dashboard hero-compact">
         <div className="container">
           <div className="hero-copy">
             <span className="eyebrow">{organisationName ?? 'Dashboard'}</span>
-            <h1>{organisationName ? `${organisationName} — Organisation overview.` : 'Organisation overview.'}</h1>
+            <h2>{organisationName ? `${organisationName} — Organisation overview.` : 'Organisation overview.'}</h2>
             <p className="lead">
               Workers, knowledge, memory and chat activity for your organisation, in one place.
             </p>

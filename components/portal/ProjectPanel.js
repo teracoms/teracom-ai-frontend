@@ -281,7 +281,7 @@ export default function ProjectPanel({ departmentId, departments, projects, task
                   >
                     {expandedProjectId === project.id ? 'Hide Tasks' : 'View Tasks'}
                   </button>{' '}
-                  <Link className="btn btn-secondary btn-small" href={`/portal/projects/${project.id}`}>
+                  <Link className="btn btn-secondary btn-small" href={`/portal/workspace/${project.id}`}>
                     Open Project
                   </Link>
                 </div>
