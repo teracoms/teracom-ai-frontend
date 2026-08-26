@@ -7,8 +7,9 @@ import EmptyState from '@/components/portal/EmptyState';
 import ProjectStatusControl from '@/components/portal/ProjectStatusControl';
 import TaskPanel from '@/components/portal/TaskPanel';
 import ProjectOutputsPanel from '@/components/portal/ProjectOutputsPanel';
+import RequirementsPanel from '@/components/portal/RequirementsPanel';
 
-const TABS = ['Conversation', 'Files', 'Outputs', 'Activity'];
+const TABS = ['Conversation', 'Requirements', 'Files', 'Outputs', 'Activity'];
 
 function formatDate(value) {
   if (!value) return '—';
@@ -26,6 +27,7 @@ export default function ProjectWorkspaceTabs({
   project,
   conversationWorker,
   conversationMessages,
+  requirement,
   uploads,
   outputs,
   storageUsage,
@@ -70,6 +72,12 @@ export default function ProjectWorkspaceTabs({
                 initialMessages={conversationMessages}
               />
             )}
+          </div>
+        )}
+
+        {activeTab === 'Requirements' && (
+          <div>
+            <RequirementsPanel projectId={project.id} requirement={requirement ?? null} />
           </div>
         )}
 

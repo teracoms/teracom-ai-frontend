@@ -1,25 +1,14 @@
-'use client';
+import Link from 'next/link';
 
-import { useState } from 'react';
-
-// CUSTOMER_EXPERIENCE_REDESIGN_V1 -- explicit placeholder only, per the
-// objective's own "Voice Conversation (placeholder if required)". No voice
-// capability exists anywhere in this backend today (confirmed by source
-// search); this button says so honestly rather than silently doing
-// nothing or pretending to start a call.
+// AI_ORGANISATION_EXPERIENCE_IMPLEMENTATION_V2 -- Voice Experience
+// Foundation (focus area 4) replaces the prior honest placeholder (no
+// voice capability existed anywhere in this backend) with a real one:
+// browser-native speech-to-text/text-to-speech via
+// lib/voice/speechProvider.js, wired into /portal/voice.
 export default function VoiceConversationButton() {
-  const [showNote, setShowNote] = useState(false);
-
   return (
-    <div>
-      <button type="button" className="btn btn-secondary" onClick={() => setShowNote(true)}>
-        Voice Conversation
-      </button>
-      {showNote && (
-        <p className="form-note" role="status" style={{ marginTop: '0.5rem' }}>
-          Voice conversation is coming soon — for now, use Chat with Orchestrator.
-        </p>
-      )}
-    </div>
+    <Link className="btn btn-secondary" href="/portal/voice">
+      Voice Conversation
+    </Link>
   );
 }

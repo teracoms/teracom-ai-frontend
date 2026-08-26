@@ -8,6 +8,7 @@ import { fetchWorkerPools } from '@/lib/api/workerPools';
 import { fetchUploadHistory } from '@/lib/api/knowledge';
 import { fetchProjectConversation } from '@/lib/api/orchestrator';
 import { fetchProjectOutputs, fetchStorageUsage } from '@/lib/api/outputArtifacts';
+import { fetchLatestRequirements } from '@/lib/api/requirements';
 import { settle, errorMessage } from '@/lib/api/results';
 import { pickDefaultWorker } from '@/lib/portalInitiative';
 import ProjectWorkspaceTabs from '@/components/portal/ProjectWorkspaceTabs';
@@ -56,6 +57,7 @@ export default async function ProjectWorkspacePage({ params }) {
     conversationSettled,
     outputsSettled,
     storageUsageSettled,
+    requirementSettled,
   ] = await Promise.allSettled([
     fetchProjects(token),
     fetchTasks(token, projectId),
@@ -65,6 +67,7 @@ export default async function ProjectWorkspacePage({ params }) {
     fetchProjectConversation(token, projectId),
     fetchProjectOutputs(token, projectId),
     fetchStorageUsage(token),
+    fetchLatestRequirements(token, projectId),
   ]);
 
   const projectsResult = settle(projectsSettled);
@@ -75,6 +78,7 @@ export default async function ProjectWorkspacePage({ params }) {
   const conversationResult = settle(conversationSettled);
   const outputsResult = settle(outputsSettled);
   const storageUsageResult = settle(storageUsageSettled);
+  const requirementResult = settle(requirementSettled);
 
   if (projectsResult.error) {
     return (
@@ -170,6 +174,7 @@ export default async function ProjectWorkspacePage({ params }) {
               project={project}
               conversationWorker={conversationWorker}
               conversationMessages={conversationResult.value?.messages ?? []}
+              requirement={requirementResult.value ?? null}
               uploads={uploads}
               outputs={outputsResult.value ?? []}
               storageUsage={storageUsageResult.value ?? null}

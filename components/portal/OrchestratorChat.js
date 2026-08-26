@@ -1,9 +1,16 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import ChatThread from '@/components/portal/ChatThread';
+import {
+  isSpeechToTextSupported,
+  isTextToSpeechSupported,
+  startListening,
+  speak,
+  cancelSpeech,
+} from '@/lib/voice/speechProvider';
 
 let localIdCounter = 0;
 function nextLocalId() {
@@ -32,8 +39,16 @@ function nextLocalId() {
  * File upload reuses the existing Knowledge upload pipeline exactly
  * (POST /api/portal/knowledge/upload, worker_id + file) -- no new backend
  * mechanism for this, per "reuse existing backend... where available."
+ *
+ * `voiceEnabled` (AI_ORGANISATION_EXPERIENCE_IMPLEMENTATION_V2 focus area
+ * 4, Voice Experience Foundation) layers a real browser-native
+ * speech-to-text/text-to-speech mode on top of the exact same send/receive
+ * flow -- a spoken turn becomes the same `message` a typed turn would,
+ * and the text transcript (ChatThread below) always renders every turn
+ * regardless of how it was entered, so voice and text are shown
+ * simultaneously rather than voice replacing text.
  */
-export default function OrchestratorChat({ workerId, projectId, initialMessages = [], onProjectCreated }) {
+export default function OrchestratorChat({ workerId, projectId, initialMessages = [], onProjectCreated, voiceEnabled = false }) {
   const router = useRouter();
   const [messages, setMessages] = useState(
     initialMessages.map((entry) => ({ id: nextLocalId(), role: entry.role, content: entry.message ?? entry.content }))
@@ -50,21 +65,34 @@ export default function OrchestratorChat({ workerId, projectId, initialMessages 
   const [projectName, setProjectName] = useState('');
   const [showProjectNameField, setShowProjectNameField] = useState(false);
 
+  const [listening, setListening] = useState(false);
+  const [interimTranscript, setInterimTranscript] = useState('');
+  const [autoSpeak, setAutoSpeak] = useState(voiceEnabled);
+  const [voiceError, setVoiceError] = useState(null);
+  const stopListeningRef = useRef(null);
+  const speechToTextSupported = isSpeechToTextSupported();
+  const textToSpeechSupported = isTextToSpeechSupported();
+
+  useEffect(() => {
+    return () => {
+      stopListeningRef.current?.();
+      cancelSpeech();
+    };
+  }, []);
+
   function appendMessage(role, content) {
     setMessages((current) => [...current, { id: nextLocalId(), role, content }]);
   }
 
-  async function handleSend(event) {
-    event.preventDefault();
-    const message = text.trim();
+  async function sendMessage(message) {
     if (!message || sending) return;
 
     setError(null);
     appendMessage('user', message);
-    setText('');
     setSending(true);
 
     try {
+      let responseText;
       if (projectId) {
         const response = await fetch(`/api/portal/orchestrator/projects/${projectId}/converse`, {
           method: 'POST',
@@ -73,7 +101,7 @@ export default function OrchestratorChat({ workerId, projectId, initialMessages 
         });
         const data = await response.json().catch(() => ({}));
         if (!response.ok) throw new Error(data.error || 'The Orchestrator did not respond.');
-        appendMessage('assistant', data.response);
+        responseText = data.response;
       } else {
         const history = messages.map((m) => ({ role: m.role, content: m.content }));
         const response = await fetch('/api/portal/orchestrator/converse', {
@@ -83,13 +111,51 @@ export default function OrchestratorChat({ workerId, projectId, initialMessages 
         });
         const data = await response.json().catch(() => ({}));
         if (!response.ok) throw new Error(data.error || 'The Orchestrator did not respond.');
-        appendMessage('assistant', data.response);
+        responseText = data.response;
+      }
+      appendMessage('assistant', responseText);
+      if (voiceEnabled && autoSpeak && textToSpeechSupported) {
+        speak(responseText, { onError: (err) => setVoiceError(err.message) });
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'The Orchestrator did not respond.');
     } finally {
       setSending(false);
     }
+  }
+
+  async function handleSend(event) {
+    event.preventDefault();
+    const message = text.trim();
+    if (!message) return;
+    setText('');
+    await sendMessage(message);
+  }
+
+  function handleToggleListening() {
+    if (listening) {
+      stopListeningRef.current?.();
+      setListening(false);
+      return;
+    }
+
+    setVoiceError(null);
+    setInterimTranscript('');
+    cancelSpeech();
+    setListening(true);
+
+    stopListeningRef.current = startListening({
+      onInterimResult: (interim) => setInterimTranscript(interim),
+      onFinalResult: (final) => {
+        setInterimTranscript('');
+        if (final) sendMessage(final);
+      },
+      onError: (err) => {
+        setVoiceError(err.message);
+        setListening(false);
+      },
+      onEnd: () => setListening(false),
+    });
   }
 
   async function handleUpload(event) {
@@ -186,6 +252,46 @@ export default function OrchestratorChat({ workerId, projectId, initialMessages 
           </p>
         )}
       </form>
+
+      {voiceEnabled && (
+        <div style={{ marginTop: '1rem', display: 'flex', gap: '0.75rem', flexWrap: 'wrap', alignItems: 'center' }}>
+          {speechToTextSupported ? (
+            <button
+              type="button"
+              className={listening ? 'btn btn-primary btn-small' : 'btn btn-secondary btn-small'}
+              onClick={handleToggleListening}
+              disabled={sending}
+            >
+              {listening ? 'Stop Listening' : 'Speak'}
+            </button>
+          ) : (
+            <p className="form-note">Speech-to-text isn&apos;t supported in this browser.</p>
+          )}
+
+          {textToSpeechSupported && (
+            <label style={{ display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
+              <input
+                type="checkbox"
+                checked={autoSpeak}
+                onChange={(event) => setAutoSpeak(event.target.checked)}
+              />
+              Read replies aloud
+            </label>
+          )}
+
+          {listening && (
+            <p className="form-note" role="status">
+              Listening{interimTranscript ? `: "${interimTranscript}"` : '...'}
+            </p>
+          )}
+
+          {voiceError && (
+            <p className="form-error" role="alert">
+              {voiceError}
+            </p>
+          )}
+        </div>
+      )}
 
       <div style={{ marginTop: '1rem', display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'flex-start' }}>
         <form onSubmit={handleUpload} style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>

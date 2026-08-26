@@ -13,6 +13,7 @@ import {
 import { fetchOnboardingWizardProgress } from '@/lib/api/onboardingWizard';
 import { LAST_AVAILABLE_STEP } from '@/lib/onboardingWizardSteps';
 import { fetchUserSettings } from '@/lib/api/userSettings';
+import { fetchProjects } from '@/lib/api/projects';
 import { settle, errorMessage, isForbidden } from '@/lib/api/results';
 import StatTile from '@/components/portal/StatTile';
 import ActivitySection from '@/components/portal/ActivitySection';
@@ -57,6 +58,7 @@ export default async function DashboardPage() {
     identityResult,
     wizardProgressResult,
     settingsResult,
+    projectsResult_,
   ] = await Promise.allSettled([
     fetchPortalDashboard(token),
     fetchRecentActivity(token),
@@ -65,6 +67,7 @@ export default async function DashboardPage() {
     fetchMyOrganisationIdentity(token),
     fetchOnboardingWizardProgress(token),
     fetchUserSettings(token),
+    fetchProjects(token),
   ]);
 
   const dashboard = settle(dashboardResult);
@@ -74,6 +77,7 @@ export default async function DashboardPage() {
   const identity = settle(identityResult);
   const wizardProgress = settle(wizardProgressResult);
   const settings = settle(settingsResult);
+  const projects = settle(projectsResult_);
 
   // Settings & Security V1 -- Dashboard Preferences. Defaults to true
   // (services/settings_service.py#DEFAULT_PREFERENCES), matching this
@@ -103,9 +107,56 @@ export default async function DashboardPage() {
     : false;
   const showBrandNewOrgBanner = isBrandNewOrganisation && (wizardProgress.error || wizardStepsDone);
 
+  const projectList = projects.value ?? [];
+  const activeProjectCount = projectList.filter((project) => project.status !== 'done').length;
+  const completedProjectCount = projectList.filter((project) => project.status === 'done').length;
+
   return (
     <main>
       <PrimaryActionHero />
+
+      {/* AI_ORGANISATION_EXPERIENCE_IMPLEMENTATION_V2 -- Business Mode
+          Refinement (focus area 7). "Prioritise: Requirements,
+          Deliverables, Progress, Outcomes. Do not prioritise: Workers,
+          Tasks, Pools, Internal orchestration." This section sits above
+          the pre-existing "Organisation overview" Workers/Knowledge/
+          Memories/Chat Sessions stat grid below (which stays, unchanged
+          -- admins still need workforce visibility, "do not remove
+          existing functionality") so the first thing a customer sees
+          after the outcome-first hero is their own project progress and
+          outputs, not headcount. */}
+      {!projects.error && projectList.length > 0 && (
+        <section className={contentSectionClass}>
+          <div className="container">
+            <div className="section-heading left">
+              <span className="eyebrow">Your projects</span>
+              <h2>Progress and outcomes, at a glance.</h2>
+            </div>
+            <div className="stat-grid">
+              <StatTile
+                label="In Progress"
+                value={activeProjectCount}
+                hint="Projects Teracom AI is actively working on"
+                href="/portal/projects"
+              />
+              <StatTile
+                label="Completed"
+                value={completedProjectCount}
+                hint="Projects delivered"
+                href="/portal/projects"
+              />
+            </div>
+            <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', marginTop: '1rem' }}>
+              <Link className="btn btn-secondary btn-small" href="/portal/outputs">
+                View Outputs
+              </Link>
+              <Link className="btn btn-secondary btn-small" href="/portal/conversations">
+                View Conversations
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* CUSTOMER_EXPERIENCE_REDESIGN_V1 -- unchanged below except h1 -> h2,
           since PrimaryActionHero above is now the page's own h1. Every stat,
