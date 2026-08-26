@@ -7,6 +7,7 @@ import { fetchWorkerList } from '@/lib/api/workers';
 import { fetchWorkerPools } from '@/lib/api/workerPools';
 import { fetchUploadHistory } from '@/lib/api/knowledge';
 import { fetchProjectConversation } from '@/lib/api/orchestrator';
+import { fetchProjectOutputs, fetchStorageUsage } from '@/lib/api/outputArtifacts';
 import { settle, errorMessage } from '@/lib/api/results';
 import { pickDefaultWorker } from '@/lib/portalInitiative';
 import ProjectWorkspaceTabs from '@/components/portal/ProjectWorkspaceTabs';
@@ -46,15 +47,25 @@ export default async function ProjectWorkspacePage({ params }) {
     );
   }
 
-  const [projectsSettled, tasksSettled, workersSettled, workerPoolsSettled, uploadsSettled, conversationSettled] =
-    await Promise.allSettled([
-      fetchProjects(token),
-      fetchTasks(token, projectId),
-      fetchWorkerList(token),
-      fetchWorkerPools(token),
-      fetchUploadHistory(token),
-      fetchProjectConversation(token, projectId),
-    ]);
+  const [
+    projectsSettled,
+    tasksSettled,
+    workersSettled,
+    workerPoolsSettled,
+    uploadsSettled,
+    conversationSettled,
+    outputsSettled,
+    storageUsageSettled,
+  ] = await Promise.allSettled([
+    fetchProjects(token),
+    fetchTasks(token, projectId),
+    fetchWorkerList(token),
+    fetchWorkerPools(token),
+    fetchUploadHistory(token),
+    fetchProjectConversation(token, projectId),
+    fetchProjectOutputs(token, projectId),
+    fetchStorageUsage(token),
+  ]);
 
   const projectsResult = settle(projectsSettled);
   const tasksResult = settle(tasksSettled);
@@ -62,6 +73,8 @@ export default async function ProjectWorkspacePage({ params }) {
   const workerPoolsResult = settle(workerPoolsSettled);
   const uploadsResult = settle(uploadsSettled);
   const conversationResult = settle(conversationSettled);
+  const outputsResult = settle(outputsSettled);
+  const storageUsageResult = settle(storageUsageSettled);
 
   if (projectsResult.error) {
     return (
@@ -158,6 +171,8 @@ export default async function ProjectWorkspacePage({ params }) {
               conversationWorker={conversationWorker}
               conversationMessages={conversationResult.value?.messages ?? []}
               uploads={uploads}
+              outputs={outputsResult.value ?? []}
+              storageUsage={storageUsageResult.value ?? null}
               taskExecutions={taskExecutions}
               tasks={tasks}
               workers={workers}

@@ -6,6 +6,7 @@ import OrchestratorChat from '@/components/portal/OrchestratorChat';
 import EmptyState from '@/components/portal/EmptyState';
 import ProjectStatusControl from '@/components/portal/ProjectStatusControl';
 import TaskPanel from '@/components/portal/TaskPanel';
+import ProjectOutputsPanel from '@/components/portal/ProjectOutputsPanel';
 
 const TABS = ['Conversation', 'Files', 'Outputs', 'Activity'];
 
@@ -26,6 +27,8 @@ export default function ProjectWorkspaceTabs({
   conversationWorker,
   conversationMessages,
   uploads,
+  outputs,
+  storageUsage,
   taskExecutions,
   tasks,
   workers,
@@ -95,11 +98,23 @@ export default function ProjectWorkspaceTabs({
 
         {activeTab === 'Outputs' && (
           <div>
-            <p className="form-note">What Teracom AI has produced so far for this project.</p>
+            {/* OUTPUT_REPOSITORY_IMPLEMENTATION_V1 -- real, downloadable
+                deliverables are now the primary content of this tab. */}
+            <ProjectOutputsPanel projectId={project.id} outputs={outputs ?? []} storageUsage={storageUsage} />
+
+            {/* Preserved verbatim from before this change, not removed --
+                genuine execution telemetry (what a task actually did,
+                verification results), a different thing from a
+                downloadable deliverable, kept as supporting technical
+                detail underneath the real outputs above. */}
+            <div className="section-heading left" style={{ marginTop: '2rem' }}>
+              <span className="eyebrow">Execution details</span>
+              <h3>What Teracom AI&apos;s workers did, task by task.</h3>
+            </div>
             {(taskExecutions ?? []).length === 0 ? (
               <EmptyState
-                title="No outputs yet"
-                description="Outputs appear here once tasks in this project are completed."
+                title="No execution records yet"
+                description="Execution details appear here once tasks in this project are completed."
               />
             ) : (
               <ul className="activity-list">
