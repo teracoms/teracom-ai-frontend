@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-import ChatInterface from '@/components/portal/ChatInterface';
+import OrchestratorChat from '@/components/portal/OrchestratorChat';
 import EmptyState from '@/components/portal/EmptyState';
 import ProjectStatusControl from '@/components/portal/ProjectStatusControl';
 import TaskPanel from '@/components/portal/TaskPanel';
@@ -24,6 +24,7 @@ function formatDate(value) {
 export default function ProjectWorkspaceTabs({
   project,
   conversationWorker,
+  conversationMessages,
   uploads,
   taskExecutions,
   tasks,
@@ -60,7 +61,11 @@ export default function ProjectWorkspaceTabs({
                 description="Create a worker first, then come back here to talk about this project."
               />
             ) : (
-              <ChatInterface workerId={conversationWorker.id} />
+              <OrchestratorChat
+                workerId={conversationWorker.id}
+                projectId={project.id}
+                initialMessages={conversationMessages}
+              />
             )}
           </div>
         )}

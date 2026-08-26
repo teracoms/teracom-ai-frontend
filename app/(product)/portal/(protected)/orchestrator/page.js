@@ -4,24 +4,25 @@ import { getSessionToken } from '@/lib/api/auth';
 import { fetchWorkerList } from '@/lib/api/workers';
 import { errorMessage } from '@/lib/api/results';
 import { pickDefaultWorker } from '@/lib/portalInitiative';
-import ChatInterface from '@/components/portal/ChatInterface';
+import OrchestratorChat from '@/components/portal/OrchestratorChat';
 import EmptyState from '@/components/portal/EmptyState';
 
 export const metadata = {
   title: 'Chat with Orchestrator | Teracom AI Portal',
 };
 
-// CUSTOMER_EXPERIENCE_REDESIGN_V1 -- "Chat with Orchestrator" from the new
-// primary dashboard. There is no single "Orchestrator" worker entity in the
-// data model -- conversation is per-worker (POST /chat/, worker_id
-// required) -- so this page picks a sensible default worker
-// (pickDefaultWorker(), the same heuristic the Initiative flow uses) and
-// presents that conversation under the friendly "Orchestrator" framing the
-// customer actually asked for, reusing ChatInterface exactly as
-// /portal/chat's own per-worker chat already does (including its Orchestration
-// Intelligence colleague-consultation panel -- a real fit here, since asking
-// "the Orchestrator" a question that another worker could help with is
-// precisely that feature's own purpose).
+// ORCHESTRATOR_CHAT_IMPLEMENTATION_V1 -- replaces the plain ChatInterface
+// reuse (CUSTOMER_EXPERIENCE_REDESIGN_V1's first pass) with OrchestratorChat,
+// a real, working multi-turn conversation against
+// services/orchestrator_service.py's own clarification-seeking prompt
+// (POST /orchestrator/converse) -- not the knowledge-QA POST /chat/, which
+// live Sandbox validation found effectively non-responsive for a brand-new
+// organisation with no knowledge base yet (it is correctly designed to
+// decline rather than probe, which is right for a knowledge worker and
+// wrong for an orchestrator). There is still no single "Orchestrator"
+// worker entity in the data model -- this page picks a sensible default
+// worker (pickDefaultWorker(), the same heuristic the Initiative flow
+// uses) and presents that conversation under the "Orchestrator" framing.
 export default async function OrchestratorPage() {
   const token = getSessionToken();
 
@@ -78,7 +79,7 @@ export default async function OrchestratorPage() {
               description="Create a worker first, then come back here to chat."
             />
           ) : (
-            <ChatInterface workerId={orchestratorWorker.id} />
+            <OrchestratorChat workerId={orchestratorWorker.id} />
           )}
         </div>
       </section>
