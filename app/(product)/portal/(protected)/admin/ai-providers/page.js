@@ -4,9 +4,11 @@ import { isAtLeastRole } from '@/lib/roles';
 import { fetchAIProviderConfig } from '@/lib/api/aiProviderConfig';
 import { fetchAIProviderCredentials } from '@/lib/api/aiProviderCredentials';
 import { fetchAIProviderRoutingRules } from '@/lib/api/aiProviderRoutingRules';
+import { fetchModelEconomicsComparison } from '@/lib/api/modelEconomics';
 import AIProviderConfigCard from '@/components/portal/AIProviderConfigCard';
 import AIProviderCredentialsPanel from '@/components/portal/AIProviderCredentialsPanel';
 import AIProviderRoutingRulesEditor from '@/components/portal/AIProviderRoutingRulesEditor';
+import ModelEconomicsComparison from '@/components/portal/ModelEconomicsComparison';
 
 export const metadata = {
   title: 'AI Providers | Teracom AI Portal',
@@ -43,12 +45,14 @@ export default async function AIProvidersPage() {
   let config = null;
   let credentials = [];
   let rules = [];
+  let comparison = [];
   let loadError = null;
 
   try {
     config = await fetchAIProviderConfig(token);
     credentials = await fetchAIProviderCredentials(token);
     rules = await fetchAIProviderRoutingRules(token);
+    comparison = await fetchModelEconomicsComparison(token);
   } catch (error) {
     loadError = error instanceof Error ? error.message : 'Unable to load AI provider settings.';
   }
@@ -114,6 +118,17 @@ export default async function AIProvidersPage() {
               </div>
             </section>
           )}
+
+          <section className="section alt">
+            <div className="container">
+              <div className="section-heading left">
+                <span className="eyebrow">Best Available</span>
+                <h2>Real provider comparison.</h2>
+                <p>What Best Available mode actually ranks on — nothing fabricated.</p>
+              </div>
+              <ModelEconomicsComparison rows={comparison} />
+            </div>
+          </section>
         </>
       )}
     </main>
