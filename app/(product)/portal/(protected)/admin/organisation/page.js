@@ -9,7 +9,7 @@ import { isForbidden, errorMessage } from '@/lib/api/results';
 import OrganisationSummaryCard from '@/components/portal/OrganisationSummaryCard';
 import FederationEnabledToggle from '@/components/portal/FederationEnabledToggle';
 import CreateSubOrganisationForm from '@/components/portal/CreateSubOrganisationForm';
-import AIProviderConfigCard from '@/components/portal/AIProviderConfigCard';
+import Link from 'next/link';
 
 export const metadata = {
   title: 'Organisation Profile | Teracom AI Portal',
@@ -178,13 +178,16 @@ export default async function AdminOrganisationPage() {
           <div className="container">
             <div className="section-heading left">
               <span className="eyebrow">AI Provider</span>
-              <h2>AI provider configuration.</h2>
+              <h2>AI provider routing.</h2>
               <p>
                 Which model actually backs every worker&apos;s own turn in this organisation — a
-                Worker is an organisational role, never a specific AI model.
+                Worker is an organisational role, never a specific AI model. Currently:{' '}
+                <span className="badge">{aiProviderConfig.routing_mode}</span>
               </p>
             </div>
-            <AIProviderConfigCard config={aiProviderConfig} />
+            <Link href="/portal/admin/ai-providers" className="btn btn-secondary btn-small">
+              Manage AI Providers
+            </Link>
           </div>
         </section>
       )}

@@ -2,13 +2,10 @@ import { NextResponse } from 'next/server';
 
 import { getSessionToken } from '@/lib/api/auth';
 import { ApiError } from '@/lib/api/client';
-import { fetchAIProviderConfig, setAIProviderConfig } from '@/lib/api/aiProviderConfig';
-import { parseAIProviderConfigPayload } from '@/lib/api/validation';
+import { fetchAIProviderRoutingRules, replaceAIProviderRoutingRules } from '@/lib/api/aiProviderRoutingRules';
+import { parseAIProviderRoutingRulesPayload } from '@/lib/api/validation';
 
-// Same-origin proxy for AIProviderConfigCard -> GET/PUT
-// /ai-provider-config/. GET is read-open (any org member); PUT is
-// admin-gated backend-side -- selecting the model/provider every
-// worker in this organisation runs against.
+// Same-origin proxy for the Custom Routing (Mode D) rule-set editor.
 export async function GET() {
   const token = getSessionToken();
 
@@ -17,7 +14,7 @@ export async function GET() {
   }
 
   try {
-    const data = await fetchAIProviderConfig(token);
+    const data = await fetchAIProviderRoutingRules(token);
     return NextResponse.json(data);
   } catch (error) {
     if (error instanceof ApiError) {
@@ -25,7 +22,7 @@ export async function GET() {
       return NextResponse.json({ error: error.message }, { status });
     }
 
-    return NextResponse.json({ error: 'Unexpected error loading the AI provider configuration.' }, { status: 500 });
+    return NextResponse.json({ error: 'Unexpected error loading the routing rules.' }, { status: 500 });
   }
 }
 
@@ -43,18 +40,13 @@ export async function PUT(request) {
     return NextResponse.json({ error: 'Invalid request body.' }, { status: 400 });
   }
 
-  const parsed = parseAIProviderConfigPayload(payload);
-
+  const parsed = parseAIProviderRoutingRulesPayload(payload);
   if (!parsed.valid) {
-    return NextResponse.json({ error: 'A valid provider is required.' }, { status: 400 });
+    return NextResponse.json({ error: 'A valid rule list is required.' }, { status: 400 });
   }
 
   try {
-    const data = await setAIProviderConfig(token, {
-      provider: parsed.provider,
-      model_name: parsed.model_name,
-      routing_mode: parsed.routing_mode,
-    });
+    const data = await replaceAIProviderRoutingRules(token, parsed.rules);
     return NextResponse.json(data);
   } catch (error) {
     if (error instanceof ApiError) {
@@ -62,6 +54,6 @@ export async function PUT(request) {
       return NextResponse.json({ error: error.message }, { status });
     }
 
-    return NextResponse.json({ error: 'Unexpected error updating the AI provider configuration.' }, { status: 500 });
+    return NextResponse.json({ error: 'Unexpected error saving the routing rules.' }, { status: 500 });
   }
 }
