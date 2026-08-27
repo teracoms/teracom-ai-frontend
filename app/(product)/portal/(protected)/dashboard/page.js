@@ -150,7 +150,7 @@ export default async function DashboardPage() {
               <Link className="btn btn-secondary btn-small" href="/portal/outputs">
                 View Outputs
               </Link>
-              <Link className="btn btn-secondary btn-small" href="/portal/conversations">
+              <Link className="btn btn-secondary btn-small" href="/portal/team">
                 View Conversations
               </Link>
             </div>
