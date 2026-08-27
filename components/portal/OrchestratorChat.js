@@ -18,6 +18,22 @@ function nextLocalId() {
   return `local-${localIdCounter}`;
 }
 
+// PROJECT_LIFECYCLE_AND_VOICE_REMEDIATION_V1 VOICE007 -- one real,
+// unambiguous label per voice state, not left for a customer to infer
+// from which bits of surrounding text happen to be visible.
+const VOICE_STATE_LABEL = {
+  listening: '🎤 Listening',
+  processing: '⏳ Processing',
+  speaking: '🔊 Speaking',
+  idle: '⚪ Idle',
+};
+const VOICE_STATE_TONE = {
+  listening: 'badge-warn',
+  processing: 'badge-warn',
+  speaking: 'badge-ok',
+  idle: 'badge-muted',
+};
+
 /**
  * ORCHESTRATOR_CHAT_IMPLEMENTATION_V1 -- a real, working Orchestrator
  * conversation. Two modes, one component:
@@ -80,6 +96,11 @@ export default function OrchestratorChat({ workerId, projectId, initialMessages 
 
   const [listening, setListening] = useState(false);
   const [interimTranscript, setInterimTranscript] = useState('');
+  // Mirrors accumulatedTranscriptRef purely for display -- the ref stays
+  // the source of truth sendMessage() actually reads from, this just
+  // lets the customer see their own growing transcript across pauses
+  // instead of it silently vanishing between sentences (see beginListening()).
+  const [accumulatedDisplay, setAccumulatedDisplay] = useState('');
   const [autoSpeak, setAutoSpeak] = useState(voiceEnabled);
   const [voiceError, setVoiceError] = useState(null);
   // UX_DEFECT_REMEDIATION_V1 VOICE002 -- real gap: cancelSpeech() already
@@ -88,8 +109,19 @@ export default function OrchestratorChat({ workerId, projectId, initialMessages 
   // there was no way to render a visible "Stop Speaking" button.
   const [speaking, setSpeaking] = useState(false);
   const stopListeningRef = useRef(null);
+  // PROJECT_LIFECYCLE_AND_VOICE_REMEDIATION_V1 VOICE002/VOICE003 --
+  // startListening() now runs continuous (see lib/voice/speechProvider.js's
+  // own note), so a turn can contain several separate "final" chunks as
+  // the customer pauses between sentences. Accumulated in a ref (not
+  // state) so appending doesn't itself trigger a re-render on every
+  // chunk -- only the actual send, on manual stop, needs to happen.
+  const accumulatedTranscriptRef = useRef('');
   const speechToTextSupported = isSpeechToTextSupported();
   const textToSpeechSupported = isTextToSpeechSupported();
+  // VOICE007 -- one real, always-current voice state, not three
+  // separately-inferred booleans a customer has to piece together
+  // themselves from which bits of text happen to be visible.
+  const voiceState = listening ? 'listening' : sending ? 'processing' : speaking ? 'speaking' : 'idle';
 
   useEffect(() => {
     return () => {
@@ -135,7 +167,20 @@ export default function OrchestratorChat({ workerId, projectId, initialMessages 
       if (voiceEnabled && autoSpeak && textToSpeechSupported) {
         setSpeaking(true);
         speak(responseText, {
-          onEnd: () => setSpeaking(false),
+          // VOICE004 -- real gap: no conversational back-and-forth flow,
+          // every turn needed a manual "Speak" click even in voice mode.
+          // The moment the Orchestrator's spoken reply finishes (whether
+          // it played out naturally or was cut short by "Stop Speaking"
+          // -- both now correctly reach onEnd, see speechProvider.js's
+          // own VOICE006 fix), reopen the microphone automatically so
+          // the customer can just keep talking, the way a real
+          // conversation works.
+          onEnd: () => {
+            setSpeaking(false);
+            if (voiceEnabled && autoSpeak && speechToTextSupported && !listening) {
+              beginListening();
+            }
+          },
           onError: (err) => {
             setSpeaking(false);
             setVoiceError(err.message);
@@ -162,15 +207,22 @@ export default function OrchestratorChat({ workerId, projectId, initialMessages 
     setSpeaking(false);
   }
 
-  function handleToggleListening() {
-    if (listening) {
-      stopListeningRef.current?.();
-      setListening(false);
-      return;
-    }
-
+  // PROJECT_LIFECYCLE_AND_VOICE_REMEDIATION_V1 VOICE002/VOICE003 -- now
+  // that startListening() runs continuous (speechProvider.js), a turn
+  // is no longer "send on the first final chunk" -- that would still
+  // cut a customer off after their first sentence, just later than
+  // before. Instead: keep accumulating final chunks in a ref as the
+  // customer talks across as many sentences/pauses as they like, and
+  // only actually send the whole thing once listening stops -- either
+  // the customer clicking "Stop Listening" themselves, or the
+  // recognizer ending on its own (e.g. a real prolonged silence
+  // timeout, still handled gracefully rather than losing what was
+  // already said).
+  function beginListening() {
     setVoiceError(null);
     setInterimTranscript('');
+    setAccumulatedDisplay('');
+    accumulatedTranscriptRef.current = '';
     cancelSpeech();
     setSpeaking(false);
     setListening(true);
@@ -178,15 +230,39 @@ export default function OrchestratorChat({ workerId, projectId, initialMessages 
     stopListeningRef.current = startListening({
       onInterimResult: (interim) => setInterimTranscript(interim),
       onFinalResult: (final) => {
+        accumulatedTranscriptRef.current = `${accumulatedTranscriptRef.current} ${final}`.trim();
+        setAccumulatedDisplay(accumulatedTranscriptRef.current);
         setInterimTranscript('');
-        if (final) sendMessage(final);
       },
       onError: (err) => {
-        setVoiceError(err.message);
         setListening(false);
+        const finalMessage = accumulatedTranscriptRef.current.trim();
+        accumulatedTranscriptRef.current = '';
+        setAccumulatedDisplay('');
+        // A genuine failure still deserves the message shown, but if the
+        // customer had already said something real before the error
+        // (e.g. a prolonged-silence timeout after a real sentence), that
+        // real speech is sent rather than silently discarded.
+        setVoiceError(err.message);
+        if (finalMessage) sendMessage(finalMessage);
       },
-      onEnd: () => setListening(false),
+      onEnd: () => {
+        setListening(false);
+        setInterimTranscript('');
+        setAccumulatedDisplay('');
+        const finalMessage = accumulatedTranscriptRef.current.trim();
+        accumulatedTranscriptRef.current = '';
+        if (finalMessage) sendMessage(finalMessage);
+      },
     });
+  }
+
+  function handleToggleListening() {
+    if (listening) {
+      stopListeningRef.current?.();
+      return;
+    }
+    beginListening();
   }
 
   async function handleUpload(event) {
@@ -317,9 +393,20 @@ export default function OrchestratorChat({ workerId, projectId, initialMessages 
             </button>
           )}
 
+          {/* VOICE007 -- real gap: a customer had no way to tell whether
+              the app was Listening, Processing, Speaking, or just
+              Finished/idle -- state that already existed (listening,
+              sending, speaking) simply had no single, unambiguous,
+              always-visible signal drawing all three together. */}
+          <span className={`badge ${VOICE_STATE_TONE[voiceState]}`} style={{ marginBottom: 0 }} role="status">
+            {VOICE_STATE_LABEL[voiceState]}
+          </span>
+
           {listening && (
             <p className="form-note" role="status">
-              Listening{interimTranscript ? `: "${interimTranscript}"` : '...'}
+              {(accumulatedDisplay || interimTranscript)
+                ? `"${[accumulatedDisplay, interimTranscript].filter(Boolean).join(' ')}"`
+                : 'Say as much as you like, then press Stop Listening when you\'re done.'}
             </p>
           )}
 

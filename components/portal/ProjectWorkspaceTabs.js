@@ -8,63 +8,13 @@ import ProjectStatusControl from '@/components/portal/ProjectStatusControl';
 import TaskPanel from '@/components/portal/TaskPanel';
 import ProjectOutputsPanel from '@/components/portal/ProjectOutputsPanel';
 import RequirementsPanel from '@/components/portal/RequirementsPanel';
+import ProjectLifecycleTracker from '@/components/portal/ProjectLifecycleTracker';
 
 function formatDate(value) {
   if (!value) return '—';
   return new Date(value).toLocaleString('en-AU', {
     year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit',
   });
-}
-
-// UX_DEFECT_REMEDIATION_V1 OUT001/OUT002 -- real gap: a customer had no
-// way to tell whether a request was queued, running, or done, or
-// whether Output generation ever succeeded -- Task.status (the real,
-// already-fetched data this component already receives as `tasks`)
-// simply wasn't rendered anywhere in Customer Mode once Files/Activity
-// moved into Administration Mode. Purely additive: no new data, no new
-// backend call, just a small, honest read of status values that
-// already exist (services/task_service.py's real set: pending,
-// in_progress, done, failed -- not the incomplete three-value list
-// models/task.py's own docstring still claims).
-function ProgressSummary({ tasks, outputCount, onViewOutputs }) {
-  if (!tasks || tasks.length === 0) return null;
-
-  const counts = tasks.reduce(
-    (acc, task) => {
-      const key = acc[task.status] !== undefined ? task.status : 'pending';
-      acc[key] += 1;
-      return acc;
-    },
-    { pending: 0, in_progress: 0, done: 0, failed: 0 }
-  );
-
-  const items = [
-    { label: 'Queued', count: counts.pending, tone: 'badge-muted' },
-    { label: 'Running', count: counts.in_progress, tone: 'badge-warn' },
-    { label: 'Completed', count: counts.done, tone: 'badge-ok' },
-    { label: 'Failed', count: counts.failed, tone: 'badge-error' },
-  ].filter((item) => item.count > 0);
-
-  return (
-    <div
-      className="card"
-      style={{ marginBottom: '1.5rem', display: 'flex', gap: '0.75rem', flexWrap: 'wrap', alignItems: 'center' }}
-    >
-      <span className="activity-meta" style={{ fontWeight: 700 }}>
-        Progress:
-      </span>
-      {items.map((item) => (
-        <span key={item.label} className={`badge ${item.tone}`} style={{ marginBottom: 0 }}>
-          {item.count} {item.label}
-        </span>
-      ))}
-      {outputCount > 0 && (
-        <button type="button" className="btn btn-secondary btn-small" onClick={onViewOutputs} style={{ marginLeft: 'auto' }}>
-          View {outputCount} {outputCount === 1 ? 'Output' : 'Outputs'}
-        </button>
-      )}
-    </div>
-  );
 }
 
 // CUSTOMER_EXPERIENCE_REDESIGN_V3 Sec7 -- the five-tab layout this
@@ -120,9 +70,13 @@ export default function ProjectWorkspaceTabs({
       <div style={{ marginTop: '1.5rem' }}>
         {activeTab === 'Conversation' && (
           <div>
-            <ProgressSummary
+            <ProjectLifecycleTracker
+              conversationMessages={conversationMessages}
+              requirement={requirement ?? null}
               tasks={tasks}
-              outputCount={(outputs ?? []).length}
+              outputs={outputs}
+              workers={workers}
+              project={project}
               onViewOutputs={() => setActiveTab('Outputs')}
             />
 
