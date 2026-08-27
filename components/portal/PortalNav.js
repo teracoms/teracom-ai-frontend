@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 
 import { useAuth } from '@/components/portal/AuthProvider';
 import { isAtLeastRole } from '@/lib/roles';
-import { NAV_ITEMS } from '@/lib/portalNavGroups';
+import { CUSTOMER_NAV_ITEMS, ADMINISTRATION_NAV_ITEMS } from '@/lib/portalNavGroups';
 
 // "Platform Review Wave 1" navigation redesign — the flat, ever-growing
 // pill list (19 links by Package Q) is replaced with a grouped structure:
@@ -40,7 +40,7 @@ function groupIsActive(pathname, links) {
   return links.some((link) => isActive(pathname, link.href));
 }
 
-export default function PortalNav({ organisationName = null, hasLogo = false }) {
+export default function PortalNav({ organisationName = null, hasLogo = false, initialNavigationMode = 'customer' }) {
   const pathname = usePathname();
   const { user } = useAuth();
   // Human Authority Model: hierarchy-aware, not exact-match — an
@@ -49,6 +49,36 @@ export default function PortalNav({ organisationName = null, hasLogo = false }) 
   // tier's access" rule the backend's own require_role() now applies
   // (backend/auth/roles.py#role_at_least()).
   const isAdmin = isAtLeastRole(user?.role, 'admin');
+
+  // CUSTOMER_EXPERIENCE_REDESIGN_V3 Sec1 -- a non-admin can never be in
+  // Administration Mode, full stop, regardless of what's stored in
+  // their own preferences (e.g. a role downgrade after the fact) --
+  // this check runs on every render, not just at the toggle.
+  const [navigationMode, setNavigationMode] = useState(initialNavigationMode);
+  const effectiveMode = isAdmin ? navigationMode : 'customer';
+  const [modeSaving, setModeSaving] = useState(false);
+
+  async function handleToggleMode() {
+    const nextMode = effectiveMode === 'administration' ? 'customer' : 'administration';
+    setNavigationMode(nextMode);
+    setModeSaving(true);
+    try {
+      await fetch('/api/portal/user-settings', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ preferences: { navigation: { mode: nextMode } } }),
+      });
+    } catch {
+      // Best-effort persistence -- the toggle already reflects the
+      // customer's own real intent for this session even if saving it
+      // for next time silently failed; not worth a visible error for
+      // a low-stakes UI preference.
+    } finally {
+      setModeSaving(false);
+    }
+  }
+
+  const activeNavItems = effectiveMode === 'administration' ? ADMINISTRATION_NAV_ITEMS : CUSTOMER_NAV_ITEMS;
 
   const [openGroup, setOpenGroup] = useState(null);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -166,7 +196,7 @@ export default function PortalNav({ organisationName = null, hasLogo = false }) 
         </button>
 
         <div className={mobileOpen ? 'portal-nav-links open' : 'portal-nav-links'}>
-          {NAV_ITEMS.map((item) => {
+          {activeNavItems.map((item) => {
             if (item.kind === 'link') {
               if (item.adminOnly && !isAdmin) return null;
 
@@ -233,6 +263,24 @@ export default function PortalNav({ organisationName = null, hasLogo = false }) 
             );
           })}
         </div>
+
+        {/* CUSTOMER_EXPERIENCE_REDESIGN_V3 Sec1.4 -- the one, real,
+            persistent Administration Mode entry point, visible only to
+            admin-tier and above. Deliberately a small text toggle, not
+            its own dropdown or a second nav row -- this document's own
+            §12 item 1 leaves the exact visual treatment open; this is a
+            first, working implementation of it, not the final polish. */}
+        {isAdmin && (
+          <button
+            type="button"
+            className="btn btn-secondary btn-small"
+            onClick={handleToggleMode}
+            disabled={modeSaving}
+            style={{ marginLeft: '0.75rem' }}
+          >
+            {effectiveMode === 'administration' ? 'Administration' : 'Customer View'}
+          </button>
+        )}
 
         {/* CUSTOMER_PLATFORM_UX_REVIEW_V1 -- moved to the far right of the
             bar (was rendered directly beside the brand) and given its own

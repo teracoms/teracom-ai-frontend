@@ -62,11 +62,20 @@ export default async function ProtectedPortalLayout({ children }) {
   // fetch above: a failure here shouldn't take down the whole portal,
   // it just means these two preferences don't apply for this page load.
   let accessibility = { reduce_motion: false, larger_text: false };
+  // CUSTOMER_EXPERIENCE_REDESIGN_V3 Sec1.4 -- reuses this same real
+  // GET /users/me/settings call rather than a second round trip just
+  // for this one field. "customer" (the real, honest default every
+  // user's own DEFAULT_PREFERENCES already resolves to) if the fetch
+  // fails, same best-effort posture as accessibility above.
+  let navigationMode = 'customer';
   try {
     const token = getSessionToken();
     const settings = token ? await fetchUserSettings(token) : null;
     if (settings?.preferences?.accessibility) {
       accessibility = settings.preferences.accessibility;
+    }
+    if (settings?.preferences?.navigation?.mode) {
+      navigationMode = settings.preferences.navigation.mode;
     }
   } catch {
     accessibility = { reduce_motion: false, larger_text: false };
@@ -75,7 +84,7 @@ export default async function ProtectedPortalLayout({ children }) {
   return (
     <AuthProvider initialUser={user}>
       <AccessibilityPreferences reduceMotion={accessibility.reduce_motion} largerText={accessibility.larger_text} />
-      <PortalNav organisationName={organisationName} hasLogo={hasLogo} />
+      <PortalNav organisationName={organisationName} hasLogo={hasLogo} initialNavigationMode={navigationMode} />
       {children}
     </AuthProvider>
   );
