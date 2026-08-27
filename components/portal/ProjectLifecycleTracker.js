@@ -144,7 +144,27 @@ export function deriveLifecycle({ conversationMessages, requirement, tasks, outp
       break;
   }
 
-  return { stages, currentStage, nextStage, activeOwner, activeStatus, outputCount: outputList.length };
+  // TERACOM_PLATFORM_EVOLUTION_V1 -- "Current Project Progress," a real
+  // fraction of the same nine honestly-derived stages above, not a
+  // separately-invented percentage. A skipped-but-caught-up stage (the
+  // Requirements Review edge case above) still counts as not-done here
+  // -- deliberately: the progress fraction is "how much is genuinely
+  // finished," not "how far did we get before hitting a gap," which is
+  // what currentStage/nextStage already answer.
+  const doneCount = stages.filter((stage) => stage.done).length;
+  const progressPercent = Math.round((doneCount / stages.length) * 100);
+
+  return {
+    stages,
+    currentStage,
+    nextStage,
+    activeOwner,
+    activeStatus,
+    outputCount: outputList.length,
+    doneCount,
+    totalStages: stages.length,
+    progressPercent,
+  };
 }
 
 function StageIcon({ done, current }) {
@@ -154,7 +174,17 @@ function StageIcon({ done, current }) {
 }
 
 export default function ProjectLifecycleTracker({ conversationMessages, requirement, tasks, outputs, workers, project, onViewOutputs }) {
-  const { stages, currentStage, nextStage, activeOwner, activeStatus, outputCount } = deriveLifecycle({
+  const {
+    stages,
+    currentStage,
+    nextStage,
+    activeOwner,
+    activeStatus,
+    outputCount,
+    doneCount,
+    totalStages,
+    progressPercent,
+  } = deriveLifecycle({
     conversationMessages,
     requirement,
     tasks,
@@ -168,6 +198,32 @@ export default function ProjectLifecycleTracker({ conversationMessages, requirem
       <div className="section-heading left" style={{ marginTop: 0 }}>
         <span className="eyebrow">Project Lifecycle</span>
         <h3>{currentStage?.label ?? 'Not started'}</h3>
+      </div>
+
+      {/* TERACOM_PLATFORM_EVOLUTION_V1 -- "Current Project Progress," a
+          real, honest fraction of the same nine stages above, not a
+          separate invented number. */}
+      <div style={{ marginBottom: '1.25rem' }}>
+        <p className="activity-meta" style={{ marginBottom: '0.4rem' }}>
+          <strong>Current Project Progress:</strong> {doneCount} of {totalStages} stages complete ({progressPercent}%)
+        </p>
+        <div
+          role="progressbar"
+          aria-valuenow={progressPercent}
+          aria-valuemin={0}
+          aria-valuemax={100}
+          style={{ height: '8px', borderRadius: '999px', background: 'rgba(255,255,255,.08)', overflow: 'hidden' }}
+        >
+          <div
+            style={{
+              height: '100%',
+              width: `${progressPercent}%`,
+              borderRadius: '999px',
+              background: progressPercent === 100 ? 'var(--red)' : '#ffb800',
+              transition: 'width .3s ease',
+            }}
+          />
+        </div>
       </div>
 
       <ul style={{ listStyle: 'none', margin: '0 0 1.25rem', padding: 0, display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
