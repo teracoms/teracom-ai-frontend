@@ -159,12 +159,16 @@ export default function RequirementsPanel({ projectId, requirement: initialRequi
     <div>
       <div className="section-heading left">
         <span className="eyebrow">Requirements</span>
-        <h3>A living requirements document, built from this project&apos;s conversation.</h3>
+        <h3>A living requirements document, kept up to date automatically as you talk.</h3>
       </div>
       <p className="form-note">
-        Generate it from the conversation in the Conversation tab, edit it by hand any time, and move
-        it through Draft, In Review, and Confirmed as the project firms up. Every change keeps the
-        previous version — nothing is overwritten.
+        {/* CUSTOMER_EXPERIENCE_REDESIGN_V3 Sec5 -- Requirements now regenerate automatically
+            after each conversation turn (api/orchestrator.py's own project routes), skipped
+            when nothing has actually changed. This action is a manual override for a customer
+            who wants an immediate re-read without waiting for their next message. */}
+        This updates automatically as your conversation progresses. Edit it by hand any time, and
+        move it through Draft, In Review, and Confirmed as the project firms up — every change
+        keeps the previous version, nothing is overwritten.
       </p>
 
       {error && (
@@ -175,7 +179,7 @@ export default function RequirementsPanel({ projectId, requirement: initialRequi
 
       <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', margin: '1rem 0' }}>
         <button type="button" className="btn btn-primary btn-small" onClick={handleGenerate} disabled={generating}>
-          {generating ? 'Generating...' : requirement ? 'Regenerate from Conversation' : 'Generate from Conversation'}
+          {generating ? 'Refreshing...' : 'Refresh now'}
         </button>
         {requirement && !editing && (
           <button type="button" className="btn btn-secondary btn-small" onClick={() => setEditing(true)}>
@@ -190,7 +194,7 @@ export default function RequirementsPanel({ projectId, requirement: initialRequi
       </div>
 
       {!requirement && !editing ? (
-        <p className="activity-meta">No requirements document yet — generate one from the conversation above.</p>
+        <p className="activity-meta">No requirements captured yet — send a message in the Conversation tab and this will populate automatically.</p>
       ) : editing ? (
         <form className="contact-form" onSubmit={handleSave} noValidate>
           <input

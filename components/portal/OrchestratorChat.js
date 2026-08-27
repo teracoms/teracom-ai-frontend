@@ -51,7 +51,20 @@ function nextLocalId() {
 export default function OrchestratorChat({ workerId, projectId, initialMessages = [], onProjectCreated, voiceEnabled = false }) {
   const router = useRouter();
   const [messages, setMessages] = useState(
-    initialMessages.map((entry) => ({ id: nextLocalId(), role: entry.role, content: entry.message ?? entry.content }))
+    initialMessages.map((entry) => ({
+      id: nextLocalId(),
+      role: entry.role,
+      content: entry.message ?? entry.content,
+      // CUSTOMER_EXPERIENCE_REDESIGN_V3 Sec6 -- a real Output, posted
+      // automatically into this same conversation the moment it was
+      // created (services/execution_service.py#_maybe_create_output()).
+      // Only ever present on messages loaded from the server (this
+      // component never creates one locally) -- surfaced on the next
+      // page load/refresh, which is this design's own explicit,
+      // sufficient "real-time" behaviour, not a live push.
+      kind: entry.message_kind ?? 'text',
+      outputReference: entry.output_reference ?? null,
+    }))
   );
   const [text, setText] = useState('');
   const [sending, setSending] = useState(false);
