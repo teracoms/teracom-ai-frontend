@@ -229,6 +229,7 @@ export default function TaskPanel({ projectId, tasks, workers, workerPools }) {
                     disabled={executingTaskId === task.id}
                     onClick={() => handleExecute(task.id)}
                   >
+                    {executingTaskId === task.id && <span className="btn-spinner" aria-hidden="true" />}
                     {executingTaskId === task.id ? 'Executing...' : 'Execute'}
                   </button>
                 )}

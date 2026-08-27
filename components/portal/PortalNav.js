@@ -42,7 +42,7 @@ function groupIsActive(pathname, links) {
 
 export default function PortalNav({ organisationName = null, hasLogo = false, initialNavigationMode = 'customer' }) {
   const pathname = usePathname();
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   // Human Authority Model: hierarchy-aware, not exact-match — an
   // "owner" (a tier introduced above "admin") must still see every
   // admin-visible nav item, the same "higher tier implies lower
@@ -134,6 +134,16 @@ export default function PortalNav({ organisationName = null, hasLogo = false, in
   function closeMenus() {
     setOpenGroup(null);
     setMobileOpen(false);
+  }
+
+  // UX_DEFECT_REMEDIATION_V1 AUTH002 -- AuthProvider.js's own logout()
+  // already existed (clears the session, redirects to /portal/login)
+  // but was never wired to anything a user could actually click --
+  // real gap, confirmed by a full-codebase search finding zero call
+  // sites. This is the first one.
+  function handleSignOut() {
+    closeMenus();
+    logout();
   }
 
   function closeAndRefocusTrigger(groupLabel) {
@@ -295,6 +305,78 @@ export default function PortalNav({ organisationName = null, hasLogo = false, in
             )}
             {organisationName}
           </span>
+        )}
+
+        {/* UX_DEFECT_REMEDIATION_V1 AUTH002 -- real defect: no visible
+            Sign Out anywhere in the platform, confirmed by a full
+            search finding zero call sites for AuthProvider.js's own
+            already-real logout(). Reuses the exact same dropdown
+            mechanism (openGroup/triggerRefs/dropdownRefs, arrow-key
+            navigation, Escape-to-trigger) every other nav group above
+            already uses, keyed by a reserved label no real nav group
+            can collide with. Profile deep-links to the real "Profile"
+            heading UserSettingsForm.js already renders inside
+            /portal/settings (id="profile"), not a page that doesn't
+            exist. */}
+        {user && (
+          <div className="portal-nav-group" key="__account__">
+            <button
+              type="button"
+              ref={(node) => {
+                triggerRefs.current.__account__ = node;
+              }}
+              className={
+                openGroup === '__account__'
+                  ? 'portal-nav-link portal-nav-group-toggle active'
+                  : 'portal-nav-link portal-nav-group-toggle'
+              }
+              aria-expanded={openGroup === '__account__'}
+              aria-haspopup="true"
+              aria-controls="portal-nav-dropdown-account"
+              aria-label="Account menu"
+              onClick={() => setOpenGroup((current) => (current === '__account__' ? null : '__account__'))}
+              onKeyDown={(event) => handleTriggerKeyDown(event, '__account__')}
+            >
+              {user.email}
+              <span className="portal-nav-caret" aria-hidden="true">
+                ▾
+              </span>
+            </button>
+
+            <div
+              id="portal-nav-dropdown-account"
+              ref={(node) => {
+                dropdownRefs.current.__account__ = node;
+              }}
+              className={
+                openGroup === '__account__'
+                  ? 'portal-nav-dropdown portal-nav-dropdown-right open'
+                  : 'portal-nav-dropdown portal-nav-dropdown-right'
+              }
+              role="menu"
+              onKeyDown={(event) => handleDropdownKeyDown(event, '__account__')}
+            >
+              <Link
+                href="/portal/settings#profile"
+                role="menuitem"
+                className="portal-nav-dropdown-link"
+                onClick={closeMenus}
+              >
+                Profile
+              </Link>
+              <Link href="/portal/settings" role="menuitem" className="portal-nav-dropdown-link" onClick={closeMenus}>
+                Settings
+              </Link>
+              <button
+                type="button"
+                role="menuitem"
+                className="portal-nav-dropdown-link portal-nav-dropdown-signout"
+                onClick={handleSignOut}
+              >
+                Sign Out
+              </button>
+            </div>
+          </div>
         )}
       </div>
     </nav>

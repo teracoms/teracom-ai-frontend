@@ -39,6 +39,36 @@ a {
 .btn-secondary:hover {
   background:rgba(255,255,255,.08);transform:translateY(-2px);
 }
+/* UX_DEFECT_REMEDIATION_V1 PROJ001 -- real gap found: dozens of buttons
+   across this app already flip to a "Sending.../Executing.../
+   Refreshing..." disabled state via their own component-level logic
+   (OrchestratorChat.js, TaskPanel.js, RequirementsPanel.js, LoginForm.js
+   and others), but .btn itself had no :disabled treatment at all -- the
+   only visible change was small button text, easy for a first-time
+   customer pressing a button to miss entirely, with nothing to suggest
+   the click even registered. This one rule gives every one of those
+   already-correct call sites a real, visible dimmed/inert state for
+   free, with no other file needing to change -- deliberately dimming
+   only (never a spinner here), since disabled also covers ordinary
+   "form not ready yet" states (e.g. an empty required field) where a
+   spinner would be a false "processing" signal. */
+.btn:disabled {
+  opacity:.55;cursor:not-allowed;transform:none!important;box-shadow:none;
+}
+/* .btn-spinner -- an explicit, opt-in loading indicator for the
+   narrower case a component knows for certain is a real async
+   operation in flight (not just a validation-disabled button), added
+   directly alongside a genuine "Sending.../Executing.../
+   Refreshing..." button-text swap. Pure CSS, additive, safe to leave
+   unused anywhere a component doesn't need it. */
+.btn-spinner {
+  display:inline-block;width:14px;height:14px;margin-right:9px;border-radius:50%;
+  border:2px solid rgba(255,255,255,.35);border-top-color:#fff;
+  animation:btn-spinner-rotate .7s linear infinite;flex-shrink:0;vertical-align:-2px;
+}
+@keyframes btn-spinner-rotate {
+  to { transform:rotate(360deg); }
+}
 .hero {
   position:relative;padding:110px 0 90px;overflow:hidden;
 }
@@ -124,21 +154,25 @@ a {
 .hero-compact .lead {
   margin-top:14px;
 }
-/* Login's copy and sign-in form sit side by side inside the hero itself
-   (both visible together, no scroll needed) rather than the form living
-   in its own .section below a tall hero -- collapses to one column on
-   narrower viewports, same 980px breakpoint every other two-column
-   layout on this page (.login-actions-grid) already uses. */
+/* UX_DEFECT_REMEDIATION_V1 AUTH001 -- real customer feedback: the prior
+   side-by-side grid (copy left, form right) read as unbalanced for a
+   single sign-in action. Replaced with one centered column -- heading,
+   lead, and sign-in card all share one narrow, centered measure -- the
+   same "one clear task per screen" read Postman/Insomnia's own sign-in
+   pages already use, and the layout every full-height hero on this site
+   already falls back to below 980px, just made the default here rather
+   than a mobile-only fallback. */
 .hero-login-grid {
-  display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center;
+  max-width:560px;margin:0 auto;text-align:center;display:flex;flex-direction:column;align-items:center;gap:32px;
+}
+.hero-login-grid .hero-copy {
+  padding:0;
+}
+.hero-login-grid .lead {
+  margin-left:auto;margin-right:auto;
 }
 .hero-login-grid .auth-card {
-  margin:0;max-width:100%;
-}
-@media(max-width:980px) {
-  .hero-login-grid {
-    grid-template-columns:1fr;gap:32px;
-  }
+  margin:0;max-width:100%;width:100%;
 }
 .alt {
   background:#090909;
@@ -196,6 +230,26 @@ a {
 }
 .badge {
   display:inline-flex;width:fit-content;border-radius:999px;background:rgba(255,23,23,.15);color:var(--red2);padding:7px 11px;font-size:11px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;margin-bottom:16px;
+}
+/* UX_DEFECT_REMEDIATION_V1 -- real gap found while fixing OUT002:
+   RequirementsPanel.js, ProjectOutputsPanel.js, ProjectWorkspaceTabs.js,
+   and the Outputs page already used badge-muted/badge-warn/badge-ok
+   expecting distinct status colours, but none of the three were ever
+   defined here -- every one of those statuses has been rendering in
+   the same default red regardless of what it actually means. Adding
+   the colours these call sites already assumed exist, not introducing
+   a new visual language. */
+.badge-muted {
+  background:rgba(255,255,255,.08);color:var(--muted);
+}
+.badge-warn {
+  background:rgba(255,184,0,.15);color:#ffb800;
+}
+.badge-ok {
+  background:rgba(0,200,120,.15);color:#00c878;
+}
+.badge-error {
+  background:rgba(255,23,23,.15);color:var(--red2);
 }
 @media(max-width:980px) {
   .feature-grid, .product-grid {
@@ -343,6 +397,17 @@ a {
 .portal-nav-dropdown-link.active {
   color:#fff;background:rgba(255,23,23,.12);
 }
+/* UX_DEFECT_REMEDIATION_V1 AUTH002 -- the account menu is the rightmost
+   item in the bar, so its dropdown anchors from the right edge instead
+   of .portal-nav-dropdown's own default left:0 -- left-anchored here
+   would push a 200px-wide panel further right, off the edge of the
+   viewport. */
+.portal-nav-dropdown-right {
+  left:auto;right:0;
+}
+.portal-nav-dropdown-signout {
+  width:100%;text-align:left;border:none;background:transparent;cursor:pointer;
+}
 @media(max-width:980px) {
   .portal-nav-mobile-toggle {
     display:inline-flex;
@@ -380,6 +445,25 @@ a {
 }
 .stat-tile:hover {
   background:rgba(255,255,255,.06);transform:translateY(-2px);
+}
+/* UX_DEFECT_REMEDIATION_V1 PROT001 -- real root cause found: the
+   Protection page's own StatusTile already accepted a `tone` prop
+   (protection/page.js) meant to distinguish a real, configured signal
+   from an honest "not configured"/"unknown" one, but no caller on that
+   page ever passed it and no status-* class existed here -- every
+   tile, positive or honest-negative, rendered visually identical,
+   which is very plausibly why the whole page read as placeholder-like
+   to a first-time customer. The underlying data was never fabricated
+   (confirmed directly against GET /protection/dashboard); this makes
+   the real distinction the data already carries actually visible. */
+.stat-tile.status-ok {
+  border-color:rgba(0,200,120,.3);background:rgba(0,200,120,.05);
+}
+.stat-tile.status-warn {
+  border-color:rgba(255,184,0,.3);background:rgba(255,184,0,.04);
+}
+.stat-tile.status-muted {
+  border-color:var(--line);background:rgba(255,255,255,.02);
 }
 .stat-tile-link {
   display:block;text-decoration:none;cursor:pointer;

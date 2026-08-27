@@ -179,6 +179,7 @@ export default function RequirementsPanel({ projectId, requirement: initialRequi
 
       <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', margin: '1rem 0' }}>
         <button type="button" className="btn btn-primary btn-small" onClick={handleGenerate} disabled={generating}>
+          {generating && <span className="btn-spinner" aria-hidden="true" />}
           {generating ? 'Refreshing...' : 'Refresh now'}
         </button>
         {requirement && !editing && (

@@ -118,7 +118,11 @@ export default function UserSettingsForm({ initialSettings }) {
       )}
       {saved && !error && <p className="activity-meta">Saved.</p>}
 
-      <div className="section-heading left" style={{ marginTop: 0 }}>
+      {/* UX_DEFECT_REMEDIATION_V1 AUTH002 -- a real anchor target for
+          PortalNav.js's own account-menu "Profile" link, not an
+          invented separate page -- this section is where profile
+          fields have always lived. */}
+      <div className="section-heading left" style={{ marginTop: 0 }} id="profile">
         <h3>Profile</h3>
       </div>
       <input

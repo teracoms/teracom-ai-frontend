@@ -130,7 +130,11 @@ export default async function ProtectionPage() {
             <h2>Seven real signals, not seven green lights.</h2>
           </div>
           <div className="stat-grid stat-grid-3">
-            <StatusTile eyebrow="Backup" title={dashboard.backup.configured ? 'Configured' : 'Not configured'}>
+            <StatusTile
+              eyebrow="Backup"
+              title={dashboard.backup.configured ? 'Configured' : 'Not configured'}
+              tone={dashboard.backup.configured ? 'ok' : 'muted'}
+            >
               <p className="activity-meta">
                 {dashboard.backup.configured
                   ? `Last: ${formatDate(dashboard.backup.last_backup_at)} (${dashboard.backup.last_backup_status}, ${dashboard.backup.last_backup_type})`
@@ -141,11 +145,19 @@ export default async function ProtectionPage() {
               </p>
             </StatusTile>
 
-            <StatusTile eyebrow="Recovery" title={dashboard.recovery.recoverable ? 'Recoverable' : 'Not recoverable'}>
+            <StatusTile
+              eyebrow="Recovery"
+              title={dashboard.recovery.recoverable ? 'Recoverable' : 'Not recoverable'}
+              tone={dashboard.recovery.recoverable ? 'ok' : 'muted'}
+            >
               <p className="activity-meta">{dashboard.recovery.note}</p>
             </StatusTile>
 
-            <StatusTile eyebrow="Encryption" title={dashboard.encryption.at_rest_encrypted ? 'Encrypted at rest' : 'Not encrypted at rest'}>
+            <StatusTile
+              eyebrow="Encryption"
+              title={dashboard.encryption.at_rest_encrypted ? 'Encrypted at rest' : 'Not encrypted at rest'}
+              tone={dashboard.encryption.at_rest_encrypted ? 'ok' : 'warn'}
+            >
               <p className="activity-meta">
                 Connections: {dashboard.encryption.connections_encrypted_now ? 'encrypted' : 'not encrypted'}
                 {dashboard.encryption.connections_encrypted_now && !dashboard.encryption.connections_encryption_enforced
@@ -155,17 +167,29 @@ export default async function ProtectionPage() {
               <p className="activity-meta">{dashboard.encryption.note}</p>
             </StatusTile>
 
-            <StatusTile eyebrow="Security" title={`${dashboard.security.recent_login_failures} failed logins (30d)`}>
+            <StatusTile
+              eyebrow="Security"
+              title={`${dashboard.security.recent_login_failures} failed logins (30d)`}
+              tone={dashboard.security.open_remediation_items > 0 ? 'warn' : 'ok'}
+            >
               <p className="activity-meta">{dashboard.security.recent_login_successes} successful logins (30d)</p>
               <p className="activity-meta">{dashboard.security.open_remediation_items} open remediation items</p>
               <p className="activity-meta">{dashboard.security.note}</p>
             </StatusTile>
 
-            <StatusTile eyebrow="Compliance" title="No framework configured">
+            <StatusTile
+              eyebrow="Compliance"
+              title={dashboard.compliance.frameworks_configured.length > 0 ? 'Framework configured' : 'No framework configured'}
+              tone={dashboard.compliance.frameworks_configured.length > 0 ? 'ok' : 'muted'}
+            >
               <p className="activity-meta">{dashboard.compliance.note}</p>
             </StatusTile>
 
-            <StatusTile eyebrow="Data Residency" title={dashboard.data_residency.hosting_model_known ? 'Known' : 'Unknown'}>
+            <StatusTile
+              eyebrow="Data Residency"
+              title={dashboard.data_residency.hosting_model_known ? 'Known' : 'Unknown'}
+              tone={dashboard.data_residency.hosting_model_known ? 'ok' : 'muted'}
+            >
               <p className="activity-meta">{dashboard.data_residency.residency_note}</p>
             </StatusTile>
           </div>

@@ -82,6 +82,11 @@ export default function OrchestratorChat({ workerId, projectId, initialMessages 
   const [interimTranscript, setInterimTranscript] = useState('');
   const [autoSpeak, setAutoSpeak] = useState(voiceEnabled);
   const [voiceError, setVoiceError] = useState(null);
+  // UX_DEFECT_REMEDIATION_V1 VOICE002 -- real gap: cancelSpeech() already
+  // existed and was already called on unmount/before listening again,
+  // but nothing tracked whether speech was actually in progress, so
+  // there was no way to render a visible "Stop Speaking" button.
+  const [speaking, setSpeaking] = useState(false);
   const stopListeningRef = useRef(null);
   const speechToTextSupported = isSpeechToTextSupported();
   const textToSpeechSupported = isTextToSpeechSupported();
@@ -128,7 +133,14 @@ export default function OrchestratorChat({ workerId, projectId, initialMessages 
       }
       appendMessage('assistant', responseText);
       if (voiceEnabled && autoSpeak && textToSpeechSupported) {
-        speak(responseText, { onError: (err) => setVoiceError(err.message) });
+        setSpeaking(true);
+        speak(responseText, {
+          onEnd: () => setSpeaking(false),
+          onError: (err) => {
+            setSpeaking(false);
+            setVoiceError(err.message);
+          },
+        });
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'The Orchestrator did not respond.');
@@ -145,6 +157,11 @@ export default function OrchestratorChat({ workerId, projectId, initialMessages 
     await sendMessage(message);
   }
 
+  function handleStopSpeaking() {
+    cancelSpeech();
+    setSpeaking(false);
+  }
+
   function handleToggleListening() {
     if (listening) {
       stopListeningRef.current?.();
@@ -155,6 +172,7 @@ export default function OrchestratorChat({ workerId, projectId, initialMessages 
     setVoiceError(null);
     setInterimTranscript('');
     cancelSpeech();
+    setSpeaking(false);
     setListening(true);
 
     stopListeningRef.current = startListening({
@@ -257,6 +275,7 @@ export default function OrchestratorChat({ workerId, projectId, initialMessages 
           rows={2}
         />
         <button type="submit" className="btn btn-primary" disabled={sending || !text.trim()}>
+          {sending && <span className="btn-spinner" aria-hidden="true" />}
           {sending ? 'Sending...' : 'Send'}
         </button>
         {sending && (
@@ -290,6 +309,12 @@ export default function OrchestratorChat({ workerId, projectId, initialMessages 
               />
               Read replies aloud
             </label>
+          )}
+
+          {speaking && (
+            <button type="button" className="btn btn-secondary btn-small" onClick={handleStopSpeaking}>
+              Stop Speaking
+            </button>
           )}
 
           {listening && (
