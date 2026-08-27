@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-import { getSessionToken } from '@/lib/api/auth';
+import { getSessionToken, getSessionUser } from '@/lib/api/auth';
 import { fetchProjects } from '@/lib/api/projects';
 import { fetchTasks, fetchTaskExecutions } from '@/lib/api/tasks';
 import { fetchWorkerList } from '@/lib/api/workers';
@@ -9,6 +9,8 @@ import { fetchUploadHistory } from '@/lib/api/knowledge';
 import { fetchProjectConversation } from '@/lib/api/orchestrator';
 import { fetchProjectOutputs, fetchStorageUsage } from '@/lib/api/outputArtifacts';
 import { fetchLatestRequirements } from '@/lib/api/requirements';
+import { fetchUserSettings } from '@/lib/api/userSettings';
+import { isAtLeastRole } from '@/lib/roles';
 import { settle, errorMessage } from '@/lib/api/results';
 import { pickDefaultWorker } from '@/lib/portalInitiative';
 import ProjectWorkspaceTabs from '@/components/portal/ProjectWorkspaceTabs';
@@ -19,12 +21,19 @@ export const metadata = {
 };
 
 // CUSTOMER_EXPERIENCE_REDESIGN_V1 -- Project Workspace (objective item 3):
-// Conversation / Files / Outputs / Activity, reusing exactly the existing
-// project/task/knowledge backend the prior /portal/projects/[projectId]
-// page already used -- no new backend endpoint, no new data. Conversation
-// is now the default tab (item 4, "conversation-first"); the previous
-// page's TaskPanel/ProjectStatusControl are preserved in full, moved into
-// the Activity tab rather than removed (item 6, "nothing removed").
+// reuses exactly the existing project/task/knowledge backend the prior
+// /portal/projects/[projectId] page already used -- no new backend
+// endpoint, no new data. Conversation is the default tab (item 4,
+// "conversation-first").
+//
+// CUSTOMER_EXPERIENCE_REDESIGN_V3 Sec7 -- of the original five tabs, only
+// Conversation (now with Requirements folded in, Sec5) and Outputs remain
+// customer-facing. Files and Activity (the former TaskPanel/
+// ProjectStatusControl tab) are preserved in full, not removed -- see
+// ProjectWorkspaceTabs.js's own docstring -- but only render at all when
+// `administrationMode` is true, computed below the same way PortalNav
+// computes it: admin-tier role AND the stored preference set to
+// "administration".
 //
 // Same fan-out precedent that page already used: no dedicated
 // GET /projects/{id} endpoint exists, so the organisation's full project
@@ -47,6 +56,8 @@ export default async function ProjectWorkspacePage({ params }) {
       </main>
     );
   }
+
+  const user = await getSessionUser();
 
   const [
     projectsSettled,
@@ -152,6 +163,24 @@ export default async function ProjectWorkspacePage({ params }) {
     executions: settle(executionSettled[index]).value ?? [],
   }));
 
+  // CUSTOMER_EXPERIENCE_REDESIGN_V3 Sec3/Sec7 -- same admin-tier +
+  // preference gate PortalNav itself already applies (never trust a
+  // stored preference alone: a non-admin always gets Customer Mode,
+  // recomputed fresh on every render). Best-effort settings fetch, same
+  // posture as the layout's own -- a failure here just means Files/
+  // Activity stay out of reach for this one page load, not that the
+  // whole workspace fails to render.
+  let navigationMode = 'customer';
+  try {
+    const settings = await fetchUserSettings(token);
+    if (settings?.preferences?.navigation?.mode) {
+      navigationMode = settings.preferences.navigation.mode;
+    }
+  } catch {
+    navigationMode = 'customer';
+  }
+  const administrationMode = isAtLeastRole(user?.role, 'admin') && navigationMode === 'administration';
+
   return (
     <>
       <WorkforceNav />
@@ -182,6 +211,7 @@ export default async function ProjectWorkspacePage({ params }) {
               tasks={tasks}
               workers={workers}
               workerPools={workerPools}
+              administrationMode={administrationMode}
               loadErrors={{
                 tasks: tasksResult.error ? errorMessage(tasksResult.error) : null,
                 workers: workersResult.error ? errorMessage(workersResult.error) : null,

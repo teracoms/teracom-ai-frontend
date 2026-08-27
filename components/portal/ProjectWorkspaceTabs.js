@@ -9,8 +9,6 @@ import TaskPanel from '@/components/portal/TaskPanel';
 import ProjectOutputsPanel from '@/components/portal/ProjectOutputsPanel';
 import RequirementsPanel from '@/components/portal/RequirementsPanel';
 
-const TABS = ['Conversation', 'Requirements', 'Files', 'Outputs', 'Activity'];
-
 function formatDate(value) {
   if (!value) return '—';
   return new Date(value).toLocaleString('en-AU', {
@@ -18,11 +16,18 @@ function formatDate(value) {
   });
 }
 
-// CUSTOMER_EXPERIENCE_REDESIGN_V1 -- item 4, "Conversation becomes primary
-// interface. Tasks become secondary/internal." Conversation is the default
-// tab; TaskPanel and ProjectStatusControl (the entire previous project
-// page's own functionality) are preserved unchanged inside Activity, not
-// removed -- just no longer the first thing a customer sees.
+// CUSTOMER_EXPERIENCE_REDESIGN_V3 Sec7 -- the five-tab layout this
+// component used to render (Conversation/Requirements/Files/Outputs/
+// Activity) collapses to two customer-facing tabs. Requirements (Sec5,
+// now automatic) is folded directly into Conversation rather than kept
+// as a tab of its own -- a customer reads their own requirements
+// alongside the conversation that produced them, not by navigating
+// away from it. Files and Activity aren't deleted (V2's own "nothing
+// removed" finding still applies) -- they relocate here into
+// Administration Mode, gated by the same `administrationMode` prop
+// PortalNav already computes from role + preference (see
+// CUSTOMER_EXPERIENCE_REDESIGN_V3 Sec3), so only an admin who has
+// switched into that mode sees them at all.
 export default function ProjectWorkspaceTabs({
   project,
   conversationWorker,
@@ -36,7 +41,11 @@ export default function ProjectWorkspaceTabs({
   workers,
   workerPools,
   loadErrors,
+  administrationMode,
 }) {
+  const TABS = administrationMode
+    ? ['Conversation', 'Outputs', 'Files', 'Activity']
+    : ['Conversation', 'Outputs'];
   const [activeTab, setActiveTab] = useState('Conversation');
 
   return (
@@ -60,6 +69,15 @@ export default function ProjectWorkspaceTabs({
       <div style={{ marginTop: '1.5rem' }}>
         {activeTab === 'Conversation' && (
           <div>
+            {/* CUSTOMER_EXPERIENCE_REDESIGN_V3 Sec5/Sec7 -- Requirements is
+                automatic now, not a separate manual tab a customer has to
+                remember to visit. It's docked above the thread it was
+                generated from, so a customer sees what Teracom AI
+                understood before reading how the conversation got there. */}
+            <div style={{ marginBottom: '2rem', paddingBottom: '1.5rem', borderBottom: '1px solid var(--line)' }}>
+              <RequirementsPanel projectId={project.id} requirement={requirement ?? null} />
+            </div>
+
             {!conversationWorker ? (
               <EmptyState
                 title="No workers yet"
@@ -72,12 +90,6 @@ export default function ProjectWorkspaceTabs({
                 initialMessages={conversationMessages}
               />
             )}
-          </div>
-        )}
-
-        {activeTab === 'Requirements' && (
-          <div>
-            <RequirementsPanel projectId={project.id} requirement={requirement ?? null} />
           </div>
         )}
 

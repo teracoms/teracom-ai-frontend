@@ -194,7 +194,7 @@ export default function RequirementsPanel({ projectId, requirement: initialRequi
       </div>
 
       {!requirement && !editing ? (
-        <p className="activity-meta">No requirements captured yet — send a message in the Conversation tab and this will populate automatically.</p>
+        <p className="activity-meta">No requirements captured yet — send a message below and this will populate automatically.</p>
       ) : editing ? (
         <form className="contact-form" onSubmit={handleSave} noValidate>
           <input
