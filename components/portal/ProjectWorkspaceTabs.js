@@ -9,6 +9,7 @@ import TaskPanel from '@/components/portal/TaskPanel';
 import ProjectOutputsPanel from '@/components/portal/ProjectOutputsPanel';
 import RequirementsPanel from '@/components/portal/RequirementsPanel';
 import ProjectLifecycleTracker from '@/components/portal/ProjectLifecycleTracker';
+import GenerateEngineeringPlanButton from '@/components/portal/GenerateEngineeringPlanButton';
 
 function formatDate(value) {
   if (!value) return '—';
@@ -178,6 +179,16 @@ export default function ProjectWorkspaceTabs({
           <div>
             <div style={{ marginBottom: '1.5rem' }}>
               <ProjectStatusControl projectId={project.id} status={project.status} />
+            </div>
+
+            {/* PROJECT_EXECUTION_AND_VOICE_V1 -- the real, previously-
+                unreachable link between Requirements and Task Creation.
+                Placed above the plain task list/manual create form
+                below (both preserved unchanged) since generating a plan
+                from what's already been captured is the normal next
+                step, manual task authoring the fallback. */}
+            <div style={{ marginBottom: '1.5rem' }}>
+              <GenerateEngineeringPlanButton projectId={project.id} primaryWorkerId={conversationWorker?.id} />
             </div>
 
             <div className="section-heading left">
