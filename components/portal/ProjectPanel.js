@@ -37,6 +37,16 @@ export default function ProjectPanel({ departmentId, departments, projects, task
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
   const [expandedProjectId, setExpandedProjectId] = useState(null);
+  // GUI006/GUI008 -- real defect, live testing: completed projects
+  // stayed mixed into the same flat list as active ones, with no way
+  // to separate day-to-day work from finished history. Project.status
+  // only has two real values today ("active"/"completed" --
+  // models/project.py -- no "archived" status exists in the schema,
+  // so that third bucket isn't offered here rather than faked with a
+  // tab that behaves identically to Completed). Client-side grouping
+  // only -- no new data, nothing hidden, every project stays exactly
+  // as reachable as before via its own real status.
+  const [statusView, setStatusView] = useState('active');
   const router = useRouter();
 
   const [planWorkerId, setPlanWorkerId] = useState('');
@@ -239,8 +249,44 @@ export default function ProjectPanel({ departmentId, departments, projects, task
       {(!projects || projects.length === 0) ? (
         <p className="activity-meta">No projects yet.</p>
       ) : (
-        <ul className="activity-list">
-          {projects.map((project) => {
+        <>
+          {/* GUI006/GUI008 -- "completed" is the only real status this
+              groups out; "active" and "blocked" (both genuinely
+              in-progress, per schemas/project.py) and anything else
+              unrecognised stay in Active rather than risk silently
+              hiding a project under a status this view doesn't know
+              about yet. */}
+          {(() => {
+            const completedProjects = projects.filter((project) => project.status === 'completed');
+            const activeProjects = projects.filter((project) => project.status !== 'completed');
+            const visibleProjects = statusView === 'completed' ? completedProjects : activeProjects;
+
+            return (
+              <>
+                <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
+                  <button
+                    type="button"
+                    className={statusView === 'active' ? 'btn btn-primary btn-small' : 'btn btn-secondary btn-small'}
+                    onClick={() => setStatusView('active')}
+                  >
+                    Active ({activeProjects.length})
+                  </button>
+                  <button
+                    type="button"
+                    className={statusView === 'completed' ? 'btn btn-primary btn-small' : 'btn btn-secondary btn-small'}
+                    onClick={() => setStatusView('completed')}
+                  >
+                    Completed ({completedProjects.length})
+                  </button>
+                </div>
+
+                {visibleProjects.length === 0 ? (
+                  <p className="activity-meta">
+                    {statusView === 'completed' ? 'No completed projects yet.' : 'No active projects.'}
+                  </p>
+                ) : (
+                  <ul className="activity-list">
+                    {visibleProjects.map((project) => {
             // MULTI_ORGANISATION_PLATFORM_V1 -- Multi-Project
             // Visibility: a real task-count breakdown per project,
             // computed client-side from the same `tasks` this
@@ -296,8 +342,13 @@ export default function ProjectPanel({ departmentId, departments, projects, task
               )}
             </li>
             );
-          })}
-        </ul>
+                    })}
+                  </ul>
+                )}
+              </>
+            );
+          })()}
+        </>
       )}
     </div>
   );

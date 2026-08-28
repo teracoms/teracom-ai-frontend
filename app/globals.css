@@ -356,7 +356,16 @@ a {
   display:block;height:32px;width:auto;padding:6px 12px;border-radius:10px;background:#f9fafb;
 }
 .portal-nav-org {
-  display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:999px;background:rgba(255,255,255,.05);border:1px solid var(--line);color:var(--muted);font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px;margin-left:auto;
+  /* GUI001 -- real defect, live testing: users could not tell which
+     organisation they were in. Root cause was legibility, not absence
+     -- this pill already existed but color:var(--muted) at 12px made
+     it blend into the nav rather than announce itself. Higher-contrast
+     text plus a small fixed "Organisation" label removes the ambiguity
+     without changing the underlying data this already renders. */
+  display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:999px;background:rgba(255,255,255,.08);border:1px solid var(--line);color:var(--text);font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:260px;margin-left:auto;
+}
+.portal-nav-org-label {
+  color:var(--muted);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.04em;
 }
 .portal-nav-org-logo {
   width:16px;height:16px;border-radius:4px;object-fit:contain;flex-shrink:0;

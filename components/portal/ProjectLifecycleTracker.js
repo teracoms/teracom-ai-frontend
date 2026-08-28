@@ -253,8 +253,17 @@ export default function ProjectLifecycleTracker({ conversationMessages, requirem
         </div>
       </div>
 
+      {/* GUI007 -- real defect, live testing: "Status" already carried
+          what needed to happen next (e.g. "Waiting for you to review
+          and confirm the requirements") but never labelled it as an
+          action to take. Relabelled specifically when the ball is in
+          the customer's own court, where "required action" is
+          literally true -- left as "Status" for every other owner
+          (Teracom AI/a named worker/an administrator), where it's
+          honestly a status being reported, not something this viewer
+          needs to go do. */}
       <p className="activity-meta">
-        <strong>Status:</strong> {activeStatus}
+        <strong>{activeOwner === 'You' ? 'Required Action:' : 'Status:'}</strong> {activeStatus}
       </p>
 
       {outputCount > 0 && (

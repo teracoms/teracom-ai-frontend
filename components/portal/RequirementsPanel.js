@@ -266,7 +266,13 @@ export default function RequirementsPanel({ projectId, requirement: initialRequi
                   <button
                     key={status}
                     type="button"
-                    className="btn btn-secondary btn-small"
+                    // GUI005 -- real defect, live testing: "Confirm
+                    // Requirements" read as one option among several
+                    // equal-weight buttons, with nothing distinguishing
+                    // it as the action that actually moves a project
+                    // forward. Gives it primary styling; Draft/In
+                    // Review stay secondary.
+                    className={status === 'confirmed' ? 'btn btn-primary btn-small' : 'btn btn-secondary btn-small'}
                     onClick={() => handleStatusChange(status)}
                     disabled={updatingStatus}
                   >
@@ -282,17 +288,32 @@ export default function RequirementsPanel({ projectId, requirement: initialRequi
             </p>
           )}
 
+          {/* GUI005 -- real defect, live testing: an empty list field
+              rendered nothing at all, so a customer had no way to tell
+              "nothing here yet" apart from "this was never asked
+              about" -- especially for questions_outstanding, where an
+              empty list is the honest, positive signal that nothing is
+              currently missing. Every section now always renders, with
+              an explicit empty state instead of silently disappearing. */}
           {LIST_FIELDS.map(([field, label]) => (
-            requirement.content[field]?.length > 0 && (
-              <div key={field} style={{ marginTop: '0.75rem' }}>
-                <p className="eyebrow">{label}</p>
+            <div key={field} style={{ marginTop: '0.75rem' }}>
+              <p className="eyebrow">
+                {field === 'questions_outstanding' ? 'Outstanding Questions' : label}
+              </p>
+              {requirement.content[field]?.length > 0 ? (
                 <ul>
                   {requirement.content[field].map((item, index) => (
                     <li key={`${field}-${index}`} className="activity-meta">{item}</li>
                   ))}
                 </ul>
-              </div>
-            )
+              ) : (
+                <p className="activity-meta">
+                  {field === 'questions_outstanding'
+                    ? 'Nothing outstanding — the conversation covers everything needed so far.'
+                    : 'Not yet captured.'}
+                </p>
+              )}
+            </div>
           ))}
         </div>
       )}

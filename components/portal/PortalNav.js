@@ -303,6 +303,7 @@ export default function PortalNav({ organisationName = null, hasLogo = false, in
               // eslint-disable-next-line @next/next/no-img-element
               <img src="/api/portal/organisation/logo" alt="" className="portal-nav-org-logo" />
             )}
+            <span className="portal-nav-org-label">Organisation</span>
             {organisationName}
           </span>
         )}

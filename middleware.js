@@ -111,14 +111,31 @@ export async function middleware(request) {
       return NextResponse.redirect(loginUrl);
     }
 
-    const response = NextResponse.next();
-
     const refreshToken = request.cookies.get(PORTAL_CONTACT_REFRESH_COOKIE_NAME)?.value;
     const refreshedAccessToken = await silentlyRefresh(
       sessionToken,
       refreshToken,
       '/portal-contact/refresh'
     );
+
+    // GUI003 -- real bug found via code review: NextResponse.next() alone
+    // only updates the cookie the *next* request will send. The Server
+    // Component rendering *this* request still reads the original,
+    // near-expiry cookie via next/headers, since it forwards the
+    // incoming request, not the outgoing response. In the narrow window
+    // where the token is within its last REFRESH_WHEN_WITHIN_SECONDS but
+    // hasn't yet actually expired, several of a page's own parallel
+    // backend fetches (a page load routinely fires many at once) can
+    // straddle the exact expiry instant -- some succeed, some 401 --
+    // which is exactly the "loads unreliably" symptom this fixes.
+    // request.cookies.set() + passing `request` into NextResponse.next()
+    // forwards the refreshed token into this same render, not just the
+    // next one.
+    if (refreshedAccessToken) {
+      request.cookies.set(PORTAL_CONTACT_SESSION_COOKIE_NAME, refreshedAccessToken);
+    }
+
+    const response = NextResponse.next({ request });
 
     if (refreshedAccessToken) {
       response.cookies.set(PORTAL_CONTACT_SESSION_COOKIE_NAME, refreshedAccessToken, {
@@ -149,10 +166,17 @@ export async function middleware(request) {
     return NextResponse.redirect(loginUrl);
   }
 
-  const response = NextResponse.next();
-
   const refreshToken = request.cookies.get(REFRESH_COOKIE_NAME)?.value;
   const refreshedAccessToken = await silentlyRefresh(sessionToken, refreshToken, '/auth/refresh');
+
+  // GUI003 -- see the identical comment in the /customer-portal branch
+  // above: forwards the refreshed token into *this* render (via the
+  // mutated request), not just the next navigation's.
+  if (refreshedAccessToken) {
+    request.cookies.set(SESSION_COOKIE_NAME, refreshedAccessToken);
+  }
+
+  const response = NextResponse.next({ request });
 
   if (refreshedAccessToken) {
     response.cookies.set(SESSION_COOKIE_NAME, refreshedAccessToken, {
