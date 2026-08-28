@@ -131,15 +131,42 @@ export default function OrchestratorChat({ workerId, projectId, initialMessages 
   }, []);
 
   function appendMessage(role, content) {
-    setMessages((current) => [...current, { id: nextLocalId(), role, content }]);
+    const id = nextLocalId();
+    setMessages((current) => [...current, { id, role, content }]);
+    return id;
   }
 
+  function removeMessage(id) {
+    setMessages((current) => current.filter((m) => m.id !== id));
+  }
+
+  // VOICE_CONVERSATION_FAILED_FETCH_V1 -- root cause of the raw, dead-end
+  // "Failed to fetch" a customer could hit here: this function's own
+  // fetch() call had no client-side timeout at all (a real risk on a
+  // shared, concurrently-used local Ollama instance -- the backend's own
+  // per-candidate timeout, services/ollama_service.py, is 60s, and a
+  // routing_mode with more than one candidate can legitimately take
+  // longer still), and on ANY failure -- including the browser's own
+  // generic network-layer TypeError, whose .message is literally the
+  // string "Failed to fetch" in Chrome -- that raw, unhelpful browser
+  // string was shown to the customer verbatim, with no guidance and no
+  // way to retry without retyping the entire message (handleSend below
+  // already cleared the input before this ever ran). Neither half of
+  // that is a network/proxy/auth defect this session could reproduce
+  // via direct, repeated testing of the real endpoint (confirmed
+  // working, both warm and cold-started, with the exact reported
+  // message, with and without prior conversation history) -- it is a
+  // real, fixable gap in how this function itself handles the failure
+  // once it happens, regardless of the underlying trigger.
   async function sendMessage(message) {
-    if (!message || sending) return;
+    if (!message || sending) return false;
 
     setError(null);
-    appendMessage('user', message);
+    const userMessageId = appendMessage('user', message);
     setSending(true);
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 120000);
 
     try {
       let responseText;
@@ -148,6 +175,7 @@ export default function OrchestratorChat({ workerId, projectId, initialMessages 
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ workerId, message }),
+          signal: controller.signal,
         });
         const data = await response.json().catch(() => ({}));
         if (!response.ok) throw new Error(data.error || 'The Orchestrator did not respond.');
@@ -158,6 +186,7 @@ export default function OrchestratorChat({ workerId, projectId, initialMessages 
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ workerId, message, history }),
+          signal: controller.signal,
         });
         const data = await response.json().catch(() => ({}));
         if (!response.ok) throw new Error(data.error || 'The Orchestrator did not respond.');
@@ -187,9 +216,28 @@ export default function OrchestratorChat({ workerId, projectId, initialMessages 
           },
         });
       }
+      return true;
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'The Orchestrator did not respond.');
+      // Roll the optimistic user message back out of the thread on
+      // failure -- it was never actually accepted, so leaving it
+      // visible (while also leaving the same text back in the input
+      // box for retry, below) looked like a confusing half-sent state.
+      removeMessage(userMessageId);
+      if (err?.name === 'AbortError') {
+        setError('The Orchestrator is taking longer than expected to respond. Please try again in a moment.');
+      } else if (err instanceof TypeError) {
+        // The browser's own generic fetch-layer failure (Chrome's own
+        // wording for this is literally "Failed to fetch") -- a real
+        // network interruption, not something this app can diagnose
+        // further from here, but a customer deserves an actionable
+        // message, not the raw browser string.
+        setError('Unable to reach the Orchestrator right now. Please check your connection and try again.');
+      } else {
+        setError(err instanceof Error ? err.message : 'The Orchestrator did not respond.');
+      }
+      return false;
     } finally {
+      clearTimeout(timeoutId);
       setSending(false);
     }
   }
@@ -198,8 +246,13 @@ export default function OrchestratorChat({ workerId, projectId, initialMessages 
     event.preventDefault();
     const message = text.trim();
     if (!message) return;
-    setText('');
-    await sendMessage(message);
+    // VOICE_CONVERSATION_FAILED_FETCH_V1 -- real gap: the input used to
+    // clear immediately, before the request even started, so a failed
+    // send (for any reason) forced the customer to retype their entire
+    // message from scratch with no way to recover it. Now only clears
+    // once sendMessage() actually confirms success.
+    const sent = await sendMessage(message);
+    if (sent) setText('');
   }
 
   function handleStopSpeaking() {
