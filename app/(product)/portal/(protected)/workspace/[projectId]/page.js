@@ -10,6 +10,7 @@ import { fetchProjectConversation } from '@/lib/api/orchestrator';
 import { fetchProjectOutputs, fetchStorageUsage } from '@/lib/api/outputArtifacts';
 import { fetchLatestRequirements } from '@/lib/api/requirements';
 import { fetchUserSettings } from '@/lib/api/userSettings';
+import { fetchVoiceProviderConfig } from '@/lib/api/voice';
 import { isAtLeastRole } from '@/lib/roles';
 import { settle, errorMessage } from '@/lib/api/results';
 import { pickDefaultWorker } from '@/lib/portalInitiative';
@@ -171,15 +172,30 @@ export default async function ProjectWorkspacePage({ params }) {
   // Activity stay out of reach for this one page load, not that the
   // whole workspace fails to render.
   let navigationMode = 'customer';
+  let voicePreferences = null;
   try {
     const settings = await fetchUserSettings(token);
     if (settings?.preferences?.navigation?.mode) {
       navigationMode = settings.preferences.navigation.mode;
     }
+    voicePreferences = settings?.preferences?.voice ?? null;
   } catch {
     navigationMode = 'customer';
   }
   const administrationMode = isAtLeastRole(user?.role, 'admin') && navigationMode === 'administration';
+
+  // TERACOM_CONVERSATIONAL_EXPERIENCE_V1 Part 1 -- the organisation's
+  // own real ceiling on which engine is actually reachable
+  // (VoiceProviderConfiguration, admin-gated). Best-effort, same
+  // posture as the settings fetch above: a failure here just means
+  // this page falls back to the always-real browser_native default,
+  // never a broken workspace.
+  let orgVoiceProviderConfig = null;
+  try {
+    orgVoiceProviderConfig = await fetchVoiceProviderConfig(token);
+  } catch {
+    orgVoiceProviderConfig = null;
+  }
 
   return (
     <>
@@ -212,6 +228,8 @@ export default async function ProjectWorkspacePage({ params }) {
               workers={workers}
               workerPools={workerPools}
               administrationMode={administrationMode}
+              voicePreferences={voicePreferences}
+              orgVoiceProviderConfig={orgVoiceProviderConfig}
               loadErrors={{
                 tasks: tasksResult.error ? errorMessage(tasksResult.error) : null,
                 workers: workersResult.error ? errorMessage(workersResult.error) : null,

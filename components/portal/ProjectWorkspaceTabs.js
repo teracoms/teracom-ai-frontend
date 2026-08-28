@@ -44,6 +44,8 @@ export default function ProjectWorkspaceTabs({
   workerPools,
   loadErrors,
   administrationMode,
+  voicePreferences,
+  orgVoiceProviderConfig,
 }) {
   const TABS = administrationMode
     ? ['Conversation', 'Outputs', 'Files', 'Activity']
@@ -100,6 +102,9 @@ export default function ProjectWorkspaceTabs({
                 workerId={conversationWorker.id}
                 projectId={project.id}
                 initialMessages={conversationMessages}
+                voiceEnabled
+                voicePreferences={voicePreferences}
+                orgVoiceProviderConfig={orgVoiceProviderConfig}
               />
             )}
           </div>

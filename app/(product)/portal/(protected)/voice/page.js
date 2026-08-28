@@ -2,6 +2,8 @@ import Link from 'next/link';
 
 import { getSessionToken } from '@/lib/api/auth';
 import { fetchWorkerList } from '@/lib/api/workers';
+import { fetchUserSettings } from '@/lib/api/userSettings';
+import { fetchVoiceProviderConfig } from '@/lib/api/voice';
 import { errorMessage } from '@/lib/api/results';
 import { pickDefaultWorker } from '@/lib/portalInitiative';
 import OrchestratorChat from '@/components/portal/OrchestratorChat';
@@ -46,6 +48,25 @@ export default async function VoicePage() {
 
   const orchestratorWorker = pickDefaultWorker(workers, '');
 
+  // TERACOM_CONVERSATIONAL_EXPERIENCE_V1 Part 1 -- same best-effort
+  // fetch pattern as the project workspace page: a failure here just
+  // means this page falls back to the always-real browser_native
+  // default, never a broken page.
+  let voicePreferences = null;
+  try {
+    const settings = await fetchUserSettings(token);
+    voicePreferences = settings?.preferences?.voice ?? null;
+  } catch {
+    voicePreferences = null;
+  }
+
+  let orgVoiceProviderConfig = null;
+  try {
+    orgVoiceProviderConfig = await fetchVoiceProviderConfig(token);
+  } catch {
+    orgVoiceProviderConfig = null;
+  }
+
   return (
     <main>
       <section className="hero hero-product hero-compact">
@@ -75,7 +96,12 @@ export default async function VoicePage() {
               description="Create a worker first, then come back here to talk."
             />
           ) : (
-            <OrchestratorChat workerId={orchestratorWorker.id} voiceEnabled />
+            <OrchestratorChat
+              workerId={orchestratorWorker.id}
+              voiceEnabled
+              voicePreferences={voicePreferences}
+              orgVoiceProviderConfig={orgVoiceProviderConfig}
+            />
           )}
         </div>
       </section>

@@ -251,6 +251,16 @@ a {
 .badge-error {
   background:rgba(255,23,23,.15);color:var(--red2);
 }
+/* TERACOM_CONVERSATIONAL_EXPERIENCE_V1 Part 3 -- AvatarPanel.js's own
+   placeholder avatar, a real, small visual signal for
+   listening/speaking, not decoration for its own sake. */
+@keyframes avatar-panel-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(0,200,120,.35); }
+  50% { box-shadow: 0 0 0 8px rgba(0,200,120,0); }
+}
+.avatar-panel-pulse {
+  animation: avatar-panel-pulse 1.6s ease-out infinite;
+}
 @media(max-width:980px) {
   .feature-grid, .product-grid {
     grid-template-columns:1fr 1fr;

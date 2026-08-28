@@ -4,13 +4,15 @@ import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import ChatThread from '@/components/portal/ChatThread';
+import AvatarPanel from '@/components/portal/AvatarPanel';
 import {
   isSpeechToTextSupported,
   isTextToSpeechSupported,
   startListening,
   speak,
   cancelSpeech,
-} from '@/lib/voice/speechProvider';
+  watchForInterruption,
+} from '@/lib/voice/voiceEngine';
 
 let localIdCounter = 0;
 function nextLocalId() {
@@ -64,7 +66,46 @@ const VOICE_STATE_TONE = {
  * regardless of how it was entered, so voice and text are shown
  * simultaneously rather than voice replacing text.
  */
-export default function OrchestratorChat({ workerId, projectId, initialMessages = [], onProjectCreated, voiceEnabled = false }) {
+// TERACOM_CONVERSATIONAL_EXPERIENCE_V1 Part 1 -- resolves the user's
+// own stored preference (Settings & Security V1 preferences.voice,
+// extended this workstream) against the organisation's real ceiling
+// (VoiceProviderConfiguration, admin-gated, VOICE_MIGRATION_V1): a
+// user may *prefer* self_hosted, but this backend route only actually
+// serves it once the organisation's own admin has enabled both the
+// self-hosted STT and TTS providers -- falling back to the always-real
+// browser_native default otherwise, never a broken voice experience
+// because of a mismatched preference.
+function resolveEffectiveProvider(voicePreferences, orgVoiceProviderConfig) {
+  const preferred = voicePreferences?.provider ?? 'browser_native';
+  if (preferred !== 'self_hosted') return 'browser_native';
+
+  const sttReady = orgVoiceProviderConfig?.stt_provider === 'faster_whisper_self_hosted';
+  const ttsReady = orgVoiceProviderConfig?.tts_provider === 'kokoro_self_hosted';
+  return sttReady && ttsReady ? 'self_hosted' : 'browser_native';
+}
+
+export default function OrchestratorChat({
+  workerId,
+  projectId,
+  initialMessages = [],
+  onProjectCreated,
+  voiceEnabled = false,
+  voicePreferences = null,
+  orgVoiceProviderConfig = null,
+}) {
+  const prefs = {
+    provider: 'browser_native',
+    voice_selection: 'af_heart',
+    speech_speed: 1.25,
+    continuous_mode: true,
+    push_to_talk: false,
+    auto_send: true,
+    voice_enabled: true,
+    ...voicePreferences,
+  };
+  const effectiveProvider = resolveEffectiveProvider(prefs, orgVoiceProviderConfig);
+  const usingFallbackProvider = prefs.provider === 'self_hosted' && effectiveProvider === 'browser_native';
+  const voiceActuallyEnabled = voiceEnabled && prefs.voice_enabled;
   const router = useRouter();
   const [messages, setMessages] = useState(
     initialMessages.map((entry) => ({
@@ -101,7 +142,7 @@ export default function OrchestratorChat({ workerId, projectId, initialMessages 
   // lets the customer see their own growing transcript across pauses
   // instead of it silently vanishing between sentences (see beginListening()).
   const [accumulatedDisplay, setAccumulatedDisplay] = useState('');
-  const [autoSpeak, setAutoSpeak] = useState(voiceEnabled);
+  const [autoSpeak, setAutoSpeak] = useState(voiceActuallyEnabled);
   const [voiceError, setVoiceError] = useState(null);
   // UX_DEFECT_REMEDIATION_V1 VOICE002 -- real gap: cancelSpeech() already
   // existed and was already called on unmount/before listening again,
@@ -109,6 +150,7 @@ export default function OrchestratorChat({ workerId, projectId, initialMessages 
   // there was no way to render a visible "Stop Speaking" button.
   const [speaking, setSpeaking] = useState(false);
   const stopListeningRef = useRef(null);
+  const stopInterruptionWatchRef = useRef(null);
   // PROJECT_LIFECYCLE_AND_VOICE_REMEDIATION_V1 VOICE002/VOICE003 --
   // startListening() now runs continuous (see lib/voice/speechProvider.js's
   // own note), so a turn can contain several separate "final" chunks as
@@ -116,8 +158,8 @@ export default function OrchestratorChat({ workerId, projectId, initialMessages 
   // state) so appending doesn't itself trigger a re-render on every
   // chunk -- only the actual send, on manual stop, needs to happen.
   const accumulatedTranscriptRef = useRef('');
-  const speechToTextSupported = isSpeechToTextSupported();
-  const textToSpeechSupported = isTextToSpeechSupported();
+  const speechToTextSupported = isSpeechToTextSupported(effectiveProvider);
+  const textToSpeechSupported = isTextToSpeechSupported(effectiveProvider);
   // VOICE007 -- one real, always-current voice state, not three
   // separately-inferred booleans a customer has to piece together
   // themselves from which bits of text happen to be visible.
@@ -126,9 +168,39 @@ export default function OrchestratorChat({ workerId, projectId, initialMessages 
   useEffect(() => {
     return () => {
       stopListeningRef.current?.();
-      cancelSpeech();
+      stopInterruptionWatchRef.current?.();
+      cancelSpeech(effectiveProvider);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // TERACOM_CONVERSATIONAL_EXPERIENCE_V1 Part 2 -- real interim
+  // barge-in (lib/voice/selfHostedSpeechProvider.js#watchForInterruption):
+  // while the assistant is speaking in continuous, self-hosted mode,
+  // watch for the customer starting to talk over it and, if so, stop
+  // the reply immediately and start real listening -- a genuine
+  // improvement over "wait for the reply to finish" for the one
+  // provider that can support it today (see voiceEngine.js's own
+  // supportsInterruption()).
+  useEffect(() => {
+    if (!speaking || !voiceActuallyEnabled || effectiveProvider !== 'self_hosted' || !prefs.continuous_mode) {
+      return undefined;
+    }
+
+    stopInterruptionWatchRef.current = watchForInterruption(effectiveProvider, {
+      onInterruptDetected: () => {
+        cancelSpeech(effectiveProvider);
+        setSpeaking(false);
+        beginListening();
+      },
+    });
+
+    return () => {
+      stopInterruptionWatchRef.current?.();
+      stopInterruptionWatchRef.current = null;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [speaking]);
 
   function appendMessage(role, content) {
     const id = nextLocalId();
@@ -193,9 +265,11 @@ export default function OrchestratorChat({ workerId, projectId, initialMessages 
         responseText = data.response;
       }
       appendMessage('assistant', responseText);
-      if (voiceEnabled && autoSpeak && textToSpeechSupported) {
+      if (voiceActuallyEnabled && autoSpeak && textToSpeechSupported) {
         setSpeaking(true);
-        speak(responseText, {
+        speak(effectiveProvider, responseText, {
+          rate: prefs.speech_speed,
+          voice: prefs.voice_selection,
           // VOICE004 -- real gap: no conversational back-and-forth flow,
           // every turn needed a manual "Speak" click even in voice mode.
           // The moment the Orchestrator's spoken reply finishes (whether
@@ -203,10 +277,15 @@ export default function OrchestratorChat({ workerId, projectId, initialMessages 
           // -- both now correctly reach onEnd, see speechProvider.js's
           // own VOICE006 fix), reopen the microphone automatically so
           // the customer can just keep talking, the way a real
-          // conversation works.
+          // conversation works. Only in continuous mode, and never for
+          // push-to-talk -- that mode's whole point is the customer
+          // decides each turn by holding the button themselves.
           onEnd: () => {
             setSpeaking(false);
-            if (voiceEnabled && autoSpeak && speechToTextSupported && !listening) {
+            if (
+              voiceActuallyEnabled && autoSpeak && speechToTextSupported &&
+              !listening && prefs.continuous_mode && !prefs.push_to_talk
+            ) {
               beginListening();
             }
           },
@@ -256,8 +335,24 @@ export default function OrchestratorChat({ workerId, projectId, initialMessages 
   }
 
   function handleStopSpeaking() {
-    cancelSpeech();
+    cancelSpeech(effectiveProvider);
     setSpeaking(false);
+  }
+
+  // TERACOM_CONVERSATIONAL_EXPERIENCE_V1 Part 1 -- what happens to a
+  // finished utterance now depends on the user's own auto_send
+  // preference: the established default (true) sends immediately,
+  // exactly today's real behaviour; false instead drops the
+  // transcript into the text box for the customer to review/edit
+  // before pressing Send themselves -- a real, working alternative,
+  // not a placeholder.
+  function deliverTranscript(finalMessage) {
+    if (!finalMessage) return;
+    if (prefs.auto_send) {
+      sendMessage(finalMessage);
+    } else {
+      setText((current) => (current ? `${current} ${finalMessage}`.trim() : finalMessage));
+    }
   }
 
   // PROJECT_LIFECYCLE_AND_VOICE_REMEDIATION_V1 VOICE002/VOICE003 -- now
@@ -270,17 +365,23 @@ export default function OrchestratorChat({ workerId, projectId, initialMessages 
   // the customer clicking "Stop Listening" themselves, or the
   // recognizer ending on its own (e.g. a real prolonged silence
   // timeout, still handled gracefully rather than losing what was
-  // already said).
+  // already said). For the self-hosted engine specifically, "continuous"
+  // is a real, client-side silence detector rather than the browser's
+  // own internal one (lib/voice/selfHostedSpeechProvider.js) -- one
+  // recorded utterance per listening session, not multiple accumulated
+  // chunks, but the same accumulation logic here handles either shape
+  // without caring which engine is behind it.
   function beginListening() {
     setVoiceError(null);
     setInterimTranscript('');
     setAccumulatedDisplay('');
     accumulatedTranscriptRef.current = '';
-    cancelSpeech();
+    cancelSpeech(effectiveProvider);
     setSpeaking(false);
     setListening(true);
 
-    stopListeningRef.current = startListening({
+    stopListeningRef.current = startListening(effectiveProvider, {
+      continuousMode: prefs.push_to_talk ? false : prefs.continuous_mode,
       onInterimResult: (interim) => setInterimTranscript(interim),
       onFinalResult: (final) => {
         accumulatedTranscriptRef.current = `${accumulatedTranscriptRef.current} ${final}`.trim();
@@ -297,7 +398,7 @@ export default function OrchestratorChat({ workerId, projectId, initialMessages 
         // (e.g. a prolonged-silence timeout after a real sentence), that
         // real speech is sent rather than silently discarded.
         setVoiceError(err.message);
-        if (finalMessage) sendMessage(finalMessage);
+        deliverTranscript(finalMessage);
       },
       onEnd: () => {
         setListening(false);
@@ -305,7 +406,7 @@ export default function OrchestratorChat({ workerId, projectId, initialMessages 
         setAccumulatedDisplay('');
         const finalMessage = accumulatedTranscriptRef.current.trim();
         accumulatedTranscriptRef.current = '';
-        if (finalMessage) sendMessage(finalMessage);
+        deliverTranscript(finalMessage);
       },
     });
   }
@@ -316,6 +417,22 @@ export default function OrchestratorChat({ workerId, projectId, initialMessages 
       return;
     }
     beginListening();
+  }
+
+  // TERACOM_CONVERSATIONAL_EXPERIENCE_V1 Part 1 -- push-to-talk is a
+  // real, distinct interaction mode, not the toggle button relabelled:
+  // recording runs only while the button is actually held, mirroring a
+  // real walkie-talkie/radio interaction rather than a start/stop pair
+  // of clicks. Mouse and touch both wired (a customer on a phone/tablet
+  // gets the same real behaviour).
+  function handlePushToTalkStart(event) {
+    event.preventDefault();
+    if (!listening) beginListening();
+  }
+
+  function handlePushToTalkEnd(event) {
+    event.preventDefault();
+    if (listening) stopListeningRef.current?.();
   }
 
   async function handleUpload(event) {
@@ -414,60 +531,87 @@ export default function OrchestratorChat({ workerId, projectId, initialMessages 
         )}
       </form>
 
-      {voiceEnabled && (
-        <div style={{ marginTop: '1rem', display: 'flex', gap: '0.75rem', flexWrap: 'wrap', alignItems: 'center' }}>
-          {speechToTextSupported ? (
-            <button
-              type="button"
-              className={listening ? 'btn btn-primary btn-small' : 'btn btn-secondary btn-small'}
-              onClick={handleToggleListening}
-              disabled={sending}
-            >
-              {listening ? 'Stop Listening' : 'Speak'}
-            </button>
-          ) : (
-            <p className="form-note">Speech-to-text isn&apos;t supported in this browser.</p>
-          )}
+      {voiceActuallyEnabled && (
+        <div style={{ marginTop: '1rem', display: 'flex', gap: '1.5rem', flexWrap: 'wrap', alignItems: 'flex-start' }}>
+          <AvatarPanel voiceState={voiceState} />
 
-          {textToSpeechSupported && (
-            <label style={{ display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
-              <input
-                type="checkbox"
-                checked={autoSpeak}
-                onChange={(event) => setAutoSpeak(event.target.checked)}
-              />
-              Read replies aloud
-            </label>
-          )}
+          <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', alignItems: 'center', flex: 1 }}>
+            {!speechToTextSupported ? (
+              <p className="form-note">Speech-to-text isn&apos;t supported in this browser.</p>
+            ) : prefs.push_to_talk ? (
+              <button
+                type="button"
+                className={listening ? 'btn btn-primary btn-small' : 'btn btn-secondary btn-small'}
+                onMouseDown={handlePushToTalkStart}
+                onMouseUp={handlePushToTalkEnd}
+                onMouseLeave={handlePushToTalkEnd}
+                onTouchStart={handlePushToTalkStart}
+                onTouchEnd={handlePushToTalkEnd}
+                disabled={sending}
+              >
+                {listening ? 'Listening... (release to send)' : 'Hold to Talk'}
+              </button>
+            ) : (
+              <button
+                type="button"
+                className={listening ? 'btn btn-primary btn-small' : 'btn btn-secondary btn-small'}
+                onClick={handleToggleListening}
+                disabled={sending}
+              >
+                {listening ? 'Stop Listening' : 'Speak'}
+              </button>
+            )}
 
-          {speaking && (
-            <button type="button" className="btn btn-secondary btn-small" onClick={handleStopSpeaking}>
-              Stop Speaking
-            </button>
-          )}
+            {textToSpeechSupported && (
+              <label style={{ display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
+                <input
+                  type="checkbox"
+                  checked={autoSpeak}
+                  onChange={(event) => setAutoSpeak(event.target.checked)}
+                />
+                Read replies aloud
+              </label>
+            )}
 
-          {/* VOICE007 -- real gap: a customer had no way to tell whether
-              the app was Listening, Processing, Speaking, or just
-              Finished/idle -- state that already existed (listening,
-              sending, speaking) simply had no single, unambiguous,
-              always-visible signal drawing all three together. */}
-          <span className={`badge ${VOICE_STATE_TONE[voiceState]}`} style={{ marginBottom: 0 }} role="status">
-            {VOICE_STATE_LABEL[voiceState]}
-          </span>
+            {speaking && (
+              <button type="button" className="btn btn-secondary btn-small" onClick={handleStopSpeaking}>
+                Stop Speaking
+              </button>
+            )}
 
-          {listening && (
-            <p className="form-note" role="status">
-              {(accumulatedDisplay || interimTranscript)
-                ? `"${[accumulatedDisplay, interimTranscript].filter(Boolean).join(' ')}"`
-                : 'Say as much as you like, then press Stop Listening when you\'re done.'}
-            </p>
-          )}
+            {/* VOICE007 -- real gap: a customer had no way to tell whether
+                the app was Listening, Processing, Speaking, or just
+                Finished/idle -- state that already existed (listening,
+                sending, speaking) simply had no single, unambiguous,
+                always-visible signal drawing all three together. */}
+            <span className={`badge ${VOICE_STATE_TONE[voiceState]}`} style={{ marginBottom: 0 }} role="status">
+              {VOICE_STATE_LABEL[voiceState]}
+            </span>
 
-          {voiceError && (
-            <p className="form-error" role="alert">
-              {voiceError}
-            </p>
-          )}
+            {usingFallbackProvider && (
+              <p className="form-note">
+                Your self-hosted voice preference isn&apos;t available for this organisation yet — using
+                your browser&apos;s own voice instead.{' '}
+                <a href="/portal/settings/voice">Voice Settings</a>
+              </p>
+            )}
+
+            {listening && (
+              <p className="form-note" role="status">
+                {(accumulatedDisplay || interimTranscript)
+                  ? `"${[accumulatedDisplay, interimTranscript].filter(Boolean).join(' ')}"`
+                  : prefs.push_to_talk
+                    ? 'Hold the button and speak, then release to send.'
+                    : 'Say as much as you like, then press Stop Listening when you\'re done.'}
+              </p>
+            )}
+
+            {voiceError && (
+              <p className="form-error" role="alert">
+                {voiceError}
+              </p>
+            )}
+          </div>
         </div>
       )}
 
