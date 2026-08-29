@@ -88,6 +88,16 @@ export default async function DepartmentsPage() {
             <p style={{ marginTop: '1rem' }}>
               <Link className="btn btn-secondary btn-small" href="/portal/admin/departments">
                 Assign heads &amp; set functions
+              </Link>{' '}
+              {/* CUSTOMER_UX_ACCEPTANCE_V1 -- "drag-and-drop upload
+                  capability" for Departments. Documents are assigned to a
+                  worker, not directly to a department (see
+                  UploadKnowledgeForm.js), so this links to that same real,
+                  now drag-and-drop-enabled uploader rather than a
+                  duplicate, department-scoped one the backend can't
+                  actually back. */}
+              <Link className="btn btn-secondary btn-small" href="/portal/knowledge/upload">
+                Upload documents for a department&apos;s workers
               </Link>
             </p>
           </div>

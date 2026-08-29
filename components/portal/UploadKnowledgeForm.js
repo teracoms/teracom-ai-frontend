@@ -26,12 +26,40 @@ export default function UploadKnowledgeForm({ workers }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+  const [droppedFile, setDroppedFile] = useState(null);
+  const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef(null);
+
+  // CUSTOMER_UX_ACCEPTANCE_V1 -- "drag-and-drop upload capability."
+  // Additive only: the plain <input type="file"> below still works
+  // exactly as before (click to browse), this just gives it a real
+  // drop target too. A dropped file is held in state rather than
+  // written into the (read-only) file input's own FileList.
+  function handleDragOver(event) {
+    event.preventDefault();
+    setDragActive(true);
+  }
+
+  function handleDragLeave(event) {
+    event.preventDefault();
+    setDragActive(false);
+  }
+
+  function handleDrop(event) {
+    event.preventDefault();
+    setDragActive(false);
+    const file = event.dataTransfer?.files?.[0];
+    if (file) {
+      setDroppedFile(file);
+      setError(null);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  }
 
   async function handleSubmit(event) {
     event.preventDefault();
 
-    const file = fileInputRef.current?.files?.[0];
+    const file = droppedFile ?? fileInputRef.current?.files?.[0];
 
     if (!workerId) {
       setError('Choose a worker to assign this document to.');
@@ -64,6 +92,7 @@ export default function UploadKnowledgeForm({ workers }) {
       }
 
       setSuccess(data);
+      setDroppedFile(null);
       if (fileInputRef.current) fileInputRef.current.value = '';
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unable to upload this document.');
@@ -113,13 +142,24 @@ export default function UploadKnowledgeForm({ workers }) {
         ))}
       </select>
 
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept=".txt,.pdf,.docx"
-        disabled={loading}
-        aria-label="Document file"
-      />
+      <div
+        className={`upload-dropzone${dragActive ? ' upload-dropzone-active' : ''}`}
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
+      >
+        <p className="upload-dropzone-label">
+          {droppedFile ? `Ready to upload: ${droppedFile.name}` : 'Drag a file here, or browse below'}
+        </p>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".txt,.pdf,.docx"
+          disabled={loading}
+          aria-label="Document file"
+          onChange={() => setDroppedFile(null)}
+        />
+      </div>
 
       <p className="form-note">Accepted: .txt, .pdf, .docx — up to 10MB.</p>
 
