@@ -17,6 +17,11 @@ import EmptyState from '@/components/portal/EmptyState';
 export default function WorkerListView({ workers, canCreate, departmentNamesById = {} }) {
   const [query, setQuery] = useState('');
   const [status, setStatus] = useState('all');
+  // CUSTOMER_UX_ACCEPTANCE_V1 -- "default large lists to approximately
+  // 20 visible items." Resets whenever the search/filter actually
+  // narrows the result set, so a customer isn't left staring at "Show
+  // more" for a filter that already found exactly what they wanted.
+  const [visibleCount, setVisibleCount] = useState(20);
 
   const filtered = useMemo(() => {
     const normalisedQuery = query.trim().toLowerCase();
@@ -31,6 +36,8 @@ export default function WorkerListView({ workers, canCreate, departmentNamesById
     });
   }, [workers, query, status]);
 
+  const visible = filtered.slice(0, visibleCount);
+
   return (
     <div>
       <div className="workers-toolbar">
@@ -38,12 +45,18 @@ export default function WorkerListView({ workers, canCreate, departmentNamesById
           type="search"
           placeholder="Search by name or role"
           value={query}
-          onChange={(event) => setQuery(event.target.value)}
+          onChange={(event) => {
+            setQuery(event.target.value);
+            setVisibleCount(20);
+          }}
           aria-label="Search workers"
         />
         <select
           value={status}
-          onChange={(event) => setStatus(event.target.value)}
+          onChange={(event) => {
+            setStatus(event.target.value);
+            setVisibleCount(20);
+          }}
           aria-label="Filter by status"
         >
           <option value="all">All statuses</option>
@@ -75,15 +88,24 @@ export default function WorkerListView({ workers, canCreate, departmentNamesById
           description="Try a different name, role or status filter."
         />
       ) : (
-        <div className="product-grid">
-          {filtered.map((worker) => (
-            <WorkerCard
-              key={worker.id}
-              worker={worker}
-              departmentName={worker.department_id ? departmentNamesById[worker.department_id] : null}
-            />
-          ))}
-        </div>
+        <>
+          <div className="console-list">
+            {visible.map((worker) => (
+              <WorkerCard
+                key={worker.id}
+                worker={worker}
+                departmentName={worker.department_id ? departmentNamesById[worker.department_id] : null}
+              />
+            ))}
+          </div>
+          {filtered.length > visible.length && (
+            <div className="console-list-footer">
+              <button type="button" className="btn btn-secondary btn-small" onClick={() => setVisibleCount((count) => count + 20)}>
+                Show more ({filtered.length - visible.length} remaining)
+              </button>
+            </div>
+          )}
+        </>
       )}
     </div>
   );

@@ -17,6 +17,9 @@ import EmptyState from '@/components/portal/EmptyState';
 export default function KnowledgeListView({ documents }) {
   const [query, setQuery] = useState('');
   const [source, setSource] = useState('all');
+  // CUSTOMER_UX_ACCEPTANCE_V1 -- "default visible results to
+  // approximately 20... optimise for large knowledge libraries."
+  const [visibleCount, setVisibleCount] = useState(20);
 
   const sources = useMemo(
     () => Array.from(new Set(documents.map((document) => document.source))).sort(),
@@ -36,6 +39,8 @@ export default function KnowledgeListView({ documents }) {
     });
   }, [documents, query, source]);
 
+  const visible = filtered.slice(0, visibleCount);
+
   return (
     <div>
       <div className="workers-toolbar">
@@ -43,12 +48,18 @@ export default function KnowledgeListView({ documents }) {
           type="search"
           placeholder="Search by title or content"
           value={query}
-          onChange={(event) => setQuery(event.target.value)}
+          onChange={(event) => {
+            setQuery(event.target.value);
+            setVisibleCount(20);
+          }}
           aria-label="Search knowledge documents"
         />
         <select
           value={source}
-          onChange={(event) => setSource(event.target.value)}
+          onChange={(event) => {
+            setSource(event.target.value);
+            setVisibleCount(20);
+          }}
           aria-label="Filter by source"
         >
           <option value="all">All sources</option>
@@ -71,11 +82,20 @@ export default function KnowledgeListView({ documents }) {
           description="Try a different title, keyword or source filter."
         />
       ) : (
-        <div className="product-grid">
-          {filtered.map((document) => (
-            <KnowledgeCard key={document.id} document={document} />
-          ))}
-        </div>
+        <>
+          <div className="console-list">
+            {visible.map((document) => (
+              <KnowledgeCard key={document.id} document={document} />
+            ))}
+          </div>
+          {filtered.length > visible.length && (
+            <div className="console-list-footer">
+              <button type="button" className="btn btn-secondary btn-small" onClick={() => setVisibleCount((count) => count + 20)}>
+                Show more ({filtered.length - visible.length} remaining)
+              </button>
+            </div>
+          )}
+        </>
       )}
     </div>
   );

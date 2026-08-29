@@ -11,6 +11,16 @@ const CONNECTOR_META = {
     label: 'Microsoft Teams',
     description: 'Pull shared files and channel documents from Teams into your knowledge base.',
   },
+  // CUSTOMER_UX_ACCEPTANCE_V1 -- "prepare architecture for... Shared
+  // Drives, external repositories."
+  google_drive: {
+    label: 'Shared Drives (Google)',
+    description: 'Sync files from a Google Shared Drive into your knowledge base.',
+  },
+  external_repository: {
+    label: 'External Repository',
+    description: 'Connect a self-hosted document store or partner system into your knowledge base.',
+  },
 };
 
 function titleCase(id) {

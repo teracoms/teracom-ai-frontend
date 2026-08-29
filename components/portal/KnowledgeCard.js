@@ -1,24 +1,35 @@
 import Link from 'next/link';
 
-// Reuses the store page's .product-card/.badge visual language, same
-// precedent WorkerCard.js established in Package 3 — a knowledge document
-// list is structurally the same shape as a worker list (badge + title +
-// preview + action).
+import { KnowledgeIcon } from '@/components/portal/icons';
+
+// CUSTOMER_UX_ACCEPTANCE_V1 -- "replace large document cards with
+// compact rows... optimise for large knowledge libraries." Same
+// compact console-row pattern WorkerCard.js now uses (app/globals.css)
+// instead of the marketing-store .product-card this used before --
+// a knowledge library with hundreds/thousands of real documents needs
+// a dense list, not a 3-per-row card grid.
 export default function KnowledgeCard({ document }) {
-  const preview = document.content.length > 160
-    ? `${document.content.slice(0, 160).trim()}...`
+  const preview = document.content.length > 140
+    ? `${document.content.slice(0, 140).trim()}...`
     : document.content;
 
   return (
-    <article className="product-card">
-      <div>
-        <span className="badge">{document.source}</span>
-        <h3>{document.title}</h3>
-        <p>{preview}</p>
+    <div className="console-row">
+      <span className="console-row-icon">
+        <KnowledgeIcon />
+      </span>
+      <div className="console-row-main">
+        <span className="console-row-title">
+          {document.title}
+          <span className="badge" style={{ marginBottom: 0 }}>{document.source}</span>
+        </span>
+        <span className="console-row-meta">{preview}</span>
       </div>
-      <Link className="btn btn-secondary" href={`/portal/knowledge/${document.id}`}>
-        View Document
-      </Link>
-    </article>
+      <div className="console-row-actions">
+        <Link className="btn btn-secondary btn-small" href={`/portal/knowledge/${document.id}`}>
+          View
+        </Link>
+      </div>
+    </div>
   );
 }
