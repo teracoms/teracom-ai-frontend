@@ -12,6 +12,7 @@ import {
   speak,
   cancelSpeech,
   watchForInterruption,
+  isSecureContextForVoice,
 } from '@/lib/voice/voiceEngine';
 
 let localIdCounter = 0;
@@ -167,6 +168,13 @@ export default function OrchestratorChat({
   // chunk -- only the actual send, on manual stop, needs to happen.
   const accumulatedTranscriptRef = useRef('');
   const speechToTextSupported = isSpeechToTextSupported(effectiveProvider);
+  // VOICE_ACCESS_INVESTIGATION_V1 -- an insecure origin (plain HTTP,
+  // not localhost) is the real, common reason speechToTextSupported
+  // above is false, not an actually-unsupported browser -- named
+  // specifically in the UI rather than folded into the generic
+  // message, since it has a different, real remedy (a secure
+  // connection, not "try a different browser").
+  const insecureContextForVoice = !isSecureContextForVoice();
   const textToSpeechSupported = isTextToSpeechSupported(effectiveProvider);
   // VOICE007 -- one real, always-current voice state, not three
   // separately-inferred booleans a customer has to piece together
@@ -550,7 +558,13 @@ export default function OrchestratorChat({
 
           <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', alignItems: 'center', flex: 1 }}>
             {!speechToTextSupported ? (
-              <p className="form-note">Speech-to-text isn&apos;t supported in this browser.</p>
+              <p className="form-note" role="alert">
+                {insecureContextForVoice
+                  ? 'Voice requires a secure connection (HTTPS) or localhost — this page is loaded over an ' +
+                    'insecure connection, so your browser blocks microphone access here regardless of ' +
+                    'permission settings.'
+                  : "Speech-to-text isn't supported in this browser."}
+              </p>
             ) : prefs.push_to_talk ? (
               <button
                 type="button"
