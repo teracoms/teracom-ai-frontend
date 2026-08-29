@@ -8,6 +8,7 @@ import {
 } from '@/lib/api/protection';
 import { settle, errorMessage, isForbidden } from '@/lib/api/results';
 import RunBackupButton from '@/components/portal/RunBackupButton';
+import TenantExportButton from '@/components/portal/TenantExportButton';
 
 export const metadata = {
   title: 'Protection | Teracom AI Portal',
@@ -151,6 +152,7 @@ export default async function ProtectionPage() {
               tone={dashboard.recovery.recoverable ? 'ok' : 'muted'}
             >
               <p className="activity-meta">{dashboard.recovery.note}</p>
+              {isAdmin && <TenantExportButton />}
             </StatusTile>
 
             <StatusTile
