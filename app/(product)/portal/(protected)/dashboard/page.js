@@ -90,6 +90,19 @@ export default async function DashboardPage() {
 
   const organisationRestricted = isForbidden(organisation.error);
   const canCreateWorker = isAtLeastRole(decodeJwtPayload(token)?.role, 'admin');
+  // CUSTOMER_EXPERIENCE_REFINEMENT_V1 Finding 5 -- "Customers interact
+  // with People/Conversations/Projects/Outputs, not Workers/Tasks/
+  // Worker Pools." This page's own "Organisation overview" stat grid
+  // (Workers/Knowledge/Memories/Chat Sessions) was rendering
+  // unconditionally for every visitor regardless of navigation mode --
+  // the one real gap CUSTOMER_EXPERIENCE_REDESIGN_V3's own Administration
+  // Mode gate (already applied everywhere else: Files/Activity tabs,
+  // the Workforce/My Organisation nav groups) had not reached. Same
+  // never-trust-a-stored-preference-alone posture as every other
+  // administrationMode computation in this app: a non-admin always
+  // gets Customer Mode, recomputed fresh here, not just read from
+  // preferences.
+  const administrationMode = canCreateWorker && !settings.error && settings.value.preferences.navigation.mode === 'administration';
   const isBrandNewOrganisation = !dashboard.error && dashboard.value.workers === 0;
   const organisationName = identity.error ? null : identity.value?.name;
 
@@ -162,17 +175,19 @@ export default async function DashboardPage() {
           since PrimaryActionHero above is now the page's own h1. Every stat,
           summary, and activity section on this page is preserved exactly as
           it was -- nothing removed. */}
-      <section className="hero hero-product hero-dashboard hero-compact">
-        <div className="container">
-          <div className="hero-copy">
-            <span className="eyebrow">{organisationName ?? 'Dashboard'}</span>
-            <h2>{organisationName ? `${organisationName} — Organisation overview.` : 'Organisation overview.'}</h2>
-            <p className="lead">
-              Workers, knowledge, memory and chat activity for your organisation, in one place.
-            </p>
+      {administrationMode && (
+        <section className="hero hero-product hero-dashboard hero-compact">
+          <div className="container">
+            <div className="hero-copy">
+              <span className="eyebrow">{organisationName ?? 'Dashboard'}</span>
+              <h2>{organisationName ? `${organisationName} — Organisation overview.` : 'Organisation overview.'}</h2>
+              <p className="lead">
+                Workers, knowledge, memory and chat activity for your organisation, in one place.
+              </p>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       <section className={contentSectionClass}>
         <div className="container">
@@ -196,41 +211,51 @@ export default async function DashboardPage() {
               )}
             </p>
           )}
-          {dashboard.error ? (
-            <p className="form-error" role="alert">
-              {errorMessage(dashboard.error)}
-            </p>
-          ) : (
-            <div className="stat-grid">
-              <StatTile
-                label="Workers"
-                value={dashboard.value.workers}
-                hint="Active AI workers in your organisation"
-                icon={<WorkersIcon />}
-                href="/portal/workers"
-              />
-              <StatTile
-                label="Knowledge"
-                value={dashboard.value.knowledge}
-                hint="Documents in your knowledge base"
-                icon={<KnowledgeIcon />}
-                href="/portal/knowledge"
-              />
-              <StatTile
-                label="Memories"
-                value={dashboard.value.memories}
-                hint="Memories captured across all workers"
-                icon={<MemoryIcon />}
-                href="/portal/memory"
-              />
-              <StatTile
-                label="Chat Sessions"
-                value={dashboard.value.chat_sessions}
-                hint="Conversations across all workers"
-                icon={<ChatIcon />}
-                href="/portal/chat"
-              />
-            </div>
+          {/* CUSTOMER_EXPERIENCE_REFINEMENT_V1 Finding 5 -- "Customers
+              interact with People/Conversations/Projects/Outputs, not
+              Workers/Tasks/Worker Pools." This stat grid is real,
+              useful workforce visibility for an admin (kept, unchanged,
+              same values, same links) but was rendering unconditionally
+              for every visitor before this fix -- the one place on this
+              page internal concepts (Workers, Chat Sessions as a raw
+              count) reached an ordinary customer regardless of mode. */}
+          {administrationMode && (
+            dashboard.error ? (
+              <p className="form-error" role="alert">
+                {errorMessage(dashboard.error)}
+              </p>
+            ) : (
+              <div className="stat-grid">
+                <StatTile
+                  label="Workers"
+                  value={dashboard.value.workers}
+                  hint="Active AI workers in your organisation"
+                  icon={<WorkersIcon />}
+                  href="/portal/workers"
+                />
+                <StatTile
+                  label="Knowledge"
+                  value={dashboard.value.knowledge}
+                  hint="Documents in your knowledge base"
+                  icon={<KnowledgeIcon />}
+                  href="/portal/knowledge"
+                />
+                <StatTile
+                  label="Memories"
+                  value={dashboard.value.memories}
+                  hint="Memories captured across all workers"
+                  icon={<MemoryIcon />}
+                  href="/portal/memory"
+                />
+                <StatTile
+                  label="Chat Sessions"
+                  value={dashboard.value.chat_sessions}
+                  hint="Conversations across all workers"
+                  icon={<ChatIcon />}
+                  href="/portal/chat"
+                />
+              </div>
+            )
           )}
         </div>
       </section>

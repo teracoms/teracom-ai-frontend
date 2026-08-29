@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import ChatThread from '@/components/portal/ChatThread';
-import AvatarPanel from '@/components/portal/AvatarPanel';
 import {
   isSpeechToTextSupported,
   isTextToSpeechSupported,
@@ -21,21 +20,16 @@ function nextLocalId() {
   return `local-${localIdCounter}`;
 }
 
-// PROJECT_LIFECYCLE_AND_VOICE_REMEDIATION_V1 VOICE007 -- one real,
-// unambiguous label per voice state, not left for a customer to infer
-// from which bits of surrounding text happen to be visible.
-const VOICE_STATE_LABEL = {
-  listening: '🎤 Listening',
-  processing: '⏳ Processing',
-  speaking: '🔊 Speaking',
-  idle: '⚪ Idle',
-};
-const VOICE_STATE_TONE = {
-  listening: 'badge-warn',
-  processing: 'badge-warn',
-  speaking: 'badge-ok',
-  idle: 'badge-muted',
-};
+// CUSTOMER_EXPERIENCE_REFINEMENT_V1 Finding 3 -- live Sandbox feedback:
+// voice exposed too much implementation detail (a persistent Idle/
+// Listening/Processing/Speaking status badge, a decorative avatar, a
+// separate "read replies aloud" toggle). Simplified to the three
+// states the customer actually acts on -- Speak / Listening / Stop
+// Listening -- communicated by the one button's own label, not a
+// second, parallel status display. AvatarPanel.js and
+// lib/avatar/avatarProvider.js are not deleted (real, working
+// foundation code, still real future placement candidates) -- simply
+// no longer rendered in this conversation view.
 
 /**
  * ORCHESTRATOR_CHAT_IMPLEMENTATION_V1 -- a real, working Orchestrator
@@ -151,7 +145,11 @@ export default function OrchestratorChat({
   // lets the customer see their own growing transcript across pauses
   // instead of it silently vanishing between sentences (see beginListening()).
   const [accumulatedDisplay, setAccumulatedDisplay] = useState('');
-  const [autoSpeak, setAutoSpeak] = useState(voiceActuallyEnabled);
+  // CUSTOMER_EXPERIENCE_REFINEMENT_V1 Finding 3 -- was a separate,
+  // always-visible "Read replies aloud" checkbox; now simply follows
+  // the real, already-existing Voice Settings preference
+  // (voice_enabled) with no extra control to remember to check.
+  const autoSpeak = voiceActuallyEnabled;
   const [voiceError, setVoiceError] = useState(null);
   // UX_DEFECT_REMEDIATION_V1 VOICE002 -- real gap: cancelSpeech() already
   // existed and was already called on unmount/before listening again,
@@ -176,10 +174,6 @@ export default function OrchestratorChat({
   // connection, not "try a different browser").
   const insecureContextForVoice = !isSecureContextForVoice();
   const textToSpeechSupported = isTextToSpeechSupported(effectiveProvider);
-  // VOICE007 -- one real, always-current voice state, not three
-  // separately-inferred booleans a customer has to piece together
-  // themselves from which bits of text happen to be visible.
-  const voiceState = listening ? 'listening' : sending ? 'processing' : speaking ? 'speaking' : 'idle';
 
   useEffect(() => {
     return () => {
@@ -553,10 +547,8 @@ export default function OrchestratorChat({
       </form>
 
       {voiceActuallyEnabled && (
-        <div style={{ marginTop: '1rem', display: 'flex', gap: '1.5rem', flexWrap: 'wrap', alignItems: 'flex-start' }}>
-          <AvatarPanel voiceState={voiceState} />
-
-          <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', alignItems: 'center', flex: 1 }}>
+        <div style={{ marginTop: '1rem' }}>
+          <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', alignItems: 'center' }}>
             {!speechToTextSupported ? (
               <p className="form-note" role="alert">
                 {insecureContextForVoice
@@ -579,25 +571,22 @@ export default function OrchestratorChat({
                 {listening ? 'Listening... (release to send)' : 'Hold to Talk'}
               </button>
             ) : (
+              // CUSTOMER_EXPERIENCE_REFINEMENT_V1 Finding 3 -- one
+              // button, one label, always current: "Speak" (idle) ->
+              // "Listening..." (while listening) -> back to "Speak".
+              // This is the whole real state a customer needs to act
+              // on; everything else this view used to show
+              // permanently (a status badge, an avatar) was
+              // decorative on top of what this button's own label
+              // already says.
               <button
                 type="button"
                 className={listening ? 'btn btn-primary btn-small' : 'btn btn-secondary btn-small'}
                 onClick={handleToggleListening}
                 disabled={sending}
               >
-                {listening ? 'Stop Listening' : 'Speak'}
+                {listening ? 'Listening... (tap to stop)' : 'Speak'}
               </button>
-            )}
-
-            {textToSpeechSupported && (
-              <label style={{ display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
-                <input
-                  type="checkbox"
-                  checked={autoSpeak}
-                  onChange={(event) => setAutoSpeak(event.target.checked)}
-                />
-                Read replies aloud
-              </label>
             )}
 
             {speaking && (
@@ -605,40 +594,36 @@ export default function OrchestratorChat({
                 Stop Speaking
               </button>
             )}
-
-            {/* VOICE007 -- real gap: a customer had no way to tell whether
-                the app was Listening, Processing, Speaking, or just
-                Finished/idle -- state that already existed (listening,
-                sending, speaking) simply had no single, unambiguous,
-                always-visible signal drawing all three together. */}
-            <span className={`badge ${VOICE_STATE_TONE[voiceState]}`} style={{ marginBottom: 0 }} role="status">
-              {VOICE_STATE_LABEL[voiceState]}
-            </span>
-
-            {usingFallbackProvider && (
-              <p className="form-note">
-                Your self-hosted voice preference isn&apos;t available for this organisation yet — using
-                your browser&apos;s own voice instead.{' '}
-                <a href="/portal/settings/voice">Voice Settings</a>
-              </p>
-            )}
-
-            {listening && (
-              <p className="form-note" role="status">
-                {(accumulatedDisplay || interimTranscript)
-                  ? `"${[accumulatedDisplay, interimTranscript].filter(Boolean).join(' ')}"`
-                  : prefs.push_to_talk
-                    ? 'Hold the button and speak, then release to send.'
-                    : 'Say as much as you like, then press Stop Listening when you\'re done.'}
-              </p>
-            )}
-
-            {voiceError && (
-              <p className="form-error" role="alert">
-                {voiceError}
-              </p>
-            )}
           </div>
+
+          {/* Everything below is conditional, real information -- an
+              actionable error, an explanation for a fallback that
+              actually happened, or the live transcript while
+              listening -- never a permanently-visible status
+              display. */}
+          {usingFallbackProvider && (
+            <p className="form-note" style={{ marginTop: '0.5rem' }}>
+              Your self-hosted voice preference isn&apos;t available for this organisation yet — using
+              your browser&apos;s own voice instead.{' '}
+              <a href="/portal/settings/voice">Voice Settings</a>
+            </p>
+          )}
+
+          {listening && (
+            <p className="form-note" role="status" style={{ marginTop: '0.5rem' }}>
+              {(accumulatedDisplay || interimTranscript)
+                ? `"${[accumulatedDisplay, interimTranscript].filter(Boolean).join(' ')}"`
+                : prefs.push_to_talk
+                  ? 'Hold the button and speak, then release to send.'
+                  : 'Listening — say as much as you like, then tap Speak again to send.'}
+            </p>
+          )}
+
+          {voiceError && (
+            <p className="form-error" role="alert" style={{ marginTop: '0.5rem' }}>
+              {voiceError}
+            </p>
+          )}
         </div>
       )}
 

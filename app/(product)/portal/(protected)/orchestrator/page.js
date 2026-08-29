@@ -3,6 +3,8 @@ import Link from 'next/link';
 import { getSessionToken } from '@/lib/api/auth';
 import { fetchWorkerList } from '@/lib/api/workers';
 import { fetchMyChatSessions, fetchSessionMessages } from '@/lib/api/chat';
+import { fetchUserSettings } from '@/lib/api/userSettings';
+import { fetchVoiceProviderConfig } from '@/lib/api/voice';
 import { errorMessage } from '@/lib/api/results';
 import { pickDefaultWorker } from '@/lib/portalInitiative';
 import OrchestratorChat from '@/components/portal/OrchestratorChat';
@@ -79,6 +81,26 @@ export default async function OrchestratorPage({ searchParams }) {
     ? workers.find((w) => w.id === resumeWorkerId) ?? pickDefaultWorker(workers, '')
     : pickDefaultWorker(workers, '');
 
+  // CUSTOMER_EXPERIENCE_REFINEMENT_V1 Finding 1 -- "Chat with
+  // Orchestrator" is now the single home-page entry point; voice and
+  // file upload are capabilities inside this one conversation, not
+  // separate destinations. Same best-effort fetch pattern as
+  // /portal/voice and the Project Workspace's own Conversation tab.
+  let voicePreferences = null;
+  try {
+    const settings = await fetchUserSettings(token);
+    voicePreferences = settings?.preferences?.voice ?? null;
+  } catch {
+    voicePreferences = null;
+  }
+
+  let orgVoiceProviderConfig = null;
+  try {
+    orgVoiceProviderConfig = await fetchVoiceProviderConfig(token);
+  } catch {
+    orgVoiceProviderConfig = null;
+  }
+
   return (
     <main>
       <section className="hero hero-product hero-compact">
@@ -112,6 +134,9 @@ export default async function OrchestratorPage({ searchParams }) {
               workerId={orchestratorWorker.id}
               initialMessages={initialMessages}
               initialSessionId={initialSessionId}
+              voiceEnabled
+              voicePreferences={voicePreferences}
+              orgVoiceProviderConfig={orgVoiceProviderConfig}
             />
           )}
         </div>
