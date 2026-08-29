@@ -6,6 +6,7 @@ import {
   fetchStorageVisibility,
   fetchBackupHistory,
   fetchTenantBackups,
+  fetchWorkerPackEntitlementAudit,
 } from '@/lib/api/protection';
 import { settle, errorMessage, isForbidden } from '@/lib/api/results';
 import RunBackupButton from '@/components/portal/RunBackupButton';
@@ -71,17 +72,19 @@ export default async function ProtectionPage() {
 
   const isAdmin = isAtLeastRole(decodeJwtPayload(token)?.role, 'admin');
 
-  const [dashboardSettled, storageSettled, historySettled, tenantBackupsSettled] = await Promise.allSettled([
+  const [dashboardSettled, storageSettled, historySettled, tenantBackupsSettled, entitlementAuditSettled] = await Promise.allSettled([
     fetchProtectionDashboard(token),
     fetchStorageVisibility(token),
     isAdmin ? fetchBackupHistory(token) : Promise.resolve([]),
     isAdmin ? fetchTenantBackups(token) : Promise.resolve([]),
+    isAdmin ? fetchWorkerPackEntitlementAudit(token) : Promise.resolve(null),
   ]);
 
   const dashboardResult = settle(dashboardSettled);
   const storageResult = settle(storageSettled);
   const historyResult = settle(historySettled);
   const tenantBackupsResult = settle(tenantBackupsSettled);
+  const entitlementAuditResult = settle(entitlementAuditSettled);
 
   if (dashboardResult.error) {
     return (
@@ -318,6 +321,59 @@ export default async function ProtectionPage() {
                 {errorMessage(tenantBackupsResult.error)}
               </p>
             )}
+          </div>
+        </section>
+      )}
+
+      {isAdmin && (
+        <section className="section alt">
+          <div className="container">
+            <div className="section-heading left">
+              <span className="eyebrow">Worker-Pack Licensing</span>
+              <h2>Is every Marketplace-pack worker still covered by an active licence?</h2>
+            </div>
+            {entitlementAuditResult.error ? (
+              <p className="form-error" role="alert">
+                {errorMessage(entitlementAuditResult.error)}
+              </p>
+            ) : entitlementAuditResult.value.pack_derived_total === 0 ? (
+              <p className="activity-meta">No workers were created from a Marketplace pack yet.</p>
+            ) : (
+              <>
+                <p className="activity-meta">
+                  {entitlementAuditResult.value.compliant.length} of {entitlementAuditResult.value.pack_derived_total} pack-derived
+                  worker(s) are fully licensed.
+                </p>
+                {entitlementAuditResult.value.at_risk.length > 0 && (
+                  <ul className="activity-list" style={{ marginTop: '0.75rem' }}>
+                    {entitlementAuditResult.value.at_risk.map((entry) => (
+                      <li key={entry.worker_id}>
+                        <p className="activity-title">
+                          {entry.worker_name} <span className="badge">at risk</span>
+                        </p>
+                        <p className="activity-meta">
+                          {entry.pack_slug} (v{entry.pack_version}) --{' '}
+                          {entry.reason === 'organisation_not_licensed'
+                            ? 'your organisation no longer holds an active licence for this pack'
+                            : 'this pack/template no longer exists'}
+                        </p>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </>
+            )}
+
+            <div style={{ marginTop: '1.5rem' }}>
+              <span className="eyebrow">Protection Report</span>
+              <p className="activity-meta" style={{ marginTop: '0.25rem' }}>
+                A single, consolidated document combining every signal on this page --
+                backup/recovery status, storage, and worker-pack licensing.
+              </p>
+              <a className="btn btn-secondary btn-small" href="/api/portal/protection/report" download style={{ marginTop: '0.5rem', display: 'inline-block' }}>
+                Download Protection Report
+              </a>
+            </div>
           </div>
         </section>
       )}
