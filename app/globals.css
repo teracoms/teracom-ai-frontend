@@ -305,7 +305,7 @@ a {
   max-width:460px;margin:0 auto;border:1px solid var(--line);background:rgba(255,255,255,.04);border-radius:28px;padding:40px;
 }
 .login-actions-grid {
-  display:grid;grid-template-columns:repeat(3,1fr);gap:22px;
+  display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:32px;
 }
 .login-action-card {
   border:1px solid var(--line);background:rgba(255,255,255,.04);border-radius:28px;padding:30px;display:flex;flex-direction:column;justify-content:space-between;min-height:200px;
