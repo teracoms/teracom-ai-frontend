@@ -13,10 +13,14 @@ export default function WorkersLoading() {
       </section>
 
       <section className="section">
-        <div className="container product-grid">
-          <div className="product-card skeleton" aria-hidden="true" />
-          <div className="product-card skeleton" aria-hidden="true" />
-          <div className="product-card skeleton" aria-hidden="true" />
+        <div className="container">
+          <div className="console-list">
+            <div className="console-row skeleton" aria-hidden="true" />
+            <div className="console-row skeleton" aria-hidden="true" />
+            <div className="console-row skeleton" aria-hidden="true" />
+            <div className="console-row skeleton" aria-hidden="true" />
+            <div className="console-row skeleton" aria-hidden="true" />
+          </div>
         </div>
       </section>
     </main>
