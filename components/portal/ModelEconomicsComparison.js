@@ -6,6 +6,8 @@ const PROVIDER_LABELS = {
   copilot: 'Copilot (Microsoft)',
   grok: 'Grok (xAI)',
   openrouter: 'OpenRouter',
+  deepseek: 'DeepSeek',
+  qwen: 'Qwen (Alibaba Cloud)',
 };
 
 /**

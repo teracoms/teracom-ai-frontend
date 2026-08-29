@@ -14,26 +14,60 @@ const PROVIDER_LABELS = {
   copilot: 'Copilot (Microsoft)',
   grok: 'Grok (xAI)',
   openrouter: 'OpenRouter',
+  deepseek: 'DeepSeek',
+  qwen: 'Qwen (Alibaba Cloud)',
+};
+
+// LITELLM_PRODUCTION_AND_MODEL_ROUTING_V1 Phase 4 -- mirrors the
+// backend's own real PURPOSES (services/ai_provider_service.py)
+// exactly; human-readable labels only, not a redefinition of the set.
+const PURPOSE_LABELS = {
+  orchestrator: 'Orchestrator conversation',
+  worker_execution: 'Worker task execution',
+  persona: 'Executive persona chat',
+  content: 'Content generation',
+  proposal: 'Proposal generation',
+  video_script: 'Video script generation',
+  requirements: 'Requirements extraction',
+  cto_planning: 'CTO planning',
+  memory_summary: 'Memory summarisation',
+  federation_consultation: 'Federation consultation',
+  consultation: 'Worker consultation',
 };
 
 /**
- * MODELROUTE1 -- Mode D (Custom Routing)'s real, stored, ordered
- * fallback list. v1 is a single organisation-wide list (purpose is
- * always null server-side) -- only visible/meaningful when
- * routing_mode="custom" on the parent AIProviderConfigCard.
+ * LITELLM_PRODUCTION_AND_MODEL_ROUTING_V1 Phase 4 -- Mode D (Custom
+ * Routing)'s stored rule set, now real for two independent groups:
+ * the organisation-wide catch-all fallback chain (unchanged from v1 --
+ * purpose always null, an ordered list) and, new, a per-workload
+ * Primary Model -- at most one rule per real purpose
+ * (services/ai_provider_service.py#PURPOSES), falling back to the
+ * catch-all chain on failure rather than its own separate ordered
+ * list (services/ai_provider_service.py#_get_routing_rules()). Both
+ * groups save together in one PUT, matching the backend's own
+ * replace-in-place semantics.
  */
 export default function AIProviderRoutingRulesEditor({ rules: initialRules }) {
   const { user } = useAuth();
   const canManage = isAtLeastRole(user?.role, 'admin');
   const router = useRouter();
 
+  const initialCatchAll = initialRules.filter((r) => !r.purpose);
+  const initialByPurpose = initialRules.filter((r) => r.purpose);
+
   const [rows, setRows] = useState(
-    initialRules.length > 0
-      ? initialRules.map((r) => ({ provider: r.provider, model_name: r.model_name ?? '' }))
+    initialCatchAll.length > 0
+      ? initialCatchAll.map((r) => ({ provider: r.provider, model_name: r.model_name ?? '' }))
       : [{ provider: 'ollama', model_name: '' }]
+  );
+  const [workloadRules, setWorkloadRules] = useState(
+    initialByPurpose.map((r) => ({ purpose: r.purpose, provider: r.provider, model_name: r.model_name ?? '' }))
   );
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
+
+  const usedPurposes = new Set(workloadRules.map((r) => r.purpose));
+  const availablePurposes = Object.keys(PURPOSE_LABELS).filter((p) => !usedPurposes.has(p));
 
   function updateRow(index, field, value) {
     setRows((prev) => prev.map((row, i) => (i === index ? { ...row, [field]: value } : row)));
@@ -57,22 +91,40 @@ export default function AIProviderRoutingRulesEditor({ rules: initialRules }) {
     });
   }
 
+  function updateWorkloadRule(index, field, value) {
+    setWorkloadRules((prev) => prev.map((row, i) => (i === index ? { ...row, [field]: value } : row)));
+  }
+
+  function addWorkloadRule() {
+    if (availablePurposes.length === 0) return;
+    setWorkloadRules((prev) => [...prev, { purpose: availablePurposes[0], provider: 'ollama', model_name: '' }]);
+  }
+
+  function removeWorkloadRule(index) {
+    setWorkloadRules((prev) => prev.filter((_, i) => i !== index));
+  }
+
   async function handleSave() {
     setError(null);
     setSaving(true);
     try {
-      const payload = {
-        rules: rows.map((row, index) => ({
-          priority: index + 1,
-          provider: row.provider,
-          model_name: row.model_name.trim() || undefined,
-        })),
-      };
+      const catchAllPayload = rows.map((row, index) => ({
+        purpose: null,
+        priority: index + 1,
+        provider: row.provider,
+        model_name: row.model_name.trim() || undefined,
+      }));
+      const workloadPayload = workloadRules.map((row) => ({
+        purpose: row.purpose,
+        priority: 1,
+        provider: row.provider,
+        model_name: row.model_name.trim() || undefined,
+      }));
 
       const response = await fetch('/api/portal/ai-provider-routing-rules', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({ rules: [...workloadPayload, ...catchAllPayload] }),
       });
       const data = await response.json().catch(() => ({}));
 
@@ -90,16 +142,91 @@ export default function AIProviderRoutingRulesEditor({ rules: initialRules }) {
 
   if (!canManage) {
     return (
-      <ol className="activity-list">
-        {rows.map((row, index) => (
-          <li key={index}>{PROVIDER_LABELS[row.provider] ?? row.provider}{row.model_name ? ` · ${row.model_name}` : ''}</li>
-        ))}
-      </ol>
+      <div>
+        {workloadRules.length > 0 && (
+          <>
+            <p className="activity-meta">Workload-specific Primary Models:</p>
+            <ol className="activity-list">
+              {workloadRules.map((row, index) => (
+                <li key={index}>
+                  {PURPOSE_LABELS[row.purpose] ?? row.purpose}: {PROVIDER_LABELS[row.provider] ?? row.provider}
+                  {row.model_name ? ` · ${row.model_name}` : ''}
+                </li>
+              ))}
+            </ol>
+          </>
+        )}
+        <p className="activity-meta">Catch-all fallback chain:</p>
+        <ol className="activity-list">
+          {rows.map((row, index) => (
+            <li key={index}>{PROVIDER_LABELS[row.provider] ?? row.provider}{row.model_name ? ` · ${row.model_name}` : ''}</li>
+          ))}
+        </ol>
+      </div>
     );
   }
 
   return (
     <div>
+      <div className="section-heading left" style={{ marginTop: 0 }}>
+        <h4 style={{ margin: 0 }}>Workload-Specific Primary Models</h4>
+      </div>
+      <p className="form-note">
+        Route a specific kind of work to its own model, falling back to the catch-all chain below if it
+        fails. At most one Primary Model per workload today.
+      </p>
+      {workloadRules.map((row, index) => (
+        <div key={index} className="contact-form" style={{ marginBottom: '8px' }}>
+          <select
+            value={row.purpose}
+            onChange={(event) => updateWorkloadRule(index, 'purpose', event.target.value)}
+            disabled={saving}
+            aria-label={`Workload for rule ${index + 1}`}
+          >
+            <option value={row.purpose}>{PURPOSE_LABELS[row.purpose] ?? row.purpose}</option>
+            {availablePurposes.map((p) => (
+              <option key={p} value={p}>
+                {PURPOSE_LABELS[p]}
+              </option>
+            ))}
+          </select>
+          <select
+            value={row.provider}
+            onChange={(event) => updateWorkloadRule(index, 'provider', event.target.value)}
+            disabled={saving}
+            aria-label={`Provider for workload ${index + 1}`}
+          >
+            {Object.keys(PROVIDER_LABELS).map((key) => (
+              <option key={key} value={key}>
+                {PROVIDER_LABELS[key]}
+              </option>
+            ))}
+          </select>
+          <input
+            type="text"
+            value={row.model_name}
+            onChange={(event) => updateWorkloadRule(index, 'model_name', event.target.value)}
+            placeholder="Model name (optional)"
+            disabled={saving}
+            aria-label={`Model name for workload ${index + 1}`}
+          />
+          <button className="btn btn-secondary btn-small" type="button" disabled={saving} onClick={() => removeWorkloadRule(index)}>
+            Remove
+          </button>
+        </div>
+      ))}
+      <button
+        className="btn btn-secondary btn-small"
+        type="button"
+        disabled={saving || availablePurposes.length === 0}
+        onClick={addWorkloadRule}
+      >
+        Add workload override
+      </button>
+
+      <div className="section-heading left">
+        <h4 style={{ margin: 0 }}>Catch-All Fallback Chain</h4>
+      </div>
       {rows.map((row, index) => (
         <div key={index} className="contact-form" style={{ marginBottom: '8px' }}>
           <span className="activity-meta">{index + 1}.</span>
@@ -138,7 +265,7 @@ export default function AIProviderRoutingRulesEditor({ rules: initialRules }) {
         Add step
       </button>{' '}
       <button className="btn btn-primary btn-small" type="button" disabled={saving} onClick={handleSave}>
-        {saving ? 'Saving...' : 'Save order'}
+        {saving ? 'Saving...' : 'Save routing'}
       </button>
       {error && (
         <p className="form-error" role="alert">

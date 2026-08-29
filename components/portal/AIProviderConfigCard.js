@@ -20,6 +20,8 @@ const PROVIDER_LABELS = {
   copilot: 'Copilot (Microsoft)',
   grok: 'Grok (xAI)',
   openrouter: 'OpenRouter',
+  deepseek: 'DeepSeek',
+  qwen: 'Qwen (Alibaba Cloud)',
 };
 
 // MODELROUTE1 -- Mode A/B/C/D, AI_SOVEREIGNTY_AND_MODEL_ROUTING_V1.md
