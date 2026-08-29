@@ -88,6 +88,7 @@ export default function OrchestratorChat({
   workerId,
   projectId,
   initialMessages = [],
+  initialSessionId = null,
   onProjectCreated,
   voiceEnabled = false,
   voicePreferences = null,
@@ -126,6 +127,13 @@ export default function OrchestratorChat({
   const [text, setText] = useState('');
   const [sending, setSending] = useState(false);
   const [error, setError] = useState(null);
+  // PROJ001 -- real conversation persistence for the pre-project
+  // Orchestrator (projectId is null). Once known (either passed in to
+  // resume a real draft, or returned from the first sendMessage() call
+  // of a brand new one), every subsequent turn includes it so the
+  // backend keeps appending to the same real, resumable session
+  // instead of starting a new draft each time.
+  const [sessionId, setSessionId] = useState(initialSessionId);
 
   const [uploading, setUploading] = useState(false);
   const [uploadNote, setUploadNote] = useState(null);
@@ -257,12 +265,17 @@ export default function OrchestratorChat({
         const response = await fetch('/api/portal/orchestrator/converse', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ workerId, message, history }),
+          body: JSON.stringify({ workerId, message, history, sessionId }),
           signal: controller.signal,
         });
         const data = await response.json().catch(() => ({}));
         if (!response.ok) throw new Error(data.error || 'The Orchestrator did not respond.');
         responseText = data.response;
+        // PROJ001 -- the backend always returns a real session_id, now
+        // that this conversation is genuinely persisted from its first
+        // turn; remember it so every later turn resumes the same
+        // session instead of each one silently starting a new draft.
+        if (data.session_id) setSessionId(data.session_id);
       }
       appendMessage('assistant', responseText);
       if (voiceActuallyEnabled && autoSpeak && textToSpeechSupported) {

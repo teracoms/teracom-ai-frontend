@@ -2,8 +2,10 @@ import Link from 'next/link';
 
 import { getSessionToken } from '@/lib/api/auth';
 import { fetchUserSettings } from '@/lib/api/userSettings';
+import { fetchMyOrganisationMemberships } from '@/lib/api/organisationMemberships';
 import { errorMessage } from '@/lib/api/results';
 import UserSettingsForm from '@/components/portal/UserSettingsForm';
+import OrganisationMembershipsPanel from '@/components/portal/OrganisationMembershipsPanel';
 
 export const metadata = {
   title: 'Settings | Teracom AI Portal',
@@ -35,8 +37,17 @@ export default async function SettingsPage() {
   }
 
   let settings;
+  let memberships = [];
   try {
     settings = await fetchUserSettings(token);
+    // ORG002 -- best-effort: a failure here shouldn't block the rest
+    // of Settings, same per-section resilience already used
+    // elsewhere in this app (e.g. admin/organisation/page.js).
+    try {
+      memberships = await fetchMyOrganisationMemberships(token);
+    } catch {
+      memberships = [];
+    }
   } catch (error) {
     return (
       <main>
@@ -77,9 +88,26 @@ export default async function SettingsPage() {
             Looking for MFA, password, active sessions, or login history?{' '}
             <Link href="/portal/settings/security">Go to Security.</Link>
           </p>
+          <p className="activity-meta" style={{ marginBottom: '20px' }}>
+            Looking for voice provider, speech speed, or continuous/push-to-talk mode?{' '}
+            <Link href="/portal/settings/voice">Go to Voice Settings.</Link>
+          </p>
           <UserSettingsForm initialSettings={settings} />
         </div>
       </section>
+
+      {memberships.length > 0 && (
+        <section className="section alt">
+          <div className="container">
+            <div className="section-heading left">
+              <span className="eyebrow">Organisations</span>
+              <h2>Your organisations.</h2>
+              <p>Every organisation you belong to, and which one is currently active.</p>
+            </div>
+            <OrganisationMembershipsPanel memberships={memberships} />
+          </div>
+        </section>
+      )}
     </main>
   );
 }

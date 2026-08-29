@@ -154,6 +154,19 @@ export function deriveLifecycle({ conversationMessages, requirement, tasks, outp
   const doneCount = stages.filter((stage) => stage.done).length;
   const progressPercent = Math.round((doneCount / stages.length) * 100);
 
+  // PROJ004 -- "Latest Activity": the most recent of every real
+  // timestamped thing already fetched for this page (a task created,
+  // a conversation message sent, a Requirements version generated) --
+  // no new backend data, just the max of what's already here.
+  const activityTimestamps = [
+    ...(tasks ?? []).map((t) => t.created_at),
+    ...(conversationMessages ?? []).map((m) => m.created_at),
+    requirement?.created_at,
+  ].filter(Boolean);
+  const latestActivityAt = activityTimestamps.length > 0
+    ? new Date(Math.max(...activityTimestamps.map((t) => new Date(t).getTime())))
+    : null;
+
   return {
     stages,
     currentStage,
@@ -164,6 +177,7 @@ export function deriveLifecycle({ conversationMessages, requirement, tasks, outp
     doneCount,
     totalStages: stages.length,
     progressPercent,
+    latestActivityAt,
   };
 }
 
@@ -184,6 +198,7 @@ export default function ProjectLifecycleTracker({ conversationMessages, requirem
     doneCount,
     totalStages,
     progressPercent,
+    latestActivityAt,
   } = deriveLifecycle({
     conversationMessages,
     requirement,
@@ -238,7 +253,7 @@ export default function ProjectLifecycleTracker({ conversationMessages, requirem
         ))}
       </ul>
 
-      <div className="stat-grid stat-grid-3" style={{ marginBottom: outputCount > 0 ? '1rem' : 0 }}>
+      <div className="stat-grid stat-grid-3">
         <div>
           <span className="eyebrow">Current Stage</span>
           <p className="activity-title">{currentStage?.label ?? '—'}</p>
@@ -252,6 +267,19 @@ export default function ProjectLifecycleTracker({ conversationMessages, requirem
           <p className="activity-title">{activeOwner}</p>
         </div>
       </div>
+
+      {/* PROJ004 -- real defect, live testing: "project status requires
+          more detail," specifically Latest Activity, which nothing on
+          this page surfaced at all. Computed from data already fetched
+          for this page, not a new backend call. */}
+      <p className="activity-meta" style={{ marginTop: '0.75rem' }}>
+        <strong>Latest Activity:</strong>{' '}
+        {latestActivityAt
+          ? latestActivityAt.toLocaleString('en-AU', {
+              year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit',
+            })
+          : 'No activity yet'}
+      </p>
 
       {/* GUI007 -- real defect, live testing: "Status" already carried
           what needed to happen next (e.g. "Waiting for you to review

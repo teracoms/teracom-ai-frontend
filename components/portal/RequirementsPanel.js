@@ -276,7 +276,13 @@ export default function RequirementsPanel({ projectId, requirement: initialRequi
                     onClick={() => handleStatusChange(status)}
                     disabled={updatingStatus}
                   >
-                    Mark {STATUS_LABELS[status]}
+                    {/* PROJ002 -- real defect, live testing: moving
+                        in_review/confirmed back to draft read as "Mark
+                        Draft," which doesn't say why -- a customer who
+                        isn't happy with what was captured has no clear
+                        button for that intent. Same real status change,
+                        clearer framing when moving backward specifically. */}
+                    {status === 'draft' && requirement.status !== 'draft' ? 'Request Changes' : `Mark ${STATUS_LABELS[status]}`}
                   </button>
                 ))}
             </div>

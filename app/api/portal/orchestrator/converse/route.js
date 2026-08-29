@@ -24,13 +24,18 @@ export async function POST(request) {
   const workerId = typeof payload?.workerId === 'string' ? payload.workerId.trim() : '';
   const message = typeof payload?.message === 'string' ? payload.message.trim() : '';
   const history = Array.isArray(payload?.history) ? payload.history : [];
+  // PROJ001 -- real conversation persistence: once the first turn
+  // returns a session_id, every later call in the same conversation
+  // includes it so the backend appends to the same real, resumable
+  // draft session instead of starting a new one each time.
+  const sessionId = typeof payload?.sessionId === 'string' ? payload.sessionId : undefined;
 
   if (!workerId || !message) {
     return NextResponse.json({ error: 'A message is required.' }, { status: 400 });
   }
 
   try {
-    const data = await converseWithOrchestrator(token, { workerId, message, history });
+    const data = await converseWithOrchestrator(token, { workerId, message, history, sessionId });
     return NextResponse.json(data);
   } catch (error) {
     if (error instanceof ApiError) {

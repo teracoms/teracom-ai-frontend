@@ -2,6 +2,7 @@ import Link from 'next/link';
 
 import { getSessionToken } from '@/lib/api/auth';
 import { fetchWorkerList } from '@/lib/api/workers';
+import { fetchMyChatSessions, fetchSessionMessages } from '@/lib/api/chat';
 import { errorMessage } from '@/lib/api/results';
 import { pickDefaultWorker } from '@/lib/portalInitiative';
 import OrchestratorChat from '@/components/portal/OrchestratorChat';
@@ -23,7 +24,7 @@ export const metadata = {
 // worker entity in the data model -- this page picks a sensible default
 // worker (pickDefaultWorker(), the same heuristic the Initiative flow
 // uses) and presents that conversation under the "Orchestrator" framing.
-export default async function OrchestratorPage() {
+export default async function OrchestratorPage({ searchParams }) {
   const token = getSessionToken();
 
   if (!token) {
@@ -48,7 +49,35 @@ export default async function OrchestratorPage() {
     loadError = error;
   }
 
-  const orchestratorWorker = pickDefaultWorker(workers, '');
+  // PROJ001 -- "Resume Conversation." ?session=<id> resumes a real,
+  // previously-persisted draft rather than always starting fresh --
+  // real messages loaded from the same source of truth
+  // resolve_and_generate()'s own history-loading already uses
+  // server-side, never trusting a client-supplied replacement. Loads
+  // best-effort: a resume that fails to find/load falls through to a
+  // brand new conversation rather than blocking the page.
+  let initialMessages = [];
+  let initialSessionId = null;
+  let resumeWorkerId = null;
+  const requestedSessionId = searchParams?.session;
+
+  if (requestedSessionId && !loadError) {
+    try {
+      const mySessions = await fetchMyChatSessions(token);
+      const match = mySessions.find((s) => s.id === requestedSessionId && s.kind === 'orchestrator_draft');
+      if (match) {
+        initialMessages = await fetchSessionMessages(token, requestedSessionId);
+        initialSessionId = requestedSessionId;
+        resumeWorkerId = match.worker_id;
+      }
+    } catch {
+      // Best-effort -- falls through to a brand new conversation below.
+    }
+  }
+
+  const orchestratorWorker = resumeWorkerId
+    ? workers.find((w) => w.id === resumeWorkerId) ?? pickDefaultWorker(workers, '')
+    : pickDefaultWorker(workers, '');
 
   return (
     <main>
@@ -79,7 +108,11 @@ export default async function OrchestratorPage() {
               description="Create a worker first, then come back here to chat."
             />
           ) : (
-            <OrchestratorChat workerId={orchestratorWorker.id} />
+            <OrchestratorChat
+              workerId={orchestratorWorker.id}
+              initialMessages={initialMessages}
+              initialSessionId={initialSessionId}
+            />
           )}
         </div>
       </section>

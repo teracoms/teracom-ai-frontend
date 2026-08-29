@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { getSessionToken } from '@/lib/api/auth';
 import { fetchProjects } from '@/lib/api/projects';
 import { fetchPersonas } from '@/lib/api/people';
+import { fetchMyChatSessions } from '@/lib/api/chat';
 import { settle, errorMessage } from '@/lib/api/results';
 import AvatarImage from '@/components/portal/AvatarImage';
 import EmptyState from '@/components/portal/EmptyState';
@@ -39,15 +40,22 @@ export default async function ExecutiveTeamPage() {
     );
   }
 
-  const [projectsSettled, personasSettled] = await Promise.allSettled([
+  const [projectsSettled, personasSettled, sessionsSettled] = await Promise.allSettled([
     fetchProjects(token),
     fetchPersonas(token),
+    fetchMyChatSessions(token),
   ]);
 
   const projectsResult = settle(projectsSettled);
   const personasResult = settle(personasSettled);
+  const sessionsResult = settle(sessionsSettled);
   const projects = projectsResult.value ?? [];
   const personas = personasResult.value ?? [];
+  // PROJ001 -- "Draft Conversations": a pre-project Orchestrator
+  // conversation the customer started but hasn't (yet) turned into a
+  // project. Previously these were never persisted at all and simply
+  // vanished on navigating away -- this is the real fix, not cosmetic.
+  const draftConversations = (sessionsResult.value ?? []).filter((s) => s.kind === 'orchestrator_draft');
 
   return (
     <main>
@@ -79,6 +87,34 @@ export default async function ExecutiveTeamPage() {
               Voice Conversation
             </Link>
           </div>
+
+          {draftConversations.length > 0 && (
+            <>
+              <div className="section-heading left">
+                <span className="eyebrow">Draft conversations</span>
+                <p>Started but not yet turned into a project — pick up right where you left off.</p>
+              </div>
+              <ul className="activity-list" style={{ marginBottom: '2rem' }}>
+                {draftConversations.map((session) => (
+                  <li key={session.id}>
+                    <div className="assignment-row">
+                      <div>
+                        <p className="activity-title">{session.title || 'Untitled conversation'}</p>
+                        <p className="activity-meta">
+                          Last message {new Date(session.last_message_at ?? session.created_at).toLocaleString('en-AU', {
+                            year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit',
+                          })}
+                        </p>
+                      </div>
+                      <Link className="btn btn-primary btn-small" href={`/portal/orchestrator?session=${session.id}`}>
+                        Resume Conversation
+                      </Link>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
 
           <div className="section-heading left">
             <span className="eyebrow">Executive team</span>
@@ -116,7 +152,8 @@ export default async function ExecutiveTeamPage() {
           )}
 
           <div className="section-heading left">
-            <span className="eyebrow">Project conversations</span>
+            <span className="eyebrow">Active conversations</span>
+            <p>Project conversations — already real, persisted throughout each project.</p>
           </div>
           {projectsResult.error ? (
             <p className="form-error" role="alert">
