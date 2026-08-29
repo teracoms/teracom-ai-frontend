@@ -160,6 +160,35 @@ export default async function ProtectionPage() {
             </StatusTile>
 
             <StatusTile
+              eyebrow="Tenant Backup"
+              title={dashboard.tenant_backup.stale ? 'Stale' : 'Up to date'}
+              tone={dashboard.tenant_backup.stale ? 'warn' : 'ok'}
+            >
+              <p className="activity-meta">
+                {dashboard.tenant_backup.configured
+                  ? `Last: ${formatDate(dashboard.tenant_backup.last_backup_at)}`
+                  : 'No tenant backup has ever run.'}
+              </p>
+              <p className="activity-meta">
+                {dashboard.tenant_backup.recent_success_count} succeeded / {dashboard.tenant_backup.recent_failure_count} failed recently
+              </p>
+              <p className="activity-meta">{dashboard.tenant_backup.note}</p>
+            </StatusTile>
+
+            <StatusTile
+              eyebrow="Recovery Drill"
+              title={dashboard.recovery_drill.stale ? 'Not recently proven' : 'Proven restorable'}
+              tone={dashboard.recovery_drill.stale ? 'warn' : 'ok'}
+            >
+              <p className="activity-meta">
+                {dashboard.recovery_drill.configured
+                  ? `Last: ${formatDate(dashboard.recovery_drill.last_drill_at)} (${dashboard.recovery_drill.last_drill_status})`
+                  : 'No recovery drill has ever run.'}
+              </p>
+              <p className="activity-meta">{dashboard.recovery_drill.note}</p>
+            </StatusTile>
+
+            <StatusTile
               eyebrow="Encryption"
               title={dashboard.encryption.at_rest_encrypted ? 'Encrypted at rest' : 'Not encrypted at rest'}
               tone={dashboard.encryption.at_rest_encrypted ? 'ok' : 'warn'}
