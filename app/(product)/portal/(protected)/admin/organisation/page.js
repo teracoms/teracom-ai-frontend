@@ -7,7 +7,7 @@ import { fetchUsers } from '@/lib/api/admin';
 import { fetchAIProviderConfig } from '@/lib/api/aiProviderConfig';
 import { isForbidden, errorMessage } from '@/lib/api/results';
 import OrganisationSummaryCard from '@/components/portal/OrganisationSummaryCard';
-import FederationEnabledToggle from '@/components/portal/FederationEnabledToggle';
+import FederationModeControl from '@/components/portal/FederationModeControl';
 import CreateSubOrganisationForm from '@/components/portal/CreateSubOrganisationForm';
 import Link from 'next/link';
 
@@ -164,11 +164,11 @@ export default async function AdminOrganisationPage() {
               <span className="eyebrow">Governance</span>
               <h2>Federation consultation.</h2>
               <p>
-                Turn Federation consultation off for this organisation entirely, regardless of
-                your licence tier.
+                Choose how far a worker can escalate — from staying entirely within your own
+                organisation to consulting approved external AI providers.
               </p>
             </div>
-            <FederationEnabledToggle organisation={organisation} />
+            <FederationModeControl organisation={organisation} />
           </div>
         </section>
       )}

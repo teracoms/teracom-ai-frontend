@@ -3,7 +3,7 @@
 import { useState } from 'react';
 
 import ConceptHelp from '@/components/portal/ConceptHelp';
-import FederationEnabledToggle from '@/components/portal/FederationEnabledToggle';
+import FederationModeControl from '@/components/portal/FederationModeControl';
 
 // CUSTOMER_ONBOARDING_WIZARD_V1.md Step 7 -- Integrations. Federation
 // Providers / External AI Providers are the same real concept in this
@@ -66,7 +66,7 @@ export default function OnboardingWizardStep7({ organisation, federationProvider
       <div className="wizard-step7-section">
         <h3>Federation setting</h3>
         {organisation ? (
-          <FederationEnabledToggle organisation={organisation} />
+          <FederationModeControl organisation={organisation} />
         ) : (
           <p className="activity-meta">Unable to load your organisation&apos;s federation setting.</p>
         )}
