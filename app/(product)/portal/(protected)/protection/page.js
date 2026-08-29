@@ -5,10 +5,12 @@ import {
   fetchProtectionDashboard,
   fetchStorageVisibility,
   fetchBackupHistory,
+  fetchTenantBackups,
 } from '@/lib/api/protection';
 import { settle, errorMessage, isForbidden } from '@/lib/api/results';
 import RunBackupButton from '@/components/portal/RunBackupButton';
 import TenantExportButton from '@/components/portal/TenantExportButton';
+import TenantBackupPanel from '@/components/portal/TenantBackupPanel';
 
 export const metadata = {
   title: 'Protection | Teracom AI Portal',
@@ -69,15 +71,17 @@ export default async function ProtectionPage() {
 
   const isAdmin = isAtLeastRole(decodeJwtPayload(token)?.role, 'admin');
 
-  const [dashboardSettled, storageSettled, historySettled] = await Promise.allSettled([
+  const [dashboardSettled, storageSettled, historySettled, tenantBackupsSettled] = await Promise.allSettled([
     fetchProtectionDashboard(token),
     fetchStorageVisibility(token),
     isAdmin ? fetchBackupHistory(token) : Promise.resolve([]),
+    isAdmin ? fetchTenantBackups(token) : Promise.resolve([]),
   ]);
 
   const dashboardResult = settle(dashboardSettled);
   const storageResult = settle(storageSettled);
   const historyResult = settle(historySettled);
+  const tenantBackupsResult = settle(tenantBackupsSettled);
 
   if (dashboardResult.error) {
     return (
@@ -267,6 +271,23 @@ export default async function ProtectionPage() {
                   </li>
                 ))}
               </ul>
+            )}
+          </div>
+        </section>
+      )}
+
+      {isAdmin && (
+        <section className="section">
+          <div className="container">
+            <div className="section-heading left">
+              <span className="eyebrow">My Organisation Backup</span>
+              <h2>Real, encrypted, tenant-bound -- yours to hold or take with you.</h2>
+            </div>
+            <TenantBackupPanel initialBackups={tenantBackupsResult.error ? [] : tenantBackupsResult.value} />
+            {tenantBackupsResult.error && (
+              <p className="form-error" role="alert" style={{ marginTop: '0.5rem' }}>
+                {errorMessage(tenantBackupsResult.error)}
+              </p>
             )}
           </div>
         </section>
