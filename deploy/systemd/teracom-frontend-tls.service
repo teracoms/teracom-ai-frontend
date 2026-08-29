@@ -1,0 +1,16 @@
+[Unit]
+Description=Teracom AI Frontend TLS Proxy (self-signed, LAN-only -- VOICE_ACCESS_INVESTIGATION_V1)
+After=network-online.target teracom-frontend.service
+Wants=network-online.target teracom-frontend.service
+StartLimitIntervalSec=60
+StartLimitBurst=5
+
+[Service]
+Type=simple
+WorkingDirectory=%h/teracom-ai/teracom-ai-frontend/deploy/tls
+ExecStart=/usr/bin/node %h/teracom-ai/teracom-ai-frontend/deploy/tls/https-proxy.cjs
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target

@@ -17,3 +17,9 @@
 # typescript (tsconfig.json exists for editor tooling only — this repo is JS)
 *.tsbuildinfo
 next-env.d.ts
+
+# VOICE_ACCESS_INVESTIGATION_V1 -- self-signed TLS cert/key are
+# host-specific and the key must never be committed; regenerate per
+# host with deploy/tls/generate-cert.sh
+deploy/tls/voice-lan.key
+deploy/tls/voice-lan.crt
