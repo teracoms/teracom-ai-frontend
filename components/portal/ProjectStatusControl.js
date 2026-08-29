@@ -57,6 +57,7 @@ export default function ProjectStatusControl({ projectId, status }) {
         <option value="active">Active</option>
         <option value="completed">Completed</option>
         <option value="blocked">Blocked</option>
+        <option value="archived">Archived</option>
       </select>
       {error && (
         <p className="form-error" role="alert">

@@ -37,16 +37,24 @@ export default function ProjectPanel({ departmentId, departments, projects, task
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
   const [expandedProjectId, setExpandedProjectId] = useState(null);
-  // GUI006/GUI008 -- real defect, live testing: completed projects
-  // stayed mixed into the same flat list as active ones, with no way
-  // to separate day-to-day work from finished history. Project.status
-  // only has two real values today ("active"/"completed" --
-  // models/project.py -- no "archived" status exists in the schema,
-  // so that third bucket isn't offered here rather than faked with a
-  // tab that behaves identically to Completed). Client-side grouping
-  // only -- no new data, nothing hidden, every project stays exactly
-  // as reachable as before via its own real status.
+  // GUI006/GUI008, extended CUSTOMER_UX_ACCEPTANCE_V1 -- real status
+  // filtering across all five requested views. "archived" is now a
+  // real, settable status (schemas/project.py); "In Progress" is a
+  // real, computed subset of Active (has at least one task that's
+  // actually started) rather than a fourth stored status, since the
+  // backend has never distinguished "created but untouched" from
+  // "someone's working on it" -- Active itself keeps its own existing,
+  // unchanged meaning (every non-terminal, non-archived project),
+  // preserving every prior caller's behaviour. Client-side grouping
+  // only -- no new data beyond the one new status, nothing hidden,
+  // every project stays exactly as reachable as before via its own
+  // real status.
   const [statusView, setStatusView] = useState('active');
+  // CUSTOMER_UX_ACCEPTANCE_V1 -- default visible cap so a project list
+  // growing into the hundreds/thousands never renders unbounded; reset
+  // whenever the visible tab changes so switching views doesn't leave
+  // a stale, seemingly-arbitrary cap in place.
+  const [visibleCount, setVisibleCount] = useState(20);
   const router = useRouter();
 
   const [planWorkerId, setPlanWorkerId] = useState('');
@@ -250,40 +258,47 @@ export default function ProjectPanel({ departmentId, departments, projects, task
         <p className="activity-meta">No projects yet.</p>
       ) : (
         <>
-          {/* GUI006/GUI008 -- "completed" is the only real status this
-              groups out; "active" and "blocked" (both genuinely
-              in-progress, per schemas/project.py) and anything else
-              unrecognised stay in Active rather than risk silently
-              hiding a project under a status this view doesn't know
-              about yet. */}
           {(() => {
+            const archivedProjects = projects.filter((project) => project.status === 'archived');
             const completedProjects = projects.filter((project) => project.status === 'completed');
-            const activeProjects = projects.filter((project) => project.status !== 'completed');
-            const visibleProjects = statusView === 'completed' ? completedProjects : activeProjects;
+            const blockedProjects = projects.filter((project) => project.status === 'blocked');
+            const activeProjects = projects.filter(
+              (project) => project.status !== 'completed' && project.status !== 'archived' && project.status !== 'blocked'
+            );
+            const inProgressProjects = activeProjects.filter((project) =>
+              (tasks ?? []).some((task) => task.project_id === project.id && task.status === 'in_progress')
+            );
+
+            const TABS = [
+              { key: 'active', label: 'Active', items: activeProjects, empty: 'No active projects.' },
+              { key: 'in_progress', label: 'In Progress', items: inProgressProjects, empty: 'Nothing actively being worked on right now.' },
+              { key: 'blocked', label: 'Blocked', items: blockedProjects, empty: 'No blocked projects.' },
+              { key: 'completed', label: 'Completed', items: completedProjects, empty: 'No completed projects yet.' },
+              { key: 'archived', label: 'Archived', items: archivedProjects, empty: 'No archived projects.' },
+            ];
+            const activeTab = TABS.find((tab) => tab.key === statusView) ?? TABS[0];
+            const visibleProjects = activeTab.items.slice(0, visibleCount);
 
             return (
               <>
-                <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
-                  <button
-                    type="button"
-                    className={statusView === 'active' ? 'btn btn-primary btn-small' : 'btn btn-secondary btn-small'}
-                    onClick={() => setStatusView('active')}
-                  >
-                    Active ({activeProjects.length})
-                  </button>
-                  <button
-                    type="button"
-                    className={statusView === 'completed' ? 'btn btn-primary btn-small' : 'btn btn-secondary btn-small'}
-                    onClick={() => setStatusView('completed')}
-                  >
-                    Completed ({completedProjects.length})
-                  </button>
+                <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
+                  {TABS.map((tab) => (
+                    <button
+                      key={tab.key}
+                      type="button"
+                      className={statusView === tab.key ? 'btn btn-primary btn-small' : 'btn btn-secondary btn-small'}
+                      onClick={() => {
+                        setStatusView(tab.key);
+                        setVisibleCount(20);
+                      }}
+                    >
+                      {tab.label} ({tab.items.length})
+                    </button>
+                  ))}
                 </div>
 
-                {visibleProjects.length === 0 ? (
-                  <p className="activity-meta">
-                    {statusView === 'completed' ? 'No completed projects yet.' : 'No active projects.'}
-                  </p>
+                {activeTab.items.length === 0 ? (
+                  <p className="activity-meta">{activeTab.empty}</p>
                 ) : (
                   <ul className="activity-list">
                     {visibleProjects.map((project) => {
@@ -344,6 +359,16 @@ export default function ProjectPanel({ departmentId, departments, projects, task
             );
                     })}
                   </ul>
+                )}
+
+                {activeTab.items.length > visibleProjects.length && (
+                  <button
+                    type="button"
+                    className="btn btn-secondary btn-small"
+                    onClick={() => setVisibleCount((count) => count + 20)}
+                  >
+                    Show more ({activeTab.items.length - visibleProjects.length} remaining)
+                  </button>
                 )}
               </>
             );

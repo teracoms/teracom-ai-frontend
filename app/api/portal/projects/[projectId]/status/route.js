@@ -25,7 +25,7 @@ export async function PATCH(request, { params }) {
   const parsed = parseProjectStatusPayload(payload);
 
   if (!parsed.valid) {
-    return NextResponse.json({ error: 'A status of "active" or "completed" is required.' }, { status: 400 });
+    return NextResponse.json({ error: 'A status of "active", "completed", "blocked", or "archived" is required.' }, { status: 400 });
   }
 
   try {
