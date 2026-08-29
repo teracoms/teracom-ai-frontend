@@ -791,6 +791,13 @@ a {
 .cto-plan-preview .btn, .cto-result .btn {
   justify-self:start;
 }
+.memory-department-section {
+  margin-bottom:40px;
+}
+.memory-department-heading {
+  font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);
+  margin:0 0 18px;padding-bottom:10px;border-bottom:1px solid var(--line);
+}
 .memory-groups {
   display:grid;gap:36px;
 }

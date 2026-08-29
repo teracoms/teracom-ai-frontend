@@ -8,6 +8,7 @@ import EmptyState from '@/components/portal/EmptyState';
 import TaskStatusControl from '@/components/portal/TaskStatusControl';
 import TaskCreateForm from '@/components/portal/TaskCreateForm';
 import WorkforceNav from '@/components/portal/WorkforceNav';
+import ConceptHelp from '@/components/portal/ConceptHelp';
 
 export const metadata = {
   title: 'Tasks | Teracom AI Portal',
@@ -69,7 +70,10 @@ export default async function TasksPage() {
         <div className="container">
           <div className="hero-copy">
             <span className="eyebrow">Tasks</span>
-            <h1>Every task, across every project.</h1>
+            <h1>
+              Every task, across every project.
+              <ConceptHelp concept="task" />
+            </h1>
             <p className="lead">
               Work assigned to a human or to a Worker — pending, in progress, and done — in one
               place.

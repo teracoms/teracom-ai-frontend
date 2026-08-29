@@ -57,6 +57,10 @@ export default async function MemoryPage() {
   // doesn't take down the others; it's just dropped from the browser with
   // its own logged reason (via .catch below), same resilience posture as
   // every other per-item fan-out in this app.
+  const departmentNameById = new Map(
+    (departments.value ?? []).map((department) => [department.id, department.name])
+  );
+
   let groups = [];
   let groupsError = null;
 
@@ -77,6 +81,12 @@ export default async function MemoryPage() {
         workerId: entry.worker.id,
         workerName: entry.worker.name,
         workerRole: entry.worker.role,
+        // CUSTOMER_UX_ACCEPTANCE_V1 -- "improve department-based
+        // organisation" of Memory. A flat, unbounded list of every
+        // worker with memories doesn't scale to an organisation with
+        // thousands of workers; grouping by department first gives it
+        // real structure.
+        departmentName: departmentNameById.get(entry.worker.department_id) ?? 'Unassigned',
         memories: entry.memories,
       }));
   }

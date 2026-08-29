@@ -95,6 +95,7 @@ export default async function DigitalWorkforcePage() {
             <h1>
               Your entire AI workforce, at a glance.
               <ConceptHelp concept="digitalWorkforce" />
+              <ConceptHelp concept="orchestrator" />
             </h1>
             <p className="lead">
               Headcount, department structure, and any worker proposal still waiting on a

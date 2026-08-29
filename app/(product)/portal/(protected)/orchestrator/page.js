@@ -9,6 +9,7 @@ import { errorMessage } from '@/lib/api/results';
 import { pickDefaultWorker } from '@/lib/portalInitiative';
 import OrchestratorChat from '@/components/portal/OrchestratorChat';
 import EmptyState from '@/components/portal/EmptyState';
+import ConceptHelp from '@/components/portal/ConceptHelp';
 
 export const metadata = {
   title: 'Chat with Orchestrator | Teracom AI Portal',
@@ -109,7 +110,10 @@ export default async function OrchestratorPage({ searchParams }) {
             <span className="eyebrow">
               <Link href="/portal/dashboard">&larr; Dashboard</Link>
             </span>
-            <h1>Chat with Orchestrator</h1>
+            <h1>
+              Chat with Orchestrator
+              <ConceptHelp concept="orchestrator" />
+            </h1>
             <p className="lead">
               Ask for anything — it can bring in a colleague worker automatically when a question
               needs one.
