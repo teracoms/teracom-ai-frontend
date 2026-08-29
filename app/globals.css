@@ -167,6 +167,12 @@ a {
 .section-heading p {
   color:var(--muted);font-size:19px;
 }
+.marketplace-subsection {
+  margin-top:44px;
+}
+.marketplace-subsection:first-of-type {
+  margin-top:32px;
+}
 .mini-services {
   display:flex;flex-wrap:wrap;gap:12px;margin-top:26px;
 }

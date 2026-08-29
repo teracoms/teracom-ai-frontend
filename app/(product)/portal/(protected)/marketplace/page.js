@@ -59,81 +59,101 @@ export default async function MarketplacePage() {
         <div className="container">
           <div className="hero-copy">
             <span className="eyebrow">Marketplace</span>
-            <h1>Curated Worker Packs.</h1>
+            <h1>Operating System Packs and Worker Packs.</h1>
             <p className="lead">
-              Browse Teracom-curated bundles of AI worker personas for your industry — each
-              pack is a starting point you can adapt, not a fixed configuration.
+              Two different things live here: whole industry platforms (Operating System Packs)
+              and bundles of AI worker personas you add to your own organisation (Worker Packs).
             </p>
           </div>
         </div>
       </section>
 
-      {topRecommended.length > 0 && (
-        <section className="section">
-          <div className="container">
-            <div className="section-heading">
-              <span className="eyebrow">
-                {recommendations.personalized ? 'Recommended for you' : 'Recommended'}
-              </span>
-              <h2>
-                {recommendations.personalized
-                  ? 'Matched to your organisation'
-                  : 'Featured Worker Packs'}
-              </h2>
-              {!recommendations.personalized && (
-                <p>
-                  Upgrade to Enterprise or Platinum for recommendations matched to your
-                  organisation&apos;s industry.
-                </p>
-              )}
-            </div>
-
-            <div className="product-grid">
-              {topRecommended.map((pack) => (
-                <MarketplacePackCard key={pack.id} pack={pack} rationale={pack.rationale} />
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
+      {/* CUSTOMER_UX_ACCEPTANCE_V1 -- "Separate marketplace content into
+          Operating System Packs vs. Worker Packs." SecurityOS/FinanceOS/
+          OperationsOS/ElectricalOS are real product-family entries (the
+          Teracom AI Operating System line), not Worker Packs -- they were
+          previously a single unlabelled pill strip in a page footnote.
+          Elevated to their own top-level, clearly-named section. */}
       <section className="section">
         <div className="container">
           <div className="section-heading">
-            <span className="eyebrow">All packs</span>
-            <h2>Full Marketplace catalogue</h2>
-          </div>
-
-          {loadError ? (
-            <p className="form-error" role="alert">
-              {errorMessage(loadError)}
+            <span className="eyebrow">Operating System Packs</span>
+            <h2>Whole platforms, built for one part of the business.</h2>
+            <p>
+              Every Operating System Pack runs on Teracom AI, specialised for one industry or
+              function end to end — not a bundle of workers, a full platform.
             </p>
-          ) : packs.length === 0 ? (
-            <EmptyState
-              title="No packs published yet"
-              description="Check back soon — Teracom's curation team is preparing the first Worker Packs."
-            />
-          ) : (
-            <div className="product-grid">
-              {packs.map((pack) => (
-                <MarketplacePackCard key={pack.id} pack={pack} />
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
-
-      <section className="section alt">
-        <div className="container">
-          <p className="form-note">
-            Every pack here runs on Teracom AI — part of the Teracom AI product family, specialist
-            platforms built for different parts of the business.
-          </p>
+          </div>
           <div className="mini-services">
             <span>SecurityOS — available now</span>
             <span>FinanceOS — coming soon</span>
             <span>OperationsOS — coming soon</span>
             <span>ElectricalOS — coming soon</span>
+          </div>
+        </div>
+      </section>
+
+      <section className="section alt">
+        <div className="container">
+          <div className="section-heading">
+            <span className="eyebrow">Worker Packs</span>
+            <h2>Curated bundles of AI worker personas.</h2>
+            <p>
+              Browse Teracom-curated bundles of AI worker personas for your industry — each
+              pack is a starting point you can adapt inside your own organisation, not a fixed
+              configuration.
+            </p>
+          </div>
+
+          {topRecommended.length > 0 && (
+            <div className="marketplace-subsection">
+              <div className="section-heading left">
+                <span className="eyebrow">
+                  {recommendations.personalized ? 'Recommended for you' : 'Recommended'}
+                </span>
+                <h3>
+                  {recommendations.personalized
+                    ? 'Matched to your organisation'
+                    : 'Featured Worker Packs'}
+                </h3>
+                {!recommendations.personalized && (
+                  <p>
+                    Upgrade to Enterprise or Platinum for recommendations matched to your
+                    organisation&apos;s industry.
+                  </p>
+                )}
+              </div>
+
+              <div className="product-grid">
+                {topRecommended.map((pack) => (
+                  <MarketplacePackCard key={pack.id} pack={pack} rationale={pack.rationale} />
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div className="marketplace-subsection">
+            <div className="section-heading left">
+              <span className="eyebrow">All Worker Packs</span>
+              <h3>Full catalogue</h3>
+            </div>
+
+            {loadError ? (
+              <p className="form-error" role="alert">
+                {errorMessage(loadError)}
+              </p>
+            ) : packs.length === 0 ? (
+              <EmptyState
+                title="No packs published yet"
+                description="Check back soon — Teracom's curation team is preparing the first Worker Packs."
+              />
+            ) : (
+              <div className="product-grid">
+                {packs.map((pack) => (
+                  <MarketplacePackCard key={pack.id} pack={pack} />
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </section>
