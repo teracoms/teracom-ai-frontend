@@ -23,13 +23,14 @@ export async function POST(request, { params }) {
 
   const workerId = typeof payload?.workerId === 'string' ? payload.workerId.trim() : '';
   const message = typeof payload?.message === 'string' ? payload.message.trim() : '';
+  const isVoice = payload?.isVoice === true;
 
   if (!workerId || !message) {
     return NextResponse.json({ error: 'A message is required.' }, { status: 400 });
   }
 
   try {
-    const data = await converseInProject(token, params.projectId, { workerId, message });
+    const data = await converseInProject(token, params.projectId, { workerId, message, isVoice });
     return NextResponse.json(data);
   } catch (error) {
     if (error instanceof ApiError) {

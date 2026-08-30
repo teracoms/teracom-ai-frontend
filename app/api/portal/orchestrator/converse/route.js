@@ -29,13 +29,17 @@ export async function POST(request) {
   // includes it so the backend appends to the same real, resumable
   // draft session instead of starting a new one each time.
   const sessionId = typeof payload?.sessionId === 'string' ? payload.sessionId : undefined;
+  // VOICE_AND_FEDERATION_REMEDIATION_V1 -- true for a turn delivered
+  // from a transcribed voice utterance (components/portal/OrchestratorChat.js's
+  // own deliverTranscript()), forwarded through to the backend as-is.
+  const isVoice = payload?.isVoice === true;
 
   if (!workerId || !message) {
     return NextResponse.json({ error: 'A message is required.' }, { status: 400 });
   }
 
   try {
-    const data = await converseWithOrchestrator(token, { workerId, message, history, sessionId });
+    const data = await converseWithOrchestrator(token, { workerId, message, history, sessionId, isVoice });
     return NextResponse.json(data);
   } catch (error) {
     if (error instanceof ApiError) {

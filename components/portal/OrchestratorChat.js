@@ -240,7 +240,12 @@ export default function OrchestratorChat({
   // message, with and without prior conversation history) -- it is a
   // real, fixable gap in how this function itself handles the failure
   // once it happens, regardless of the underlying trigger.
-  async function sendMessage(message) {
+  // VOICE_AND_FEDERATION_REMEDIATION_V1 -- `isVoice` marks a turn that
+  // originated from a transcribed voice utterance (deliverTranscript()
+  // below) rather than typed text (handleSend()), forwarded to the
+  // backend so it can route through the "orchestrator_voice" purpose
+  // and get a real Federation second opinion when confidence is low.
+  async function sendMessage(message, isVoice = false) {
     if (!message || sending) return false;
 
     setError(null);
@@ -256,7 +261,7 @@ export default function OrchestratorChat({
         const response = await fetch(`/api/portal/orchestrator/projects/${projectId}/converse`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ workerId, message }),
+          body: JSON.stringify({ workerId, message, isVoice }),
           signal: controller.signal,
         });
         const data = await response.json().catch(() => ({}));
@@ -267,7 +272,7 @@ export default function OrchestratorChat({
         const response = await fetch('/api/portal/orchestrator/converse', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ workerId, message, history, sessionId }),
+          body: JSON.stringify({ workerId, message, history, sessionId, isVoice }),
           signal: controller.signal,
         });
         const data = await response.json().catch(() => ({}));
@@ -364,7 +369,7 @@ export default function OrchestratorChat({
   function deliverTranscript(finalMessage) {
     if (!finalMessage) return;
     if (prefs.auto_send) {
-      sendMessage(finalMessage);
+      sendMessage(finalMessage, true);
     } else {
       setText((current) => (current ? `${current} ${finalMessage}`.trim() : finalMessage));
     }
