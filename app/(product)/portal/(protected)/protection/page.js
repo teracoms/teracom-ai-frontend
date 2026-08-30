@@ -8,6 +8,7 @@ import {
   fetchTenantBackups,
   fetchWorkerPackEntitlementAudit,
   fetchRecoveryDrillHistory,
+  fetchMarketplaceProtectionReport,
 } from '@/lib/api/protection';
 import { settle, errorMessage, isForbidden } from '@/lib/api/results';
 import RunBackupButton from '@/components/portal/RunBackupButton';
@@ -73,13 +74,14 @@ export default async function ProtectionPage() {
 
   const isAdmin = isAtLeastRole(decodeJwtPayload(token)?.role, 'admin');
 
-  const [dashboardSettled, storageSettled, historySettled, tenantBackupsSettled, entitlementAuditSettled, drillHistorySettled] = await Promise.allSettled([
+  const [dashboardSettled, storageSettled, historySettled, tenantBackupsSettled, entitlementAuditSettled, drillHistorySettled, marketplaceReportSettled] = await Promise.allSettled([
     fetchProtectionDashboard(token),
     fetchStorageVisibility(token),
     isAdmin ? fetchBackupHistory(token) : Promise.resolve([]),
     isAdmin ? fetchTenantBackups(token) : Promise.resolve([]),
     isAdmin ? fetchWorkerPackEntitlementAudit(token) : Promise.resolve(null),
     isAdmin ? fetchRecoveryDrillHistory(token) : Promise.resolve([]),
+    isAdmin ? fetchMarketplaceProtectionReport(token) : Promise.resolve(null),
   ]);
 
   const dashboardResult = settle(dashboardSettled);
@@ -88,6 +90,7 @@ export default async function ProtectionPage() {
   const tenantBackupsResult = settle(tenantBackupsSettled);
   const entitlementAuditResult = settle(entitlementAuditSettled);
   const drillHistoryResult = settle(drillHistorySettled);
+  const marketplaceReportResult = settle(marketplaceReportSettled);
 
   if (dashboardResult.error) {
     return (
@@ -418,6 +421,59 @@ export default async function ProtectionPage() {
                 Download Protection Report
               </a>
             </div>
+          </div>
+        </section>
+      )}
+
+      {isAdmin && (
+        <section className="section">
+          <div className="container">
+            <div className="section-heading left">
+              <span className="eyebrow">Marketplace &amp; IP Protection</span>
+              <h2>Every pack-derived row, not just workers -- and who owns what.</h2>
+            </div>
+            {marketplaceReportResult.error ? (
+              <p className="form-error" role="alert">
+                {errorMessage(marketplaceReportResult.error)}
+              </p>
+            ) : (
+              <>
+                <p className="activity-meta">
+                  {marketplaceReportResult.value.pack_entitlement_audit.pack_derived_total -
+                    marketplaceReportResult.value.pack_entitlement_audit.at_risk_total} of{' '}
+                  {marketplaceReportResult.value.pack_entitlement_audit.pack_derived_total} pack-derived row(s)
+                  (workers, knowledge, memory, projects, tasks) are fully licensed.{' '}
+                  {marketplaceReportResult.value.packs_out_of_date} pack(s) provisioned here have a newer
+                  version published; {marketplaceReportResult.value.packs_unlicensed} pack(s) are no longer
+                  covered by an active licence.
+                </p>
+
+                <div className="stat-grid stat-grid-3" style={{ marginTop: '1rem' }}>
+                  <StatusTile eyebrow="Knowledge: Customer-owned" title={marketplaceReportResult.value.knowledge_ownership.customer_owned} />
+                  <StatusTile eyebrow="Knowledge: Marketplace-owned" title={marketplaceReportResult.value.knowledge_ownership.marketplace_owned} />
+                  <StatusTile eyebrow="Knowledge: Vendor-owned" title={marketplaceReportResult.value.knowledge_ownership.vendor_owned}>
+                    <p className="activity-meta">No third-party Marketplace vendor exists yet -- always 0 today.</p>
+                  </StatusTile>
+                </div>
+
+                {marketplaceReportResult.value.pack_maintenance.length > 0 && (
+                  <ul className="activity-list" style={{ marginTop: '1rem' }}>
+                    {marketplaceReportResult.value.pack_maintenance.map((status) => (
+                      <li key={status.provisioning_id}>
+                        <p className="activity-title">
+                          {status.pack_slug} (v{status.provisioned_version}){' '}
+                          {!status.up_to_date && <span className="badge">newer version available</span>}{' '}
+                          {!status.licensed && <span className="badge">unlicensed</span>}
+                        </p>
+                        <p className="activity-meta">
+                          Latest published: v{status.latest_published_version ?? '—'} · Provisioned {formatDate(status.provisioned_at)}
+                        </p>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </>
+            )}
           </div>
         </section>
       )}
