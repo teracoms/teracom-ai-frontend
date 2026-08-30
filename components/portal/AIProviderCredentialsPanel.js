@@ -104,6 +104,33 @@ export default function AIProviderCredentialsPanel({ credentials }) {
     }
   }
 
+  // CLOUD_PROVIDER_GUI_LIFECYCLE_V1 -- the real "Enable Provider"/
+  // "Disable Provider" action. Never touches the stored key or its
+  // verification state -- only whether resolve_and_generate() may
+  // currently select it.
+  async function handleSetEnabled(provider, enabled) {
+    setError(null);
+    setSaving(true);
+    try {
+      const response = await fetch(`/api/portal/ai-provider-credentials/${provider}/enabled`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ enabled }),
+      });
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Unable to update this provider.');
+      }
+
+      router.refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Unable to update this provider.');
+    } finally {
+      setSaving(false);
+    }
+  }
+
   return (
     <div>
       <ul className="activity-list">
@@ -119,7 +146,8 @@ export default function AIProviderCredentialsPanel({ credentials }) {
               <span className="activity-title">{PROVIDER_LABELS[cred.provider] ?? cred.provider}</span>
               <span className="activity-meta">
                 {cred.is_configured
-                  ? `Key ending ...${cred.key_last_four} · ${cred.is_active ? STATUS_LABELS.ok : (STATUS_LABELS[cred.last_verified_status] ?? 'Not verified')}`
+                  ? `Key ending ...${cred.key_last_four} · ${cred.is_active ? STATUS_LABELS.ok : (STATUS_LABELS[cred.last_verified_status] ?? 'Not verified')}` +
+                    (cred.is_active ? ` · ${cred.is_enabled ? 'Enabled' : 'Disabled'}` : '')
                   : 'Not configured'}
               </span>
             </div>
@@ -176,6 +204,16 @@ export default function AIProviderCredentialsPanel({ credentials }) {
                         >
                           Test connection
                         </button>{' '}
+                        {cred.is_active && (
+                          <button
+                            className="btn btn-secondary btn-small"
+                            type="button"
+                            disabled={saving}
+                            onClick={() => handleSetEnabled(cred.provider, !cred.is_enabled)}
+                          >
+                            {cred.is_enabled ? 'Disable provider' : 'Enable provider'}
+                          </button>
+                        )}{' '}
                         <button
                           className="btn btn-secondary btn-small"
                           type="button"

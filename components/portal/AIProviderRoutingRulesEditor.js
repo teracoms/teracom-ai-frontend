@@ -23,7 +23,16 @@ const PROVIDER_LABELS = {
 // exactly; human-readable labels only, not a redefinition of the set.
 const PURPOSE_LABELS = {
   orchestrator: 'Orchestrator conversation',
-  worker_execution: 'Worker task execution',
+  // CLOUD_PROVIDER_GUI_LIFECYCLE_V1 -- the real "Assign Workers/
+  // Departments" GUI action, per SD-015: a Worker's own row never
+  // carries a model choice, so assignment happens by *purpose*
+  // (which class of turn this is) rather than by naming a literal
+  // Worker. orchestrator_voice/engineering_execution were added to
+  // the backend's own real PURPOSES after this editor was first
+  // built; this was a real, stale gap, not a deliberate omission.
+  orchestrator_voice: 'Orchestrator voice conversations',
+  worker_execution: 'Worker task execution (every other department)',
+  engineering_execution: 'Engineering Department task execution',
   persona: 'Executive persona chat',
   content: 'Content generation',
   proposal: 'Proposal generation',

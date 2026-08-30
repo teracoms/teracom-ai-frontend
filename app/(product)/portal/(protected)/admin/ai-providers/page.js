@@ -91,7 +91,12 @@ export default async function AIProvidersPage() {
                 <span className="eyebrow">Routing mode</span>
                 <h2>How requests are routed.</h2>
               </div>
-              <AIProviderConfigCard config={config} />
+              <AIProviderConfigCard
+                config={config}
+                implementedProviders={providerHealth
+                  .filter((row) => row.error !== 'not_implemented')
+                  .map((row) => row.provider)}
+              />
             </div>
           </section>
 
@@ -99,10 +104,13 @@ export default async function AIProvidersPage() {
             <div className="container">
               <div className="section-heading left">
                 <span className="eyebrow">Provider Health</span>
-                <h2>Is each provider reachable right now?</h2>
+                <h2>Is each provider reachable?</h2>
                 <p>
-                  A live check, made fresh every time this page loads — distinct from historical
-                  availability below, since a healthy provider can still be slow under real load.
+                  Ollama is checked live, fresh every time this page loads. A cloud provider has no
+                  free live-check equivalent, so its status reflects its credential&apos;s own last
+                  real verification instead — use &quot;Test connection&quot; below for a fresh one.
+                  Distinct from historical availability below, since a healthy provider can still be
+                  slow under real load.
                 </p>
               </div>
               <ProviderHealthPanel statuses={providerHealth} />

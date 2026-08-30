@@ -6,12 +6,6 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/components/portal/AuthProvider';
 import { isAtLeastRole } from '@/lib/roles';
 
-// Only "ollama" has a real, working integration in this environment
-// today (services/ai_provider_service.py#IMPLEMENTED_PROVIDERS) --
-// shown honestly rather than implying every listed provider is
-// equally live.
-const IMPLEMENTED_PROVIDERS = new Set(['ollama']);
-
 const PROVIDER_LABELS = {
   ollama: 'Ollama',
   openai: 'GPT (OpenAI)',
@@ -44,7 +38,14 @@ const ROUTING_MODE_OPTIONS = [
  * chooses which model actually backs every worker's own turn in this
  * organisation.
  */
-export default function AIProviderConfigCard({ config }) {
+export default function AIProviderConfigCard({ config, implementedProviders }) {
+  // CLOUD_PROVIDER_GUI_LIFECYCLE_V1 -- real, derived from the same
+  // GET /ai-provider-config/health data ProviderHealthPanel renders,
+  // not a second, separately-hand-maintained copy of the backend's
+  // own IMPLEMENTED_PROVIDERS (a real divergence-risk bug class this
+  // fixes: the prior hardcoded frontend copy was `{'ollama'}` even
+  // after the backend enabled six real cloud providers).
+  const implementedSet = new Set(implementedProviders ?? ['ollama']);
   const { user } = useAuth();
   const canManage = isAtLeastRole(user?.role, 'admin');
   const router = useRouter();
@@ -121,7 +122,7 @@ export default function AIProviderConfigCard({ config }) {
             {Object.keys(PROVIDER_LABELS).map((key) => (
               <option key={key} value={key}>
                 {PROVIDER_LABELS[key]}
-                {IMPLEMENTED_PROVIDERS.has(key) ? '' : ' (not yet connected)'}
+                {implementedSet.has(key) ? '' : ' (not yet connected)'}
               </option>
             ))}
           </select>
@@ -138,7 +139,7 @@ export default function AIProviderConfigCard({ config }) {
           </button>
         </form>
       )}
-      {!IMPLEMENTED_PROVIDERS.has(provider) && (
+      {!implementedSet.has(provider) && (
         <p className="form-note">
           This provider is a real, selectable configuration value, but has no working integration in
           this environment yet — workers will report a clear error rather than silently falling back
