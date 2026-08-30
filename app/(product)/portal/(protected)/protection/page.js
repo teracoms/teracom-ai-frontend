@@ -7,6 +7,7 @@ import {
   fetchBackupHistory,
   fetchTenantBackups,
   fetchWorkerPackEntitlementAudit,
+  fetchRecoveryDrillHistory,
 } from '@/lib/api/protection';
 import { settle, errorMessage, isForbidden } from '@/lib/api/results';
 import RunBackupButton from '@/components/portal/RunBackupButton';
@@ -72,12 +73,13 @@ export default async function ProtectionPage() {
 
   const isAdmin = isAtLeastRole(decodeJwtPayload(token)?.role, 'admin');
 
-  const [dashboardSettled, storageSettled, historySettled, tenantBackupsSettled, entitlementAuditSettled] = await Promise.allSettled([
+  const [dashboardSettled, storageSettled, historySettled, tenantBackupsSettled, entitlementAuditSettled, drillHistorySettled] = await Promise.allSettled([
     fetchProtectionDashboard(token),
     fetchStorageVisibility(token),
     isAdmin ? fetchBackupHistory(token) : Promise.resolve([]),
     isAdmin ? fetchTenantBackups(token) : Promise.resolve([]),
     isAdmin ? fetchWorkerPackEntitlementAudit(token) : Promise.resolve(null),
+    isAdmin ? fetchRecoveryDrillHistory(token) : Promise.resolve([]),
   ]);
 
   const dashboardResult = settle(dashboardSettled);
@@ -85,6 +87,7 @@ export default async function ProtectionPage() {
   const historyResult = settle(historySettled);
   const tenantBackupsResult = settle(tenantBackupsSettled);
   const entitlementAuditResult = settle(entitlementAuditSettled);
+  const drillHistoryResult = settle(drillHistorySettled);
 
   if (dashboardResult.error) {
     return (
@@ -297,6 +300,47 @@ export default async function ProtectionPage() {
                           {record.databases.join(', ')}
                           {record.total_size_bytes != null ? ` · ${formatBytes(record.total_size_bytes)}` : ''}
                           {record.error_message ? ` · ${record.error_message}` : ''}
+                        </p>
+                      </div>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </section>
+      )}
+
+      {isAdmin && (
+        <section className="section">
+          <div className="container">
+            <div className="section-heading left">
+              <span className="eyebrow">Recovery Drill History</span>
+              <h2>Every real, scheduled proof that the backup actually restores.</h2>
+            </div>
+            {drillHistoryResult.error ? (
+              <p className="form-error" role="alert">
+                {errorMessage(drillHistoryResult.error)}
+              </p>
+            ) : drillHistoryResult.value.length === 0 ? (
+              <p className="activity-meta" style={{ marginTop: '1rem' }}>
+                No recovery drill has run yet.
+              </p>
+            ) : (
+              <ul className="activity-list" style={{ marginTop: '1rem' }}>
+                {drillHistoryResult.value.map((record) => (
+                  <li key={record.id}>
+                    <div className="assignment-row">
+                      <div>
+                        <p className="activity-title">
+                          {formatDate(record.started_at)} <span className="badge">{record.status}</span>
+                        </p>
+                        <p className="activity-meta">
+                          {record.error_message
+                            ? record.error_message
+                            : record.table_row_counts
+                              ? `${Object.keys(record.table_row_counts).length} table(s) compared`
+                              : 'Restored and compared against the live source database.'}
                         </p>
                       </div>
                     </div>
