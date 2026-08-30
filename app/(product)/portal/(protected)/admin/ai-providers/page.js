@@ -1,7 +1,7 @@
 import { getSessionToken } from '@/lib/api/auth';
 import { decodeJwtPayload } from '@/lib/api/jwt';
 import { isAtLeastRole } from '@/lib/roles';
-import { fetchAIProviderConfig } from '@/lib/api/aiProviderConfig';
+import { fetchAIProviderConfig, fetchProviderHealth } from '@/lib/api/aiProviderConfig';
 import { fetchAIProviderCredentials } from '@/lib/api/aiProviderCredentials';
 import { fetchAIProviderRoutingRules } from '@/lib/api/aiProviderRoutingRules';
 import { fetchModelEconomicsComparison } from '@/lib/api/modelEconomics';
@@ -9,6 +9,7 @@ import AIProviderConfigCard from '@/components/portal/AIProviderConfigCard';
 import AIProviderCredentialsPanel from '@/components/portal/AIProviderCredentialsPanel';
 import AIProviderRoutingRulesEditor from '@/components/portal/AIProviderRoutingRulesEditor';
 import ModelEconomicsComparison from '@/components/portal/ModelEconomicsComparison';
+import ProviderHealthPanel from '@/components/portal/ProviderHealthPanel';
 
 export const metadata = {
   title: 'AI Providers | Teracom AI Portal',
@@ -46,6 +47,7 @@ export default async function AIProvidersPage() {
   let credentials = [];
   let rules = [];
   let comparison = [];
+  let providerHealth = [];
   let loadError = null;
 
   try {
@@ -53,6 +55,7 @@ export default async function AIProvidersPage() {
     credentials = await fetchAIProviderCredentials(token);
     rules = await fetchAIProviderRoutingRules(token);
     comparison = await fetchModelEconomicsComparison(token);
+    providerHealth = await fetchProviderHealth(token);
   } catch (error) {
     loadError = error instanceof Error ? error.message : 'Unable to load AI provider settings.';
   }
@@ -89,6 +92,20 @@ export default async function AIProvidersPage() {
                 <h2>How requests are routed.</h2>
               </div>
               <AIProviderConfigCard config={config} />
+            </div>
+          </section>
+
+          <section className="section alt">
+            <div className="container">
+              <div className="section-heading left">
+                <span className="eyebrow">Provider Health</span>
+                <h2>Is each provider reachable right now?</h2>
+                <p>
+                  A live check, made fresh every time this page loads — distinct from historical
+                  availability below, since a healthy provider can still be slow under real load.
+                </p>
+              </div>
+              <ProviderHealthPanel statuses={providerHealth} />
             </div>
           </section>
 
