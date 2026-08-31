@@ -38,7 +38,12 @@ export default function ChatComposer({ workerId, onMessage }) {
         throw new Error(data.error || 'Unable to send this message.');
       }
 
-      onMessage('assistant', data.response);
+      // TECHNICAL_SUPPORT_OS_MVP_V1: sources names which Knowledge rows
+      // fed this answer (schemas/chat.py#ChatResponse), so it can be
+      // shown as sourced from a specific document rather than asserted
+      // as grounded with no visible proof. Absent/empty on any answer
+      // with no permitted knowledge context -- unchanged rendering.
+      onMessage('assistant', data.response, { sources: data.sources });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unable to send this message.');
     } finally {

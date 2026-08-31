@@ -19,8 +19,8 @@ import OrchestrationPanel from '@/components/portal/OrchestrationPanel';
 export default function ChatInterface({ workerId }) {
   const [messages, setMessages] = useState([]);
 
-  function appendMessage(role, content) {
-    setMessages((current) => [...current, { id: `local-${current.length}`, role, content }]);
+  function appendMessage(role, content, extra = {}) {
+    setMessages((current) => [...current, { id: `local-${current.length}`, role, content, ...extra }]);
   }
 
   function handleConsultationComplete(originalMessage, result) {

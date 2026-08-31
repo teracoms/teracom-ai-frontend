@@ -61,6 +61,9 @@ export default function ChatThread({ messages, emptyTitle, emptyDescription }) {
           ) : (
             <p className="chat-message-content">{message.content}</p>
           )}
+          {message.sources && message.sources.length > 0 && (
+            <p className="form-note chat-message-sources">Sourced from: {message.sources.join(', ')}</p>
+          )}
         </li>
       ))}
     </ul>
