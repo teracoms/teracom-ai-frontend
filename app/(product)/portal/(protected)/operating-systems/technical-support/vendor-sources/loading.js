@@ -4,7 +4,7 @@ export default function VendorSourcesLoading() {
       <section className="hero hero-product">
         <div className="container">
           <div className="hero-copy">
-            <span className="eyebrow">Knowledge</span>
+            <span className="eyebrow">Technical Support OS</span>
             <h1>Loading vendor sources...</h1>
           </div>
         </div>

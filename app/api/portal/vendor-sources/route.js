@@ -56,6 +56,7 @@ export async function POST(request) {
       vendor_name: parsed.vendor_name,
       resource_url: parsed.resource_url,
       worker_id: parsed.worker_id,
+      schedule_interval: parsed.schedule_interval,
     });
     return NextResponse.json(data);
   } catch (error) {

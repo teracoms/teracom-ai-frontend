@@ -58,9 +58,9 @@ export default async function ConnectorsPage() {
             <span className="eyebrow">Connectors</span>
             <h1>External source connectors.</h1>
             <p className="lead">
-              SharePoint, OneDrive and Teams integrations are planned but not yet built — there&apos;s
-              no working OAuth or sync for any of them today. Upload documents directly until
-              these are available.
+              Each connector below shows its own real, evidence-based status — not a blanket
+              &quot;coming soon.&quot; No connector currently has a working OAuth or sync
+              connection; upload documents directly until one does.
             </p>
           </div>
           <div className="hero-actions">

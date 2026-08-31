@@ -27,39 +27,51 @@ function titleCase(id) {
   return id.charAt(0).toUpperCase() + id.slice(1);
 }
 
+// TECHNICAL_SUPPORT_OS_PRODUCT_INTEGRATION -- "Audit the actual connector
+// implementation before presenting connector status. Replace misleading
+// 'Connectors Coming Soon' messaging with evidence-based statuses."
+// teracom-ai-backend (781cfe3) now returns one of these five real values,
+// read from services/connectors/*.py's own BaseConnector.status() rather
+// than a hardcoded literal -- this map is presentation only, not a second
+// source of truth for what the status *is*.
+const STATUS_META = {
+  available: { label: 'Available', badgeClass: 'badge badge-success' },
+  configuration_required: { label: 'Configuration Required', badgeClass: 'badge' },
+  partial: { label: 'Partial', badgeClass: 'badge' },
+  planned: { label: 'Planned', badgeClass: 'badge' },
+  not_implemented: { label: 'Not Implemented', badgeClass: 'badge' },
+};
+
 /**
- * Every connector this app can list is a disabled "coming soon" card —
- * deliberately, not a temporary placeholder. teracom-ai-backend's connector
- * endpoints return a hardcoded status literal (see lib/api/connectors.js);
- * `services/connectors/*.py`'s SharePointConnector/OneDriveConnector/
- * TeamsConnector classes define connect()/sync() methods that imply a real
- * OAuth flow, but are never instantiated or called by any registered route
- * (verified by grepping the whole backend — see
- * CONNECTORS_IMPLEMENTATION_REPORT.md §2). There is no reachable endpoint
- * this UI could wire a "Connect" button to, so none is offered — a disabled
- * button here would be dishonest in the other direction (implying an action
- * exists that silently does nothing), which is exactly the kind of
- * behaviour-the-backend-can't-back this app has avoided building in every
- * prior package.
+ * A connector's action affordance is derived from its own real status, not
+ * fixed to "always disabled" — but today every real status is
+ * not_implemented (confirmed live), and no connect/sync endpoint is
+ * reachable for any of them (CONNECTORS_IMPLEMENTATION_REPORT.md §2), so a
+ * disabled button with an honest label is still what every connector
+ * renders today. The moment a real backend earns "available" or
+ * "configuration_required" for one connector, this component already
+ * renders it as actionable rather than needing a second edit.
  */
 export default function ConnectorCard({ id, status }) {
   const meta = CONNECTOR_META[id] ?? {
     label: titleCase(id),
     description: 'Connector integration details are not yet available.',
   };
+  const statusMeta = STATUS_META[status] ?? { label: titleCase(status ?? 'unknown'), badgeClass: 'badge' };
+  const isActionable = status === 'available' || status === 'configuration_required';
 
   return (
     <article className="product-card connector-card">
       <div>
-        <span className="badge">Coming Soon</span>
+        <span className={statusMeta.badgeClass}>{statusMeta.label}</span>
         <h3>{meta.label}</h3>
         <p>{meta.description}</p>
         <p className="connector-status">
-          Backend status: <span>{status}</span>
+          Status: <span>{statusMeta.label}</span>
         </p>
       </div>
-      <button type="button" className="btn btn-secondary" disabled>
-        Not Yet Available
+      <button type="button" className="btn btn-secondary" disabled={!isActionable}>
+        {isActionable ? 'Connect' : statusMeta.label}
       </button>
     </article>
   );
