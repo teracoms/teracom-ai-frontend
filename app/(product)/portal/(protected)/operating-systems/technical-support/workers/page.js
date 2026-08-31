@@ -87,6 +87,12 @@ export default async function TechnicalSupportWorkersPage() {
                       <Link className="btn btn-secondary btn-small" href={`/portal/workers/${worker.id}`}>
                         View Worker
                       </Link>
+                      <Link
+                        className="btn btn-secondary btn-small"
+                        href={`/portal/operating-systems/technical-support/workers/${worker.id}/configure`}
+                      >
+                        Configure Voice &amp; Avatar
+                      </Link>
                       <Link className="btn btn-secondary btn-small" href="/portal/chat">
                         Chat
                       </Link>
